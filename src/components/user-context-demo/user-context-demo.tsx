@@ -27,9 +27,54 @@ export const UserContextDemo = () => {
   const [cityResults, setCityResults] = useState<any[]>([])
   const [searchLoading, setSearchLoading] = useState(false)
   const [searchError, setSearchError] = useState<string | null>(null)
+  const [currentTime, setCurrentTime] = useState(new Date())
+  const [is24Hour, setIs24Hour] = useState(true)
 
   // Debounce para evitar llamadas excesivas a la API
   const debouncedQuery = useDebounce(cityQuery, 300)
+
+  // Actualizar la hora cada segundo
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date())
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  // Formatear hora según el timezone
+  const formatLocalTime = useMemo(() => {
+    if (!timezone?.timezone) return "N/A"
+
+    try {
+      return new Intl.DateTimeFormat(language.fullCode || "es-ES", {
+        timeZone: timezone.timezone,
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: !is24Hour,
+      }).format(currentTime)
+    } catch {
+      return "N/A"
+    }
+  }, [timezone?.timezone, language.fullCode, currentTime, is24Hour])
+
+  // Formatear fecha según el timezone
+  const formatLocalDate = useMemo(() => {
+    if (!timezone?.timezone) return "N/A"
+
+    try {
+      return new Intl.DateTimeFormat(language.fullCode || "es-ES", {
+        timeZone: timezone.timezone,
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }).format(currentTime)
+    } catch {
+      return "N/A"
+    }
+  }, [timezone?.timezone, language.fullCode, currentTime])
 
   // Convertir resultados a formato de Combobox
   const comboboxOptions: ComboboxOption[] = useMemo(() => {
@@ -145,8 +190,21 @@ export const UserContextDemo = () => {
             <span className="font-medium">{timezone?.offsetString || "N/A"}</span>
           </div>
           <div className="flex justify-between">
+            <span className="text-muted-foreground">Fecha Local:</span>
+            <span className="font-medium capitalize">{formatLocalDate}</span>
+          </div>
+          <div className="flex items-center justify-between">
             <span className="text-muted-foreground">Hora Local:</span>
-            <span className="font-mono font-medium">{formatLocalTime()}</span>
+            <div className="flex items-center gap-2">
+              <span className="font-mono font-medium">{formatLocalTime}</span>
+              <button
+                onClick={() => setIs24Hour(!is24Hour)}
+                className="hover:bg-muted/80 rounded-md bg-muted px-2 py-0.5 text-xs"
+                title={is24Hour ? "Cambiar a 12 horas" : "Cambiar a 24 horas"}
+              >
+                {is24Hour ? "24h" : "12h"}
+              </button>
+            </div>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">DST:</span>
