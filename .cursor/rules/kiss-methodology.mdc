@@ -1,0 +1,68 @@
+---
+alwaysApply: true
+---
+
+# KISS Methodology
+
+## KISS Definition
+
+**K**eep **I**t **S**imple, **S**tupid - Keep the code simple and straightforward
+
+## Mandatory Rules
+
+### 1. 🧼 Code Simplicity
+- Use descriptive and clear names for variables, functions, and classes
+- Avoid deep nesting (maximum 3 levels)
+- Prefer small functions with a single responsibility
+- Use simple control structures (if, for, while) before complex patterns
+
+### 2. 🎯 Direct Solutions
+- Implement the most direct solution that solves the problem
+- Avoid over-abstraction in simple cases
+- Use native language/framework features before creating custom abstractions
+- Prefer explicit code over "clever" code
+
+### 3. 📖 Readability First
+- Write code that explains itself
+- Avoid unnecessary comments in obvious code
+- Use standard language/framework conventions
+- Keep lines of code short (maximum 120 characters)
+
+## KISS Validation Checklist
+
+### Before Writing Code
+- [ ] Is this the simplest possible solution?
+- [ ] Can I explain this code in 30 seconds?
+- [ ] Am I using the native language/framework tools?
+- [ ] Is the code easy to understand for another developer?
+
+### During Development
+- [ ] Am I complicating something that should be simple?
+- [ ] Can I simplify this logic?
+- [ ] Am I following standard conventions?
+- [ ] Does the code explain itself?
+
+### After Implementation
+- [ ] Is the code easy to maintain?
+- [ ] Can I test this functionality easily?
+- [ ] Can another developer understand it quickly?
+- [ ] Am I using the most direct solution?
+
+## Anti-KISS Rules (Prohibited)
+
+### ❌ Don't Do
+- Create complex abstractions for simple cases
+- Use design patterns without clear justification
+- Write "clever" code that is difficult to understand
+- Optimize prematurely without real measurement
+
+### ❌ Problematic Patterns
+- Factories for simple objects
+- Builders for basic structures
+- Observers for simple logic
+- Middleware or interceptors for basic validations
+- Value objects for primitive data
+
+## KISS Mantra
+
+"Simple first, straightforward after. If it's complex, simplify it. If it's not clear, make it clear."

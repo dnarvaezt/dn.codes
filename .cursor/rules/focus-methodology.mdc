@@ -1,0 +1,120 @@
+---
+alwaysApply: true
+---
+
+# FOCUS Methodology
+
+## FOCUS Definition
+
+**F**unction clear | **O**bjective defined | **C**ase uses first | **U**nit minimal | **S**imple before complex
+
+## Mandatory Rules
+
+### 1. 🧠 Function Clear
+
+- Before any implementation, define in ONE sentence what the functionality should do
+- Use specific technical terms, not vague ones like "improve" or "adapt"
+- Example: "Allow a user to edit their shipping address from the profile"
+
+### 2. 🎯 Objective Defined
+
+- List specific acceptance criteria
+- Define what is considered "done" and "correct"
+- Establish measurable success metrics
+
+### 3. 📋 Use Cases First
+
+- Write test scenarios BEFORE writing code
+- Cover happy path, edge cases, and error scenarios
+- Use TDD when appropriate for the context
+
+### 4. 🧩 Minimal Unit
+
+- Divide functionalities into small, manageable blocks
+- Implement one functionality at a time
+- Do not solve multiple problems simultaneously
+
+### 5. 🧼 Simple Before Complex
+
+- Implement the simplest solution that works
+- Refactor after it works
+- Avoid over-engineering and premature optimization
+
+## FOCUS Validation Checklist
+
+### Before Implementation
+
+- [ ] Do I have a clear function in one sentence?
+- [ ] Have I defined acceptance criteria?
+- [ ] Have I written use cases and tests?
+- [ ] Have I divided into minimal units?
+- [ ] Am I using the simplest solution?
+
+### During Implementation
+
+- [ ] Am I following the project's architecture?
+- [ ] Am I using the project's conventions?
+- [ ] Am I applying solid design principles?
+- [ ] Am I keeping the code testable?
+
+### After Implementation
+
+- [ ] Does it work according to defined criteria?
+- [ ] Do all tests pass?
+- [ ] Is the code maintainable and scalable?
+- [ ] Does it follow project conventions?
+
+## Anti-FOCUS Rules (Prohibited)
+
+### ❌ Don't Do
+
+- Implement without defining clear function
+- Skip acceptance criteria definition
+- Write code without use cases
+- Solve multiple problems at once
+- Optimize before it works
+
+### ❌ Problematic Patterns
+
+- Components with complex business logic
+- Modules with cross dependencies
+- Components with mixed presentation logic
+- Tests without defined use cases
+- Duplicated code without justification
+
+## FOCUS Application Example
+
+### 1. Clear Function
+
+"Create component to display product list with category filters"
+
+### 2. Defined Objective
+
+- Display product list
+- Allow filtering by category
+- Pagination of 20 items per page
+- Loading indicator during requests
+
+### 3. Use Cases
+
+- User views complete product list
+- User filters by specific category
+- User navigates between result pages
+- User sees message when no results
+
+### 4. Minimal Unit
+
+- Create list component
+- Implement filtering logic
+- Add pagination
+- Create tests
+
+### 5. Simple Before Complex
+
+- Implement basic functionality first
+- Add filters afterwards
+- Optimize performance at the end
+
+## FOCUS Mantra
+
+"Define function, establish objective, write cases, divide into units, implement simple. Refactor afterwards."

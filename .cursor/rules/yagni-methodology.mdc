@@ -1,0 +1,68 @@
+---
+alwaysApply: true
+---
+
+# YAGNI Methodology
+
+## YAGNI Definition
+
+**Y**ou **A**ren't **G**onna **N**eed **I**t - Don't implement functionality that is not currently needed
+
+## Mandatory Rules
+
+### 1. 🚫 Don't Create Unnecessary Code
+- Don't implement unsolicited features
+- Don't create methods, classes, or files "just in case"
+- Don't add parameters or options that aren't used
+- Don't create abstractions for unique cases
+
+### 2. 🎯 Just-in-Time Implementation
+- Implement only when really needed
+- Don't anticipate future changes without clear evidence
+- Don't create interfaces or contracts until multiple implementations are needed
+- Don't optimize prematurely
+
+### 3. 🧹 Clean Code
+- Remove dead or unused code
+- Don't keep commented code "just in case"
+- Don't create empty configuration files
+- Don't add unused dependencies
+
+## YAGNI Validation Checklist
+
+### Before Writing Code
+- [ ] Is this functionality explicitly required?
+- [ ] Am I going to use this code right now?
+- [ ] Am I creating something "just in case"?
+- [ ] Is this abstraction really necessary?
+
+### During Development
+- [ ] Am I implementing only what is required?
+- [ ] Can I remove unused code?
+- [ ] Am I anticipating future changes?
+- [ ] Does this functionality have a real use case?
+
+### After Implementation
+- [ ] Is all the code being used?
+- [ ] Can I simplify the implementation?
+- [ ] Am I keeping only what is necessary?
+- [ ] Does the code solve the current problem?
+
+## Anti-YAGNI Rules (Prohibited)
+
+### ❌ Don't Do
+- Create interfaces "just in case"
+- Implement future functionalities
+- Create generic methods without real use
+- Add parameters "just in case"
+
+### ❌ Problematic Patterns
+- Generic services or modules without use cases
+- Components with multiple unused responsibilities
+- Modules with unused complex logic
+- Tests for unimplemented functionalities
+- Value objects for unique cases
+
+## YAGNI Mantra
+
+"Necessary first, future later. If you don't need it now, don't implement it. If it's not used, remove it."

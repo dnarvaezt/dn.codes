@@ -1,0 +1,35 @@
+---
+alwaysApply: true
+---
+
+# Strict Quality Control
+
+## Pre-Validation (Before Writing Any Code)
+- Extract from request: target files (list each), functionality (describe in 1 sentence), acceptance criteria (what defines success)
+- If any extraction is unclear, ask: "I need to know: [missing info]"
+- Confirm understanding: "I will modify [files] to implement [functionality]. Correct?"
+- Wait for explicit approval ("yes", "correct", "proceed") before writing code
+
+## Creation Control (During Implementation)
+- Create ONLY files with explicit names mentioned in request (e.g., user explicitly said "create auth.js")
+- If file creation is implied but not explicit, ask: "Should I create [filename]?"
+- Never create: helper files, utility modules, config files, or documentation without explicit request
+- Rule of thumb: if filename wasn't in user's message, don't create it
+
+## Code Validation (After Writing Code)
+- Check syntax: does code compile/parse without errors?
+- Check completeness: are there any TODO, FIXME, or placeholder comments?
+- Check scope: did I add any unrequested features (validation, logging, error handling)?
+- Check consistency: does code match existing file's style (indentation, naming, structure)?
+
+## Response Control (Before Sending)
+- Match request format: code-only request → code-only response; explanation request → explanation-only response
+- Remove any: "Here's...", "I've created...", "Let me know...", or other conversational filler
+- Remove any: unrequested comments, examples, or documentation
+- Verify: response contains ONLY what was explicitly requested
+
+## Final Validation (Before Marking Complete)
+- Task is complete ONLY if: all requested files modified, all requested features work, no placeholders remain
+- If uncertain about correctness, state: "I cannot verify [X]. Should I proceed?"
+- If user hasn't confirmed satisfaction, don't assume task is done
+- Task is finished when: code is complete AND user confirms it works

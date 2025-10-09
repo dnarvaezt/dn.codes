@@ -1,0 +1,99 @@
+---
+alwaysApply: true
+---
+
+# Conventional Commits Rules
+
+## Mandatory Format
+- Use Conventional Commits
+- Format: `type(scope): subject`
+
+## Allowed Types
+- build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test
+
+## Format Rules
+- **type**: lower-case, non-empty
+- **scope**: optional, lower-case/camel-case/kebab-case
+- **subject**: lower-case, minimum 10 characters, maximum 100
+- **complete header**: maximum 100 characters
+- **body**: blank line before body
+- **footer**: blank line before footer
+
+## Valid Examples
+```
+feat(auth): add user authentication with jwt tokens
+fix(api): fix validation error in user creation
+docs(readme): update installation instructions
+refactor(components): extract common validation logic
+```
+
+## Invalid Examples
+```
+feat: add auth (too short)
+FEAT: add authentication (uppercase)
+feat(Auth): add authentication (scope in PascalCase)
+feat: Add user authentication with JWT tokens for secure API access (too long)
+```
+
+## Product Value Focus
+
+### Basic Format
+```
+<type>(<scope>): <short message in present tense>
+```
+
+### Allowed Types
+- **feat**: new functionality that adds value to the user
+- **fix**: bug fix that affects user experience
+- **refactor**: code improvement that positively impacts the product
+- **perf**: optimization that improves user-visible performance
+- **docs**: documentation that facilitates use or maintenance
+- **style**: formatting changes that don't affect functionality
+- **test**: tests that ensure product quality
+- **chore**: internal maintenance tasks
+
+### Message Principles
+- **Value focus**: describe what improves for the user/product
+- **Present tense**: use present tense verbs (add, improve, fix, allow, simplify)
+- **Clarity**: avoid unnecessary technical jargon
+- **Impact**: explain the benefit or problem solved
+- **Language**: follow project's language convention
+
+### Value-Oriented Examples
+
+#### ✅ Good Examples
+```
+feat(content): allow viewing active study plan in navigation
+fix(auth): fix error preventing login on mobile devices
+refactor(quiz): simplify response validation to improve performance
+perf(video): reduce loading times in recorded lessons
+feat(navbar): add direct access to active study plan
+```
+
+#### ❌ Examples to Avoid
+```
+refactor(component): update hook study-zone (too technical)
+fix(api): resolve validation error (not value-focused)
+feat(auth): add authentication (too vague)
+chore(deps): update dependencies (not user-facing)
+```
+
+**Important note**: Technical details should be secondary to user value.
+
+### Optional Extension (Body)
+For complex changes, add impact explanation:
+
+```
+feat(navbar): add direct access to active study plan
+
+Now users can access content faster from navigation,
+improving learning experience and reducing unnecessary steps.
+```
+
+### Best Practices
+- **Language**: Follow the project's established language convention
+- Use value expressions: "now users can...", "improves experience in...", "fixes error that prevented..."
+- Avoid overly technical words when not necessary
+- Keep messages simple and focused on the change's impact for the product
+- Scope should describe the main module or functionality affected
+- Use present tense verbs: add, improve, fix, allow, simplify, optimize, resolve

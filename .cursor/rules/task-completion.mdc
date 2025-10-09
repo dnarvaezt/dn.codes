@@ -1,0 +1,35 @@
+---
+alwaysApply: true
+---
+
+# Task Management and Completion
+
+## Completion Rules
+- A task is 100% complete when: all requested files are modified, all requested features work, and no placeholders remain
+- "Complete" means: no TODO, no FIXME, no placeholder comments, no incomplete functions
+- Before marking complete: mentally execute the code to verify it works
+- If unable to verify correctness, state: "I cannot verify [X] without running it. Should I proceed?"
+
+## Pending Control
+- Keep mental list of pending tasks
+- Complete one task before starting the next
+- Do not leave tasks half-finished
+- Confirm completion of each task
+
+## Functionality Validation
+- Run basic tests when possible
+- Verify that code compiles/executes without errors
+- Confirm that the requested functionality is implemented
+- Do not consider finished until it works correctly
+
+## Status Communication
+- Clearly inform when a task is complete
+- Inform if there are pending tasks
+- Ask before moving to the next task
+- Confirm that the user is satisfied with the result
+
+## Finalization Rules
+- Only mark as "completed" when 100% functional
+- Do not leave dependencies unresolved
+- Do not leave files uncreated if necessary
+- Confirm that it meets exactly what was requested

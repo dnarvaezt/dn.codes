@@ -1,0 +1,67 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
+# 🧠 Reuse Methodology in Development and AI
+
+## 🎯 Objective
+Avoid code, function, and model duplication in the system, ensuring **reusability, maintainability, and scalability**.
+
+---
+
+## 📌 Key Principles
+
+1. **DRY (Don't Repeat Yourself)**
+   - Each piece of knowledge should have a single representation in the system.
+   - Before creating, check if an equivalent function/module/model already exists.
+
+2. **YAGNI (You Aren't Gonna Need It)**
+   - Don't build functionalities "just in case".
+   - Everything created must respond to a real and current use case.
+
+3. **Single Source of Truth (SSOT)**
+   - Maintain a single place where truth lives (e.g., utility functions, validators, models).
+   - Any new module should depend on this source, never duplicate it.
+
+4. **Refactor over duplicate**
+   - If something similar already exists but doesn't fit 100%, it should be **adjusted, refactored, or parameterized** instead of copied.
+
+5. **AI Reusability**
+   - **Models:** prioritize using pre-trained models or fine-tuning instead of training from scratch.
+   - **Pipelines:** extend existing components (preprocessing, embeddings, validations) before creating new ones.
+   - **Datasets:** centralize and reuse instead of fragmenting into multiple copies.
+
+---
+
+## ✅ Validation Checklist Before Creating
+
+1. **Search**
+   - Does this function/class/dataset/model already exist in the project?
+   - Are there internal or external libraries that solve it?
+
+2. **Validate**
+   - Does the existing functionality cover my use case?
+   - Can I adapt it with parameters or small improvements?
+
+3. **Reuse or Extend**
+   - Refactor existing code if applicable.
+   - Generalize functions into common utilities.
+
+4. **Create (last option)**
+   - Only if nothing exists that adequately solves the problem.
+   - Clearly document the justification for creation.
+
+---
+
+## 📖 Flow Example
+
+```mermaid
+flowchart TD
+    A[Functionality required?] --> B[Does it already exist?]
+    B -->|Yes| C[Reuse it]
+    B -->|No| D[Can existing code be refactored?]
+    D -->|Yes| E[Refactor and extend]
+    D -->|No| F[Create new module/function/model]
+```

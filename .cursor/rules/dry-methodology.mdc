@@ -1,0 +1,137 @@
+---
+alwaysApply: true
+---
+
+# DRY Methodology
+
+## DRY Definition
+
+**D**on't **R**epeat **Y**ourself - Avoid code duplication
+
+## Core Principles
+
+### 1. 🎯 Duplication Detection
+
+- Identify repeated code in multiple locations
+- Detect duplicated business logic
+- Recognize similar patterns in different contexts
+- Analyze repetitive data structures
+
+### 2. 🔍 Abstraction Analysis
+
+- Evaluate if duplication justifies an abstraction
+- Consider maintenance cost vs. complexity
+- Identify appropriate abstraction level
+- Determine future reusability
+
+### 3. 🛠️ Strategic Refactoring
+
+- Extract common methods to base classes or modules
+- Create reusable utilities
+- Share functionality through composition or mixins
+- Use composition over inheritance
+
+## DRY Detection Rules
+
+### ❌ Common Duplication Patterns
+
+- Identical code in multiple files
+- Repeated validation logic
+- Similar data query structures
+- Duplicated error handling
+- Repetitive data transformations
+
+### ✅ Applicable DRY Solutions
+
+- Extract to private functions
+- Create abstract base classes or modules
+- Implement reusable shared functions
+- Use data transfer objects or value objects
+- Centralize in services or utilities
+
+## DRY Validation Checklist
+
+### Before Writing Code
+
+- [ ] Does similar code exist in the project?
+- [ ] Can I reuse existing functionality?
+- [ ] Is duplication justified or avoidable?
+- [ ] What abstraction level do I need?
+
+### During Development
+
+- [ ] Am I copying existing code?
+- [ ] Can I extract this logic to a common place?
+- [ ] Does abstraction improve maintainability?
+- [ ] Am I following the single responsibility principle?
+
+### After Implementation
+
+- [ ] Did I eliminate all unnecessary duplication?
+- [ ] Is the code reusable?
+- [ ] Is the abstraction clear and understandable?
+- [ ] Did I maintain the original functionality?
+
+## DRY Implementation Strategies
+
+### 1. Function Extraction
+
+- Extract repeated logic into dedicated functions
+- Parameterize differences to make functions reusable
+- Place shared functions in utility modules
+
+### 2. Base Classes or Modules
+
+- Create base classes for shared behavior
+- Use inheritance or composition appropriately
+- Keep base implementations focused and clear
+
+### 3. Shared Utilities
+
+- Create utility modules for common operations
+- Group related utilities logically
+- Make utilities pure and testable
+
+### 4. Data Objects
+
+- Define reusable data structures
+- Encapsulate validation logic
+- Ensure type safety where possible
+
+## Anti-DRY Rules (Prohibited)
+
+### ❌ Don't Do
+
+- Copy and paste code without analysis
+- Create unnecessary abstractions
+- Duplicate validation logic
+- Repeat query or data access patterns
+- Ignore existing patterns
+
+### ❌ Problematic Patterns
+
+- Duplicated code in multiple files
+- Business logic in presentation layer
+- Hardcoded validations
+- Repetitive data access code
+- Inconsistent error handling
+
+## DRY Quality Metrics
+
+### Duplication Indicators
+
+- Duplicated lines of code
+- Functions with similar logic
+- Repetitive data structures
+- Duplicated validation patterns
+
+### Reusability Indicators
+
+- Usage of shared modules and base classes
+- Interface or contract implementation
+- Data object utilization
+- Service centralization
+
+## DRY Mantra
+
+"Before writing, search. Before duplicating, abstract. Before copying, refactor."

@@ -1,0 +1,37 @@
+---
+alwaysApply: true
+---
+
+# Debugging Behavior Prevention
+
+## Absolute Prohibitions
+- NEVER create example, demo or test files without explicit request
+- NEVER add debug statements or unsolicited logging
+- NEVER create additional configuration files
+- NEVER suggest unsolicited "improvements" or "optimizations"
+- NEVER create unsolicited documentation
+
+## Creation Control
+- Create files ONLY if explicitly mentioned by name (e.g., "create user.js", "add config.json")
+- Add functionalities ONLY if explicitly requested (e.g., "add validation", "implement login")
+- Modify files ONLY if specified by exact path (e.g., "update src/app.js")
+- If file name is ambiguous, ask for exact path before proceeding
+
+## Implementation Rules
+- Implement the exact requested feature with minimum viable code
+- Do NOT add: try-catch blocks, input validation, type checking, logging, or error messages unless explicitly requested
+- Do NOT add: middleware, interceptors, guards, decorators, or wrappers unless explicitly requested
+- Do NOT add: helper functions, utility classes, or service layers unless explicitly requested
+- If safety concerns arise (e.g., SQL injection risk), ask: "Should I add [protection]?" rather than adding it silently
+
+## Scope Control
+- Keep implementation within the exact boundaries defined by the request
+- Do NOT create: utilities/, helpers/, services/, lib/, common/ directories unless requested
+- Do NOT implement: related features, complementary functions, or "nice to have" additions
+- If you identify a related improvement, ask: "I noticed [X]. Should I handle it too?" and wait for confirmation
+
+## Request Validation
+- Before creating any file, confirm: "Should I create [filename] in [path]?"
+- Before adding any functionality, confirm: "Should I implement [feature] with [approach]?"
+- Before expanding scope, ask: "Should I also handle [related case]?"
+- Never assume; always confirm when uncertain

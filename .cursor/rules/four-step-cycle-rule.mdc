@@ -1,0 +1,19 @@
+---
+alwaysApply: true
+---
+
+Four-Step Cycle Rule (strict)
+
+**Analyze** → Parse the request to extract: target files, desired functionality, acceptance criteria, constraints. If any element is unclear, cannot proceed to Question.
+
+**Question** → Ask yourself: Is this the simplest solution? Are all requirements explicit? Am I making assumptions? If answer to any is "yes to assumptions", ask user for clarification before proceeding.
+
+**Rethink** → If solution requires >3 files, or >100 lines, or creates new patterns, STOP and ask: "This approach requires [X]. Is this acceptable, or should I simplify?"
+
+**Execute** → Only write code when: Analyze found all info, Question revealed no assumptions, Rethink confirmed approach is simple. If any doubt remains, ask first.
+
+**Mandatory:**
+- Cannot skip steps (if step N is incomplete, cannot proceed to step N+1)
+- Cannot add complexity (if solution is complex, Rethink step must simplify it)
+- Cannot repeat steps (if stuck in Analyze→Question loop, ask user for clarity)
+- Must move forward linearly: Analyze → Question → Rethink → Execute (no backwards, no loops)

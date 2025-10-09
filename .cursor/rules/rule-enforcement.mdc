@@ -1,0 +1,88 @@
+---
+alwaysApply: true
+---
+
+# Supreme Rule of Strict Compliance
+
+## Definition
+This is the SUPREME rule that must ALWAYS be applied before any other rule or instruction.
+
+## Fundamental Principle
+**CURSOR MUST COMPLY WITH ALL ESTABLISHED RULES WITHOUT EXCEPTION**
+
+## Mandatory Rules
+
+### 1. 🚨 Absolute Priority of Rules
+- Project rules have MAXIMUM PRIORITY
+- User rules have MAXIMUM PRIORITY
+- NEVER ignore, omit, or skip any established rule
+- NEVER justify non-compliance with rules
+
+### 2. 🔍 Mandatory Prior Verification
+- BEFORE any action, verify ALL applicable rules
+- Read and understand each rule before proceeding
+- Confirm that the action complies with ALL rules
+- If there is a conflict between rules, ask the user
+
+### 3. ⚖️ Strict Compliance
+- Implement EXACTLY what the rules say
+- Do not interpret rules flexibly
+- Do not assume non-explicit exceptions
+- Do not create "shortcuts" that violate rules
+
+### 4. 🚫 Absolute Prohibitions
+- DO NOT create unrequested files
+- DO NOT add unrequested functionalities
+- DO NOT skip established validations
+- DO NOT modify rules without explicit authorization
+- DO NOT justify non-compliance
+
+### 5. 📋 Mandatory Checklist
+Before each action, verify with Yes/No answers:
+- [ ] Did the user explicitly mention this file/action in their request? (Must be YES)
+- [ ] Am I adding something that was NOT requested? (Must be NO)
+- [ ] Am I following EXACTLY the pattern/style of existing code? (Must be YES)
+- [ ] Does this action violate any rule of: YAGNI, KISS, DRY, or FOCUS? (Must be NO)
+- [ ] Can I explain why each line of added code was requested? (Must be YES)
+
+## Project Rules to ALWAYS Comply With
+- Architecture and patterns established in the project
+- SOLID principles
+- Best practices of the language/framework used
+- Project code standards
+- Test-Driven Development (when applicable)
+- DRY methodology
+- KISS methodology
+- YAGNI methodology
+- FOCUS methodology
+
+## User Rules to ALWAYS Comply With
+- Do not create unrequested documentation
+- Do not add unrequested explanations
+- Implement only what is requested
+- Maintain consistency with the project
+
+## Consequences of Non-Compliance
+- The action must be STOPPED immediately
+- It must be corrected to comply with the rules
+- It must be verified again before continuing
+- It is NOT considered complete until all rules are met
+
+## Exceptions
+- ONLY if the user explicitly authorizes an exception
+- The exception must be documented and justified
+- Compliance with the rest of the rules must be maintained
+
+## Supreme Mantra
+"Rules are sacred. Comply first, ask later. No exceptions, no justifications, no shortcuts."
+
+## Final Validation
+Before marking any task as complete, ALL these statements must be true:
+- [ ] Each modified file was explicitly mentioned by the user
+- [ ] Each added function/method was explicitly requested
+- [ ] I did not add: validations, logging, try-catch, comments, or unrequested examples
+- [ ] Code style (indentation, naming, structure) matches 100% with existing files
+- [ ] I can trace each change to an explicit user request
+- [ ] I did not create files for: configuration, helpers, utilities, or unrequested documentation
+
+**THIS RULE IS UNBREAKABLE - If any checkbox is NO, the task is incomplete**

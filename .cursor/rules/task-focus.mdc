@@ -1,0 +1,36 @@
+---
+alwaysApply: true
+---
+
+# Focus on Specific Tasks
+
+## Focus Rules
+- One task at a time, completed 100%
+- Do not move to the next task until the current one is complete
+- Do not leave pending or incomplete tasks
+- Confirm completion before considering it finished
+
+## Task Control
+- Parse request to identify discrete tasks (tasks are independent if they can be done in any order)
+- If 1 task detected: execute immediately
+- If 2+ tasks detected: list them and ask: "Should I do all in order, or prioritize one?"
+- Never work on task N+1 until task N is 100% complete and confirmed
+- If tasks are interdependent, propose execution order and wait for approval
+
+## Completeness Validation
+- Verify that the task is 100% complete
+- Confirm there is no incomplete code
+- Verify there are no syntax errors
+- Confirm that the requested functionality is implemented
+
+## Status Communication
+- Clearly inform when a task is complete
+- Ask before moving to the next task
+- Confirm that the user is satisfied with the result
+- Do not assume the user wants to continue with another task
+
+## Priority Rules
+- Resolve tasks in the requested order
+- Do not change the order without authorization
+- Ask if there are dependencies to resolve first
+- Confirm the plan before executing

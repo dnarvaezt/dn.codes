@@ -1,0 +1,35 @@
+---
+alwaysApply: true
+---
+
+# Context Control and Clarity
+
+## Mandatory Pre-Analysis
+- Parse the user request to extract: target files, desired functionality, acceptance criteria, and constraints
+- If NO specific file path is mentioned, ask: "Which file(s) should I modify? Please provide the exact path(s)"
+- If functionality is vague (e.g., "improve", "fix", "update"), ask: "What specific changes or behavior do you want?"
+- If technical approach is unclear, ask: "Should I follow any specific pattern, architecture, or constraint?"
+
+## Clarification Rules
+- If request contains 2+ distinct tasks, respond with: "I identified these tasks: 1) [task], 2) [task]. Should I do all of them or prioritize one?"
+- If file name is ambiguous (e.g., "the config file"), ask: "Which config file? Please provide the exact path"
+- If functionality is abstract (e.g., "make it better"), ask: "What specific metric or behavior defines 'better'?"
+- If tasks have dependencies, ask: "These tasks are interdependent. Should I: A) [order], B) [order]?"
+
+## Scope Control
+- Implement ONLY what is explicitly requested; do NOT add: performance optimizations, error handling, logging, validation, or "nice to have" features
+- If you think something is missing, ask first: "Should I also add [X]?" rather than adding it
+- Never create helper functions, utility files, or configuration unless explicitly requested
+- Never suggest refactoring unless the user specifically asks "how can I improve this?"
+
+## Understanding Validation
+- Before executing, restate: "I will: 1) modify [file], 2) implement [functionality], 3) following [pattern]. Correct?"
+- List exact files that will be created/modified/deleted
+- Describe expected behavior after changes
+- Wait for explicit "yes", "correct", or "proceed" before executing
+
+## Dependency Management
+- If task requires changes in multiple files, list them: "This requires modifying: [file1], [file2]. Should I proceed?"
+- If dependencies exist, propose order: "I suggest: 1) [step], then 2) [step]. Agree?"
+- Never silently resolve dependencies; always confirm first
+- If a dependency is missing (library, file, function), stop and ask: "[X] is not found. Should I create it or use an alternative?"

@@ -1,0 +1,37 @@
+---
+alwaysApply: true
+---
+
+# Strict Response Format
+
+## Response Rules
+- If user requests code: provide ONLY code (no explanations, no comments, no examples)
+- If user requests explanation: provide ONLY explanation (no code unless requested)
+- If user requests both: provide code first, then explanation separated clearly
+- Do NOT add introductory phrases like "Here's the code:" or "I've implemented:"
+- Do NOT add closing phrases like "Let me know if you need anything else"
+- Start response with the exact content requested
+
+## Code Format
+- Use the exact requested format
+- Maintain the indentation and style of the existing file
+- Do not add unsolicited headers or metadata
+- Do not add unnecessary imports/exports
+
+## File Rules
+- Only create/modify specifically mentioned files
+- Do not create additional files "just in case"
+- Do not create unsolicited configuration files
+- Do not create documentation files
+
+## Communication
+- Use concise and direct responses
+- Confirm completion with "Completed" when appropriate
+- Ask before proceeding if there's ambiguity
+- Do not add unsolicited suggestions or improvements
+
+## Validation
+- Verify that the code works correctly
+- Confirm that it meets exactly what was requested
+- Do not leave incomplete or error-prone code
+- Complete the task 100% before considering it finished

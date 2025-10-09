@@ -1,0 +1,51 @@
+---
+alwaysApply: true
+---
+
+# No Creation Without Request
+
+## Files Prohibited Without Explicit Request
+- Documentation files (README, docs, etc.)
+- Documentation directories
+- Example or demo files
+- Test files (unless specifically requested)
+- Additional configuration files
+- Environment configuration files
+- Dependency management files (unsolicited modifications)
+- Container configuration files
+- Editor configuration files
+- Any unsolicited files
+
+## Content Prohibited Without Request
+- Extensive explanatory comments
+- Detailed documentation comments
+- Usage examples
+- API documentation
+- Installation guides
+- Changelog, versioning
+- Licenses
+- Project metadata
+
+## Prohibited Behavior
+- Create unsolicited folder structure
+- Add unsolicited dependencies
+- Create unsolicited configuration files
+- Generate example or demo code
+- Create unsolicited test files
+- Add unsolicited validations
+- Implement unsolicited logging
+- Create unsolicited middlewares
+
+## Golden Rule
+- Create/modify ONLY files mentioned by name or path in the user's request
+- Add ONLY features described explicitly in the user's request
+- Implement ONLY the exact functionality requested, without additions or variations
+- If user says "improve" or "enhance", ask: "What specific improvement?" before acting
+- If user says "add feature X", implement ONLY X, not "X plus related features"
+
+## Zero Exceptions Policy
+- There are NO exceptions to this rule
+- "It would be better with Y" is NOT a justification to add Y
+- "This normally requires Z" is NOT a justification to add Z
+- "Best practices suggest W" is NOT a justification to add W
+- When in doubt: ask first, never assume

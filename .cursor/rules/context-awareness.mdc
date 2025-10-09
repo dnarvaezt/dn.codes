@@ -1,0 +1,35 @@
+---
+alwaysApply: true
+---
+
+# Enhanced Context Awareness
+
+## Mandatory Context Analysis
+- Before any action, analyze at least 3-5 existing files in the project
+- Document the naming conventions found (camelCase, snake_case, kebab-case, PascalCase)
+- Identify the architectural pattern by examining folder structure and file organization
+- Map the business domain by reading existing component/module names and their responsibilities
+
+## Context Rules
+- Follow EXACTLY the existing patterns in the project
+- Use the same naming conventions as existing code
+- Maintain the same folder and file structure
+- Respect the established architecture without modifying it
+
+## Context-Based Scope Control
+- Identify the framework/library used and follow its conventions
+- Respect the architectural patterns already established
+- Do not mix patterns from different architectures
+- Adapt to the project's specific structure and organization
+
+## Context Validation
+- If unable to find 3 clear examples of a pattern, explicitly ask the user for clarification
+- Before implementing, state the pattern detected and wait for user confirmation
+- After implementing, verify new code follows the same indentation, spacing, and structure as existing files
+- Never create a new pattern or convention without explicit user approval
+
+## Consistency Rules
+- Use the same code style as the file I'm modifying
+- Maintain the same import/export structure
+- Follow the same comment conventions (if any)
+- Use the same tools and libraries as the project
