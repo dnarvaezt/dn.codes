@@ -1,0 +1,208 @@
+---
+alwaysApply: true
+---
+
+# Zustand como Solución de Estado Global
+
+## Regla Principal
+
+- Usar **Zustand** como solución principal para manejo de estado global en React
+- React Context queda prohibido para gestión de estado compartido entre componentes
+
+## Justificación
+
+- Zustand es más simple y tiene menos boilerplate que Context
+- Mejor rendimiento: evita re-renders innecesarios
+- No requiere providers anidados
+- API más limpia y directa
+- Mejor experiencia de desarrollo con TypeScript
+- Menor curva de aprendizaje
+
+## Cuándo Usar Zustand
+
+### ✅ Casos de Uso Obligatorios
+
+- Estado global de la aplicación
+- Estado compartido entre múltiples componentes no relacionados
+- Estado que necesita persistencia
+- Estado que requiere acciones/mutadores centralizados
+- Estado que múltiples rutas o páginas necesitan acceder
+
+## Cuándo NO Usar Zustand
+
+### ❌ Excepciones Permitidas
+
+- Estado local de un componente (usar `useState`, `useReducer`)
+- Props drilling de máximo 2 niveles (pasar props directamente)
+- Estado de formularios (usar librerías especializadas como react-hook-form)
+
+## Estructura de Store con Zustand
+
+### Ubicación
+
+```text
+src/store/
+├── index.ts
+├── user-store.ts
+├── theme-store.ts
+└── [feature]-store.ts
+```
+
+### Convenciones de Nomenclatura
+
+- Archivos: `[nombre]-store.ts` (kebab-case)
+- Stores: `use[Nombre]Store` (PascalCase con prefijo "use")
+- Ejemplo: `useUserStore`, `useThemeStore`
+
+### Estructura Básica de un Store
+
+```typescript
+import { create } from 'zustand';
+
+interface [Nombre]State {
+  // Estado
+  value: string;
+  count: number;
+
+  // Acciones
+  setValue: (value: string) => void;
+  increment: () => void;
+  reset: () => void;
+}
+
+export const use[Nombre]Store = create<[Nombre]State>((set) => ({
+  // Estado inicial
+  value: '',
+  count: 0,
+
+  // Acciones
+  setValue: (value) => set({ value }),
+  increment: () => set((state) => ({ count: state.count + 1 })),
+  reset: () => set({ value: '', count: 0 }),
+}));
+```
+
+## Reglas de Implementación
+
+### 1. 📦 Separación por Dominio
+
+- Un store por dominio o feature
+- No crear un store monolítico con todo el estado
+- Separar responsabilidades claramente
+
+### 2. 🎯 Acciones Centralizadas
+
+- Toda mutación de estado debe hacerse a través de acciones definidas en el store
+- No permitir mutación directa del estado desde componentes
+- Las acciones deben tener nombres descriptivos y en presente
+
+### 3. 🔍 Selectores Específicos
+
+- Usar selectores para extraer solo el estado necesario
+- Evitar suscribirse a todo el store si solo se necesita una propiedad
+
+```typescript
+// ❌ Mal: se suscribe a todo el store
+const store = useUserStore();
+
+// ✅ Bien: selector específico
+const userName = useUserStore((state) => state.name);
+const setUserName = useUserStore((state) => state.setName);
+```
+
+### 4. 🧪 Testeable
+
+- Los stores deben ser fáciles de testear
+- Exportar el estado inicial si es necesario para tests
+- Las acciones deben ser funciones puras cuando sea posible
+
+### 5. 📝 TypeScript Obligatorio
+
+- Todos los stores deben estar tipados
+- Usar interfaces para definir la forma del estado
+- No usar `any` en ningún store
+
+## Middleware Permitido
+
+### Persist (Persistencia)
+
+```typescript
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
+export const useUserStore = create(
+  persist<UserState>(
+    (set) => ({
+      // ... store implementation
+    }),
+    {
+      name: 'user-storage',
+    }
+  )
+);
+```
+
+### Devtools (Desarrollo)
+
+```typescript
+import { devtools } from 'zustand/middleware';
+
+export const useUserStore = create(
+  devtools<UserState>(
+    (set) => ({
+      // ... store implementation
+    }),
+    { name: 'UserStore' }
+  )
+);
+```
+
+## Migración desde React Context
+
+### Prohibiciones
+
+- ❌ No crear nuevos Context para estado global
+- ❌ No usar `useContext` para estado compartido
+- ❌ No crear Providers personalizados para estado
+
+### Plan de Migración
+
+1. Identificar Contexts existentes que manejan estado
+2. Crear store equivalente en Zustand
+3. Migrar consumidores del Context al nuevo store
+4. Eliminar Context y Provider una vez migrado
+5. Actualizar tests
+
+## Validación de Cumplimiento
+
+### Checklist Antes de Crear Estado Global
+
+- [ ] ¿Es realmente estado global o puede ser local?
+- [ ] ¿Ya existe un store que pueda manejar este estado?
+- [ ] ¿He definido las interfaces TypeScript?
+- [ ] ¿Las acciones son claras y específicas?
+- [ ] ¿Estoy usando selectores en los componentes?
+
+## Anti-Patrones Prohibidos
+
+### ❌ No Hacer
+
+- Crear Context para estado global
+- Usar `useContext` + `useState` para compartir estado
+- Providers anidados para estado
+- Prop drilling excesivo cuando Zustand es la solución
+- Stores gigantes con todo el estado de la app
+- Mutación directa del estado sin acciones
+
+## Excepciones Documentadas
+
+### React Context Solo Para
+
+- Composición de componentes (children, render props)
+- Tema (si no se usa Zustand para tema)
+- Internacionalización (i18n) ya configurada
+- Librerías de terceros que requieren Context
+
+## Mantra
+
+"Estado global = Zustand. Context = composición. Local = useState. Sin excepciones sin justificación."

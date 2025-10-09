@@ -1,0 +1,287 @@
+---
+alwaysApply: true
+---
+
+# TDD Methodology
+
+## TDD Definition
+
+**T**est **D**riven **D**evelopment - Write tests before implementation to guide design and ensure quality
+
+## TDD Philosophy
+
+### Core Beliefs
+
+1. **Tests Drive Design**
+   - Tests are not verification tools, they are design tools
+   - Good tests lead to good design
+   - If it's hard to test, it's poorly designed
+
+2. **Confidence Through Coverage**
+   - Every line of code exists because a test demanded it
+   - No speculative code, only necessary code
+   - Refactoring is safe when tests pass
+
+3. **Fast Feedback Loop**
+   - Fail fast, fix fast
+   - Small iterations reduce debugging time
+   - Immediate feedback prevents accumulation of errors
+
+4. **Living Documentation**
+   - Tests document expected behavior
+   - Tests show how to use the code
+   - Tests reveal intent better than comments
+
+## The Sacred Cycle: Red → Green → Refactor
+
+### 🔴 RED: Write a Failing Test
+
+**Philosophy**: Define what success looks like before building
+
+**Strategy**:
+- Write the smallest test that fails
+- Test one behavior at a time
+- Name tests to describe intent, not implementation
+- Focus on WHAT, not HOW
+
+**Validation**:
+- [ ] Test fails for the right reason (not syntax error)
+- [ ] Test describes a real use case
+- [ ] Test name is clear and descriptive
+- [ ] Only one assertion per concept
+
+**Anti-Patterns**:
+- ❌ Writing multiple tests before implementing
+- ❌ Testing implementation details instead of behavior
+- ❌ Writing tests that pass immediately
+- ❌ Vague or cryptic test names
+
+### 🟢 GREEN: Make it Pass with Minimal Code
+
+**Philosophy**: Do the simplest thing that could possibly work
+
+**Strategy**:
+- Write only enough code to pass the test
+- Resist the urge to add "just in case" code
+- Hardcode if necessary (refactor later)
+- Ignore edge cases until there's a test for them
+
+**Validation**:
+- [ ] Test passes
+- [ ] No unrequested functionality added
+- [ ] Code is simple and direct
+- [ ] No premature optimization
+
+**Anti-Patterns**:
+- ❌ Adding features not covered by tests
+- ❌ Optimizing before it works
+- ❌ Solving future problems
+- ❌ Over-engineering the solution
+
+### 🔵 REFACTOR: Improve Without Changing Behavior
+
+**Philosophy**: Clean code is a continuous process, not a final state
+
+**Strategy**:
+- Apply DRY only after duplication emerges
+- Extract methods for clarity
+- Rename for better understanding
+- Remove code smells while tests stay green
+
+**Validation**:
+- [ ] All tests still pass
+- [ ] Code is more readable
+- [ ] No duplicated logic
+- [ ] Design patterns emerge naturally
+
+**Anti-Patterns**:
+- ❌ Refactoring without running tests
+- ❌ Changing test and code simultaneously
+- ❌ Skipping refactor to move faster
+- ❌ Refactoring beyond current needs
+
+## TDD Strategic Principles
+
+### 1. 🎯 Test Behavior, Not Implementation
+
+**Why**: Implementation changes, behavior stays
+
+**Strategy**:
+- Test public interfaces, not private methods
+- Test outcomes, not internal state
+- Test what the code does, not how it does it
+
+**Example Mindset**:
+```
+❌ "Test that method X calls method Y"
+✅ "Test that when user does A, system responds with B"
+```
+
+### 2. 🧩 One Test, One Reason to Fail
+
+**Why**: Pinpoint failures instantly
+
+**Strategy**:
+- Each test validates one behavior
+- One assertion per test (or per concept)
+- Isolated tests that don't depend on each other
+- Clear failure messages
+
+### 3. 🔄 Triangulation: Prove Generality
+
+**Why**: Avoid hardcoded solutions
+
+**Strategy**:
+- Write 2-3 tests with different inputs
+- Force yourself to generalize
+- Don't generalize until triangulation demands it
+
+### 4. 📦 Test in Isolation
+
+**Why**: Fast, reliable, independent tests
+
+**Strategy**:
+- Use mocks/stubs for external dependencies
+- Each test sets up its own data
+- Tests can run in any order
+- No shared state between tests
+
+### 5. 🚀 Test First, Not Test After
+
+**Why**: Design emerges from usage, not structure
+
+**Strategy**:
+- Write test as if the API already exists
+- Let tests reveal the best interface
+- Implementation follows design, not vice versa
+
+## TDD Quality Metrics
+
+### Test Quality Indicators
+
+✅ **Good Tests Are**:
+- Fast (< 100ms each)
+- Isolated (no dependencies)
+- Repeatable (same result every time)
+- Self-validating (pass/fail, no manual check)
+- Timely (written before code)
+
+❌ **Bad Tests Are**:
+- Slow (> 1 second)
+- Brittle (break with small changes)
+- Obscure (unclear what they test)
+- Interdependent (must run in order)
+- Written after implementation
+
+### Coverage Philosophy
+
+**Not About Percentage**: 100% coverage ≠ good tests
+
+**About Confidence**: Can you refactor fearlessly?
+
+**Strategy**:
+- Cover all public behaviors
+- Test edge cases when they matter
+- Ignore trivial code (getters/setters)
+- Focus on critical business logic
+
+## TDD Practical Workflow
+
+### 1. Start with a List
+
+Before coding, list all test cases:
+- Happy path scenarios
+- Edge cases
+- Error conditions
+- Business rules
+
+### 2. Pick the Simplest Test
+
+Start with the easiest, most obvious test
+
+### 3. Follow the Cycle Religiously
+
+Never skip RED → GREEN → REFACTOR
+
+### 4. Commit at GREEN
+
+Every passing test is a safe checkpoint
+
+### 5. Refactor Fearlessly
+
+Tests are your safety net
+
+## TDD Anti-Patterns to Avoid
+
+### ❌ The Liar
+Test passes but feature doesn't work
+
+**Solution**: Verify test actually tests something
+
+### ❌ The Free Rider
+Test passes because of another test's setup
+
+**Solution**: Each test must be independent
+
+### ❌ The Nitpicker
+Test breaks with irrelevant changes
+
+**Solution**: Test behavior, not implementation
+
+### ❌ The Inspector
+Test digs into internal state
+
+**Solution**: Test public interface only
+
+### ❌ The Mockery
+Too many mocks, testing doubles instead of code
+
+**Solution**: Mock only external dependencies
+
+## TDD Checklist for Every Feature
+
+### Before Starting
+- [ ] Do I understand the requirement?
+- [ ] Can I describe success in a test?
+- [ ] Have I listed all test cases?
+
+### During Development
+- [ ] Am I in RED or GREEN phase?
+- [ ] Is my test failing for the right reason?
+- [ ] Did I write minimal code to pass?
+- [ ] Are all tests still passing?
+
+### After Implementation
+- [ ] Did I refactor with tests green?
+- [ ] Are my tests clear and maintainable?
+- [ ] Does each test have one reason to fail?
+- [ ] Can I explain what each test validates?
+
+## TDD Integration with Other Methodologies
+
+### TDD + YAGNI
+Tests prevent "just in case" code - only write what tests demand
+
+### TDD + KISS
+Tests force simple solutions - complex code is hard to test
+
+### TDD + DRY
+Refactor phase is where DRY emerges naturally
+
+### TDD + FOCUS
+Tests define the clear function and objective upfront
+
+## TDD Mantra
+
+"Red. Green. Refactor. Repeat. Never skip. Never rush. Let tests guide design."
+
+## Final Philosophy
+
+TDD is not about testing. TDD is about:
+- **Thinking** before building
+- **Designing** through usage
+- **Confidence** in changes
+- **Documentation** that never lies
+- **Quality** by default, not by effort
+
+**The ultimate goal**: Write code you trust, that others understand, that survives time.

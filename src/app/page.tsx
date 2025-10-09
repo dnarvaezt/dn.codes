@@ -2,6 +2,17 @@
 
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui"
 import { Github as GitHubIcon, Linkedin as LinkedInIcon, Mail } from "lucide-react"
+import dynamic from "next/dynamic"
+
+const UserContextDemo = dynamic(
+  () => import("@/components/user-context-demo").then((mod) => ({ default: mod.UserContextDemo })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="text-center text-muted-foreground">Cargando contexto de usuario...</div>
+    ),
+  }
+)
 
 const Home = () => {
   const projects = [
@@ -121,6 +132,16 @@ const Home = () => {
               </CardContent>
             </Card>
           ))}
+        </div>
+      </section>
+
+      {/* User Context Demo */}
+      <section className="mb-20" aria-labelledby="demo-heading">
+        <h2 id="demo-heading" className="mb-8 text-center text-3xl font-bold">
+          User Context Demo
+        </h2>
+        <div className="mx-auto max-w-2xl">
+          <UserContextDemo />
         </div>
       </section>
 

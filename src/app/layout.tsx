@@ -1,4 +1,5 @@
 import { Footer, Navbar } from "@/components/layout"
+import { Providers } from "@/components/providers"
 import { StructuredData } from "@/components/seo"
 import "@/styles/globals.scss"
 import { Geist, Geist_Mono } from "next/font/google"
@@ -92,20 +93,22 @@ const RootLayout = ({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <StructuredData />
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
-        >
-          Skip to main content
-        </a>
-        <div className="flex min-h-screen flex-col">
-          <Navbar />
-          <main id="main-content" className="flex-1" role="main">
-            {children}
-          </main>
-          <Footer />
-        </div>
+        <Providers>
+          <StructuredData />
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
+          >
+            Skip to main content
+          </a>
+          <div className="flex min-h-screen flex-col">
+            <Navbar />
+            <main id="main-content" className="flex-1" role="main">
+              {children}
+            </main>
+            <Footer />
+          </div>
+        </Providers>
       </body>
     </html>
   )

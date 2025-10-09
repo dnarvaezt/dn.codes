@@ -1,8 +1,16 @@
 "use client"
 
+import dynamic from "next/dynamic"
 import Link from "next/link"
 import { ThemeToggle } from "../theme-toggle"
 import "./navbar.scss"
+
+const UserInfo = dynamic(
+  () => import("@/components/user-info").then((mod) => ({ default: mod.UserInfo })),
+  {
+    ssr: false,
+  }
+)
 
 export const Navbar = () => {
   return (
@@ -27,7 +35,8 @@ export const Navbar = () => {
           </Link>
         </div>
 
-        <div className="navbar__actions" aria-label="Theme toggle">
+        <div className="navbar__actions" aria-label="User actions">
+          <UserInfo />
           <ThemeToggle />
         </div>
       </div>
