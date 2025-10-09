@@ -1,0 +1,8 @@
+// Button component styles
+// Using Tailwind utilities via @apply for custom styling if needed
+
+.button {
+  &--custom {
+    @apply rounded-lg font-semibold transition-all duration-200;
+  }
+}
