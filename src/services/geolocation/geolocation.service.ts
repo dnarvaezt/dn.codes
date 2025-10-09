@@ -209,5 +209,3 @@ export class GeolocationService {
 export const createGeolocationService = () => {
   return new GeolocationService()
 }
-
-export const geolocationService = new GeolocationService()

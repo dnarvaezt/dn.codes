@@ -9,6 +9,7 @@ import {
   UserContextInitOptions,
   UserContextService,
   UserContextState,
+  WeatherService,
 } from "@/services"
 import { create } from "zustand"
 import { devtools } from "zustand/middleware"
@@ -29,7 +30,8 @@ interface UserContextStore extends UserContextState {
     geocodingService: GeocodingService,
     citySearchService: CitySearchService,
     timezoneService: TimezoneService,
-    languageService: LanguageService
+    languageService: LanguageService,
+    weatherService?: WeatherService
   ) => void
 }
 
@@ -39,6 +41,7 @@ export const useUserContextStore = create<UserContextStore>()(
       location: null,
       city: null,
       timezone: null,
+      weather: null,
       language: {
         language: "en",
         fullCode: "en-US",
@@ -55,14 +58,16 @@ export const useUserContextStore = create<UserContextStore>()(
         geocodingService,
         citySearchService,
         timezoneService,
-        languageService
+        languageService,
+        weatherService
       ) => {
         const service = new UserContextService(
           geolocationService,
           geocodingService,
           citySearchService,
           timezoneService,
-          languageService
+          languageService,
+          weatherService
         )
 
         service.subscribe(() => {
@@ -71,6 +76,7 @@ export const useUserContextStore = create<UserContextStore>()(
             location: state.location,
             city: state.city,
             timezone: state.timezone,
+            weather: state.weather,
             language: state.language,
             isInitialized: state.isInitialized,
           })
@@ -114,20 +120,16 @@ export const useUserContextStore = create<UserContextStore>()(
 
       searchCities: async (query) => {
         const { service } = get()
-        console.log("🏪 [UserContextStore] searchCities called:", { query, hasService: !!service })
 
         if (!service) {
-          console.error("❌ [UserContextStore] Servicio no inicializado!")
           throw new Error("Servicio no inicializado")
         }
 
         try {
           set({ error: null })
           const results = await service.searchCities(query)
-          console.log("✅ [UserContextStore] Resultados del servicio:", results)
           return results
         } catch (err) {
-          console.error("❌ [UserContextStore] Error en searchCities:", err)
           const error = err instanceof Error ? err : new Error("Error al buscar ciudades")
           set({ error })
           throw error
@@ -176,6 +178,7 @@ export const useUserContextStore = create<UserContextStore>()(
           location: null,
           city: null,
           timezone: null,
+          weather: null,
           language: {
             language: "en",
             fullCode: "en-US",

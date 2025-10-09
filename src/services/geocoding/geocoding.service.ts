@@ -147,5 +147,3 @@ export const createGeocodingService = (
 ) => {
   return new GeocodingService(geolocationService, languageService)
 }
-
-export const geocodingService = new GeocodingService()

@@ -91,5 +91,3 @@ export class LanguageService {
 export const createLanguageService = () => {
   return new LanguageService()
 }
-
-export const languageService = new LanguageService()

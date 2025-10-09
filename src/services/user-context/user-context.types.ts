@@ -2,6 +2,7 @@ import type { CitySearchResult } from "../city-search"
 import type { GeolocationPosition } from "../geolocation"
 import type { LanguageInfo } from "../language"
 import type { TimezoneInfo } from "../timezone"
+import type { WeatherInfo } from "../weather"
 
 export type UserContextDetectionMethod = "auto" | "manual"
 
@@ -14,6 +15,7 @@ export interface UserContextState {
   location: UserLocation | null
   city: CitySearchResult | null
   timezone: TimezoneInfo | null
+  weather: WeatherInfo | null
   language: LanguageInfo
   isInitialized: boolean
 }
@@ -25,7 +27,7 @@ export interface UserContextInitOptions {
 }
 
 export interface UserContextChangeEvent {
-  type: "location" | "city" | "timezone" | "language" | "initialized"
+  type: "location" | "city" | "timezone" | "weather" | "language" | "initialized"
   data: Partial<UserContextState>
   timestamp: number
 }
@@ -47,6 +49,7 @@ export enum UserContextErrorCode {
   GEOCODING_FAILED = "GEOCODING_FAILED",
   CITY_SEARCH_FAILED = "CITY_SEARCH_FAILED",
   TIMEZONE_FAILED = "TIMEZONE_FAILED",
+  WEATHER_FAILED = "WEATHER_FAILED",
   LANGUAGE_FAILED = "LANGUAGE_FAILED",
   NOT_INITIALIZED = "NOT_INITIALIZED",
   INVALID_CITY = "INVALID_CITY",

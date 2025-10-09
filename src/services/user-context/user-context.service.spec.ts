@@ -1,12 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { UserContextService } from "./user-context.service"
-import { UserContextErrorCode } from "./user-context.types"
+import { UserContextError, UserContextErrorCode } from "./user-context.types"
 
 import type { CitySearchResult, CitySearchService } from "../city-search"
 import type { CityInfo, GeocodingService } from "../geocoding"
 import type { GeolocationPosition, GeolocationService } from "../geolocation"
 import type { LanguageInfo, LanguageService } from "../language"
 import type { TimezoneInfo, TimezoneService } from "../timezone"
+import type { WeatherInfo, WeatherService } from "../weather"
 
 describe("UserContextService", () => {
   let service: UserContextService
@@ -15,6 +16,7 @@ describe("UserContextService", () => {
   let mockCitySearchService: Partial<CitySearchService>
   let mockTimezoneService: Partial<TimezoneService>
   let mockLanguageService: Partial<LanguageService>
+  let mockWeatherService: Partial<WeatherService>
 
   const mockPosition: GeolocationPosition = {
     coords: {
@@ -63,6 +65,46 @@ describe("UserContextService", () => {
     detectionMethod: "browser",
   }
 
+  const mockWeather: WeatherInfo = {
+    coordinates: {
+      latitude: 40.7128,
+      longitude: -74.006,
+    },
+    weather: [
+      {
+        id: 800,
+        main: "Clear",
+        description: "clear sky",
+        icon: "01d",
+      },
+    ],
+    main: {
+      temp: 20,
+      feelsLike: 19,
+      tempMin: 18,
+      tempMax: 22,
+      pressure: 1013,
+      humidity: 60,
+    },
+    visibility: 10000,
+    wind: {
+      speed: 5,
+      deg: 180,
+    },
+    clouds: {
+      all: 0,
+    },
+    dt: 1609459200,
+    sys: {
+      country: "US",
+      sunrise: 1609416000,
+      sunset: 1609449600,
+    },
+    timezone: -18000,
+    cityId: 5128581,
+    cityName: "New York",
+  }
+
   beforeEach(() => {
     mockGeolocationService = {
       getPosition: vi.fn().mockResolvedValue(mockPosition),
@@ -87,12 +129,17 @@ describe("UserContextService", () => {
       resetToAutomatic: vi.fn(),
     }
 
+    mockWeatherService = {
+      getWeatherByCoordinates: vi.fn().mockResolvedValue(mockWeather),
+    }
+
     service = new UserContextService(
       mockGeolocationService as GeolocationService,
       mockGeocodingService as GeocodingService,
       mockCitySearchService as CitySearchService,
       mockTimezoneService as TimezoneService,
-      mockLanguageService as LanguageService
+      mockLanguageService as LanguageService,
+      mockWeatherService as WeatherService
     )
 
     vi.clearAllMocks()
@@ -110,6 +157,9 @@ describe("UserContextService", () => {
       expect(state.city?.city).toBe("New York")
       expect(state.timezone).toBeDefined()
       expect(state.timezone?.timezone).toBe("America/New_York")
+      expect(state.weather).toBeDefined()
+      expect(state.weather?.cityName).toBe("New York")
+      expect(state.weather?.main.temp).toBe(20)
       expect(state.language).toEqual(mockLanguage)
 
       expect(mockGeolocationService.getPosition).toHaveBeenCalled()
@@ -121,6 +171,13 @@ describe("UserContextService", () => {
         })
       )
       expect(mockTimezoneService.getTimezoneByCoordinates).toHaveBeenCalledWith(40.7128, -74.006)
+      expect(mockWeatherService.getWeatherByCoordinates).toHaveBeenCalledWith(
+        40.7128,
+        -74.006,
+        expect.objectContaining({
+          language: "en",
+        })
+      )
     })
 
     it("debe inicializar sin geolocalización cuando está deshabilitada", async () => {
@@ -130,10 +187,12 @@ describe("UserContextService", () => {
       expect(state.location).toBeNull()
       expect(state.city).toBeNull()
       expect(state.timezone).toBeDefined()
+      expect(state.weather).toBeNull()
       expect(state.language).toEqual(mockLanguage)
 
       expect(mockGeolocationService.getPosition).not.toHaveBeenCalled()
       expect(mockTimezoneService.getTimezone).toHaveBeenCalled()
+      expect(mockWeatherService.getWeatherByCoordinates).not.toHaveBeenCalled()
     })
 
     it("debe usar timezone del navegador si falla la geolocalización", async () => {
@@ -176,6 +235,11 @@ describe("UserContextService", () => {
       )
       expect(listener).toHaveBeenCalledWith(
         expect.objectContaining({
+          type: "weather",
+        })
+      )
+      expect(listener).toHaveBeenCalledWith(
+        expect.objectContaining({
           type: "initialized",
         })
       )
@@ -214,7 +278,17 @@ describe("UserContextService", () => {
         },
       }
 
+      const newWeather: WeatherInfo = {
+        ...mockWeather,
+        cityName: "Los Angeles",
+        coordinates: {
+          latitude: 34.0522,
+          longitude: -118.2437,
+        },
+      }
+
       mockTimezoneService.getTimezoneByCoordinates = vi.fn().mockReturnValue(newTimezone)
+      mockWeatherService.getWeatherByCoordinates = vi.fn().mockResolvedValue(newWeather)
 
       await service.setCity(newCity)
 
@@ -222,8 +296,16 @@ describe("UserContextService", () => {
 
       expect(state.city).toEqual(newCity)
       expect(state.timezone?.timezone).toBe("America/Los_Angeles")
+      expect(state.weather?.cityName).toBe("Los Angeles")
       expect(state.location?.detectionMethod).toBe("manual")
       expect(mockTimezoneService.getTimezoneByCoordinates).toHaveBeenCalledWith(34.0522, -118.2437)
+      expect(mockWeatherService.getWeatherByCoordinates).toHaveBeenCalledWith(
+        34.0522,
+        -118.2437,
+        expect.objectContaining({
+          language: "en",
+        })
+      )
     })
 
     it("debe lanzar error si la ciudad es inválida", async () => {
@@ -258,6 +340,11 @@ describe("UserContextService", () => {
       expect(listener).toHaveBeenCalledWith(
         expect.objectContaining({
           type: "timezone",
+        })
+      )
+      expect(listener).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: "weather",
         })
       )
     })
@@ -389,6 +476,7 @@ describe("UserContextService", () => {
       expect(state.location).toBeDefined()
       expect(state.city).toBeDefined()
       expect(state.timezone).toBeDefined()
+      expect(state.weather).toBeDefined()
       expect(state.language).toBeDefined()
     })
 
@@ -427,6 +515,7 @@ describe("UserContextService", () => {
       expect(state.location).toBeNull()
       expect(state.city).toBeNull()
       expect(state.timezone).toBeNull()
+      expect(state.weather).toBeNull()
     })
   })
 
@@ -485,8 +574,8 @@ describe("UserContextService", () => {
       try {
         await service.searchCities("Invalid")
         expect.fail("Debería haber lanzado error")
-      } catch (error: any) {
-        expect(error.code).toBe(UserContextErrorCode.CITY_SEARCH_FAILED)
+      } catch (error) {
+        expect((error as UserContextError).code).toBe(UserContextErrorCode.CITY_SEARCH_FAILED)
       }
     })
 
@@ -500,8 +589,8 @@ describe("UserContextService", () => {
       try {
         service.setLanguage("es")
         expect.fail("Debería haber lanzado error")
-      } catch (error: any) {
-        expect(error.code).toBe(UserContextErrorCode.INVALID_LANGUAGE)
+      } catch (error) {
+        expect((error as UserContextError).code).toBe(UserContextErrorCode.INVALID_LANGUAGE)
       }
     })
   })

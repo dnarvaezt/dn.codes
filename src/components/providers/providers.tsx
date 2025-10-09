@@ -6,6 +6,7 @@ import {
   GeolocationService,
   LanguageService,
   TimezoneService,
+  WeatherService,
 } from "@/services"
 import { useUserContextStore } from "@/store"
 import { ThemeProvider } from "next-themes"
@@ -21,12 +22,9 @@ const UserContextInitializer = ({ children }: { children: React.ReactNode }) => 
   const setPartialInitialization = useUserContextStore((state) => state.setPartialInitialization)
 
   useEffect(() => {
-    const apiKey = process.env.NEXT_PUBLIC_GEOAPIFY_API_KEY
+    const geoapifyApiKey = process.env.NEXT_PUBLIC_GEOAPIFY_API_KEY
 
-    if (!apiKey) {
-      console.warn(
-        "⚠️ NEXT_PUBLIC_GEOAPIFY_API_KEY no está configurada. La búsqueda de ciudades no estará disponible."
-      )
+    if (!geoapifyApiKey) {
       setPartialInitialization()
       return
     }
@@ -34,23 +32,28 @@ const UserContextInitializer = ({ children }: { children: React.ReactNode }) => 
     try {
       const geolocationService = new GeolocationService()
       const geocodingService = new GeocodingService()
-      const citySearchService = new CitySearchService(apiKey)
+      const citySearchService = new CitySearchService(geoapifyApiKey)
       const timezoneService = new TimezoneService()
       const languageService = new LanguageService()
+
+      const weatherApiKey = process.env.NEXT_PUBLIC_OPENWEATHERMAP_API_KEY
+      const weatherService = weatherApiKey
+        ? new WeatherService(weatherApiKey, geolocationService, languageService)
+        : undefined
 
       initializeService(
         geolocationService,
         geocodingService,
         citySearchService,
         timezoneService,
-        languageService
+        languageService,
+        weatherService
       )
 
-      initialize({ enableGeolocation: true, timeout: 10000 }).catch((error) => {
-        console.error("Error al inicializar UserContextStore:", error)
+      initialize({ enableGeolocation: true, timeout: 10000 }).catch(() => {
+        // Error handled by store
       })
-    } catch (error) {
-      console.error("Error al configurar servicios:", error)
+    } catch {
       setPartialInitialization()
     }
   }, [initializeService, initialize, setPartialInitialization])

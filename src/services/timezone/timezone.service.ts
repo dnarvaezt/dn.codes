@@ -427,5 +427,3 @@ export const createTimezoneService = (
 ) => {
   return new TimezoneService(geolocationService, languageService)
 }
-
-export const timezoneService = new TimezoneService()

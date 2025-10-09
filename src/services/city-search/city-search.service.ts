@@ -74,12 +74,10 @@ export class CitySearchService {
 
     try {
       const url = this.buildSearchUrl(text, options)
-      console.log("🌐 [CitySearchService] URL generada:", url)
 
       const response = await fetch(url, {
         signal: controller.signal,
       })
-      console.log("📡 [CitySearchService] Response status:", response.status, response.ok)
 
       if (!response.ok) {
         throw this.createError(`Error al buscar ciudades: ${response.statusText}`, response.status)
@@ -87,19 +85,11 @@ export class CitySearchService {
 
       const data: GeoapifyAutocompleteResponse = await response.json()
 
-      console.log("🔍 [CitySearchService] Respuesta API:", {
-        totalFeatures: data.features?.length || 0,
-        query: data.query,
-        firstFeature: data.features?.[0],
-      })
-
       if (!data.features || !Array.isArray(data.features)) {
-        console.warn("⚠️ [CitySearchService] No se encontraron features en la respuesta")
         return []
       }
 
       const results = data.features.map((feature) => this.mapFeatureToResult(feature))
-      console.log("✅ [CitySearchService] Ciudades procesadas:", results.length, results)
 
       return results
     } catch (error) {

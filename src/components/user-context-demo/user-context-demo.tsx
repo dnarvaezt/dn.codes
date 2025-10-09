@@ -3,13 +3,16 @@
 import { Combobox } from "@/components/ui"
 import { useDebounce } from "@/hooks"
 import { useUserContextStore } from "@/store"
+import Image from "next/image"
 import { useEffect, useMemo, useState } from "react"
 
 import type { ComboboxOption } from "@/components/ui"
+import type { CitySearchResult } from "@/services/city-search"
 
 export const UserContextDemo = () => {
   const city = useUserContextStore((state) => state.city)
   const timezone = useUserContextStore((state) => state.timezone)
+  const weather = useUserContextStore((state) => state.weather)
   const language = useUserContextStore((state) => state.language)
   const location = useUserContextStore((state) => state.location)
   const isInitialized = useUserContextStore((state) => state.isInitialized)
@@ -24,7 +27,7 @@ export const UserContextDemo = () => {
   const isPartiallyInitialized = isInitialized && !service
 
   const [cityQuery, setCityQuery] = useState("")
-  const [cityResults, setCityResults] = useState<any[]>([])
+  const [cityResults, setCityResults] = useState<CitySearchResult[]>([])
   const [searchLoading, setSearchLoading] = useState(false)
   const [searchError, setSearchError] = useState<string | null>(null)
   const [currentTime, setCurrentTime] = useState(new Date())
@@ -84,14 +87,12 @@ export const UserContextDemo = () => {
       secondaryLabel: city.city && city.state ? `${city.city}, ${city.state}` : city.city,
       data: city,
     }))
-    console.log("🗺️ [UserContextDemo] Opciones generadas para Combobox:", options.length, options)
     return options
   }, [cityResults])
 
   // Efecto para buscar ciudades cuando el query con debounce cambie
   useEffect(() => {
     if (isPartiallyInitialized) {
-      console.log("⏭️ [UserContextDemo] Búsqueda omitida: modo parcial")
       return
     }
 
@@ -102,16 +103,12 @@ export const UserContextDemo = () => {
         return
       }
 
-      console.log("🔎 [UserContextDemo] Iniciando búsqueda:", debouncedQuery)
-
       try {
         setSearchLoading(true)
         setSearchError(null)
         const results = await searchCities(debouncedQuery)
-        console.log("📍 [UserContextDemo] Resultados recibidos:", results.length, results)
         setCityResults(results)
       } catch (err) {
-        console.error("❌ [UserContextDemo] Error al buscar ciudades:", err)
         setSearchError(err instanceof Error ? err.message : "Error al buscar ciudades")
         setCityResults([])
       } finally {
@@ -123,15 +120,11 @@ export const UserContextDemo = () => {
   }, [debouncedQuery, searchCities, isPartiallyInitialized])
 
   const handleSelectCity = async (option: ComboboxOption) => {
-    try {
-      const cityData = (option as any).data
-      await setCity(cityData)
-      setCityResults([])
-      setCityQuery("")
-      setSearchError(null)
-    } catch (err) {
-      console.error("Error al cambiar ciudad:", err)
-    }
+    const cityData = option.data as CitySearchResult
+    await setCity(cityData)
+    setCityResults([])
+    setCityQuery("")
+    setSearchError(null)
   }
 
   if (!isInitialized && isLoading) {
@@ -224,6 +217,115 @@ export const UserContextDemo = () => {
             </span>
           </div>
         </div>
+      </div>
+
+      {/* Clima Actual */}
+      <div className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
+        <h3 className="mb-4 text-lg font-semibold">Clima Actual</h3>
+
+        {weather ? (
+          <div className="space-y-4">
+            {/* Condición principal con ícono */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {weather.weather[0] && (
+                  <Image
+                    src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
+                    alt={weather.weather[0].description}
+                    width={64}
+                    height={64}
+                    className="h-16 w-16"
+                  />
+                )}
+                <div>
+                  <p className="text-3xl font-bold">{Math.round(weather.main.temp)}°C</p>
+                  <p className="capitalize text-muted-foreground">
+                    {weather.weather[0]?.description || "N/A"}
+                  </p>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-muted-foreground">Sensación térmica</p>
+                <p className="text-lg font-semibold">{Math.round(weather.main.feelsLike)}°C</p>
+              </div>
+            </div>
+
+            {/* Detalles del clima */}
+            <div className="border-t pt-4">
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Mín/Máx:</span>
+                  <span className="font-medium">
+                    {Math.round(weather.main.tempMin)}° / {Math.round(weather.main.tempMax)}°
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Humedad:</span>
+                  <span className="font-medium">{weather.main.humidity}%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Presión:</span>
+                  <span className="font-medium">{weather.main.pressure} hPa</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Visibilidad:</span>
+                  <span className="font-medium">{(weather.visibility / 1000).toFixed(1)} km</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Viento:</span>
+                  <span className="font-medium">{weather.wind.speed} m/s</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Dirección:</span>
+                  <span className="font-medium">{weather.wind.deg}°</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Nubes:</span>
+                  <span className="font-medium">{weather.clouds.all}%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">País:</span>
+                  <span className="font-medium">{weather.sys.country}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Amanecer y atardecer */}
+            <div className="border-t pt-4">
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">🌅 Amanecer:</span>
+                  <span className="font-medium">
+                    {new Date(weather.sys.sunrise * 1000).toLocaleTimeString(language.fullCode, {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      timeZone: timezone?.timezone,
+                    })}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">🌇 Atardecer:</span>
+                  <span className="font-medium">
+                    {new Date(weather.sys.sunset * 1000).toLocaleTimeString(language.fullCode, {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      timeZone: timezone?.timezone,
+                    })}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="rounded-md border border-blue-500/50 bg-blue-500/10 p-4 text-center text-sm text-blue-700 dark:text-blue-400">
+            <p className="font-semibold">ℹ️ Información del clima no disponible</p>
+            <p className="mt-1 text-xs">
+              {isPartiallyInitialized
+                ? "Configura las API keys para ver el clima"
+                : "El clima se cargará automáticamente cuando se detecte tu ubicación"}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Cambiar ciudad */}

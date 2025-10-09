@@ -3,6 +3,7 @@ import type { GeocodingService } from "../geocoding"
 import type { GeolocationService } from "../geolocation"
 import type { LanguageService, SupportedLanguage } from "../language"
 import type { TimezoneService } from "../timezone"
+import type { WeatherService } from "../weather"
 
 import {
   DEFAULT_USER_CONTEXT_OPTIONS,
@@ -23,12 +24,14 @@ export class UserContextService {
     private readonly geocodingService: GeocodingService,
     private readonly citySearchService: CitySearchService,
     private readonly timezoneService: TimezoneService,
-    private readonly languageService: LanguageService
+    private readonly languageService: LanguageService,
+    private readonly weatherService?: WeatherService
   ) {
     this.state = {
       location: null,
       city: null,
       timezone: null,
+      weather: null,
       language: this.languageService.getCurrentLanguage(),
       isInitialized: false,
     }
@@ -42,8 +45,8 @@ export class UserContextService {
     this.listeners.forEach((listener) => {
       try {
         listener(event)
-      } catch (error) {
-        console.error("Error en listener de UserContextService:", error)
+      } catch {
+        // Silently handle listener errors
       }
     })
   }
@@ -121,6 +124,23 @@ export class UserContextService {
 
           this.state.timezone = timezone
           this.emitEvent("timezone", { timezone: this.state.timezone })
+
+          if (this.weatherService) {
+            try {
+              const weather = await this.weatherService.getWeatherByCoordinates(
+                position.coords.latitude,
+                position.coords.longitude,
+                {
+                  language: language.language,
+                  timeout: opts.timeout,
+                }
+              )
+              this.state.weather = weather
+              this.emitEvent("weather", { weather: this.state.weather })
+            } catch {
+              this.state.weather = null
+            }
+          }
         } catch {
           const timezone = this.timezoneService.getTimezone()
           this.state.timezone = timezone
@@ -170,6 +190,23 @@ export class UserContextService {
 
     this.state.timezone = timezone
     this.emitEvent("timezone", { timezone: this.state.timezone })
+
+    if (this.weatherService) {
+      try {
+        const weather = await this.weatherService.getWeatherByCoordinates(
+          city.coordinates.latitude,
+          city.coordinates.longitude,
+          {
+            language: this.state.language.language,
+          }
+        )
+        this.state.weather = weather
+        this.emitEvent("weather", { weather: this.state.weather })
+      } catch {
+        this.state.weather = null
+        this.emitEvent("weather", { weather: null })
+      }
+    }
 
     if (this.state.location) {
       this.state.location = {
@@ -228,6 +265,7 @@ export class UserContextService {
       location: this.state.location ? { ...this.state.location } : null,
       city: this.state.city ? { ...this.state.city } : null,
       timezone: this.state.timezone ? { ...this.state.timezone } : null,
+      weather: this.state.weather ? { ...this.state.weather } : null,
       language: { ...this.state.language },
       isInitialized: this.state.isInitialized,
     }
@@ -242,6 +280,7 @@ export class UserContextService {
       location: null,
       city: null,
       timezone: null,
+      weather: null,
       language: this.languageService.getCurrentLanguage(),
       isInitialized: false,
     }
@@ -254,13 +293,15 @@ export const createUserContextService = (
   geocodingService: GeocodingService,
   citySearchService: CitySearchService,
   timezoneService: TimezoneService,
-  languageService: LanguageService
+  languageService: LanguageService,
+  weatherService?: WeatherService
 ) => {
   return new UserContextService(
     geolocationService,
     geocodingService,
     citySearchService,
     timezoneService,
-    languageService
+    languageService,
+    weatherService
   )
 }
