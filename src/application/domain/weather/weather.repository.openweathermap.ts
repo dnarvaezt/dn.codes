@@ -1,4 +1,4 @@
-import type { WeatherRepository } from "./user-context.repository.interface"
+import type { WeatherRepository } from "./weather.repository.interface"
 
 import {
   DEFAULT_WEATHER_INFO,
@@ -8,9 +8,9 @@ import {
   WeatherError,
   WeatherInfo,
   WeatherOptions,
-} from "./user-context.model"
+} from "./weather.model"
 
-export class WeatherRepositoryImpl implements WeatherRepository {
+export class WeatherRepositoryOpenWeatherMap implements WeatherRepository {
   private readonly apiKey: string
 
   constructor(apiKey: string) {
@@ -215,6 +215,6 @@ export class WeatherRepositoryImpl implements WeatherRepository {
   }
 }
 
-export const createWeatherRepository = (apiKey: string) => {
-  return new WeatherRepositoryImpl(apiKey)
+export const createWeatherRepository = (apiKey: string): WeatherRepository => {
+  return new WeatherRepositoryOpenWeatherMap(apiKey)
 }

@@ -1,4 +1,4 @@
-import type { LanguageRepository } from "./user-context.repository.interface"
+import type { LanguageRepository } from "./language.repository.interface"
 
 import {
   DEFAULT_LANGUAGE,
@@ -7,9 +7,9 @@ import {
   LanguageInfo,
   SUPPORTED_LANGUAGES,
   SupportedLanguage,
-} from "./user-context.model"
+} from "./language.model"
 
-export class LanguageRepositoryImpl implements LanguageRepository {
+export class LanguageRepositoryBrowser implements LanguageRepository {
   private currentLanguage: LanguageInfo | null = null
 
   private createError(message: string): LanguageError {
@@ -19,7 +19,7 @@ export class LanguageRepositoryImpl implements LanguageRepository {
   private extractLanguageCode(fullCode: string): SupportedLanguage {
     const baseLanguage = fullCode.toLowerCase().split("-")[0]
 
-    if (this.isSupported(baseLanguage as SupportedLanguage)) {
+    if (this.isSupported(baseLanguage)) {
       return baseLanguage as SupportedLanguage
     }
 
@@ -27,7 +27,9 @@ export class LanguageRepositoryImpl implements LanguageRepository {
   }
 
   public getBrowserLanguage(): string {
-    return navigator.language || DEFAULT_LANGUAGE.fullCode
+    return typeof navigator !== "undefined"
+      ? navigator.language || DEFAULT_LANGUAGE.fullCode
+      : DEFAULT_LANGUAGE.fullCode
   }
 
   public getLanguage(): LanguageInfo {
@@ -90,6 +92,6 @@ export class LanguageRepositoryImpl implements LanguageRepository {
   }
 }
 
-export const createLanguageRepository = () => {
-  return new LanguageRepositoryImpl()
+export const createLanguageRepository = (): LanguageRepository => {
+  return new LanguageRepositoryBrowser()
 }

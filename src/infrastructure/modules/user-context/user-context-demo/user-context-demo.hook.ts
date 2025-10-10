@@ -1,4 +1,4 @@
-import type { CitySearchResult } from "@/application/domain/user-context"
+import type { CitySearchResult } from "@/application/domain/city-search"
 import type { ComboboxOption } from "@/infrastructure/components/ui"
 
 import { useDebounce } from "@/infrastructure/hooks"
@@ -14,13 +14,13 @@ export const useUserContextDemo = () => {
   const isInitialized = useUserContextStore((state) => state.isInitialized)
   const isLoading = useUserContextStore((state) => state.isLoading)
   const error = useUserContextStore((state) => state.error)
-  const service = useUserContextStore((state) => state.service)
+  const citySearchService = useUserContextStore((state) => state.citySearchService)
   const setCity = useUserContextStore((state) => state.setCity)
   const searchCities = useUserContextStore((state) => state.searchCities)
   const setLanguage = useUserContextStore((state) => state.setLanguage)
   const resetLanguageToAuto = useUserContextStore((state) => state.resetLanguageToAuto)
 
-  const isPartiallyInitialized = isInitialized && !service
+  const isPartiallyInitialized = isInitialized && !citySearchService
 
   const [cityQuery, setCityQuery] = useState("")
   const [cityResults, setCityResults] = useState<CitySearchResult[]>([])

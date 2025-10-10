@@ -1,15 +1,16 @@
-import type { GeocodingRepository } from "./user-context.repository.interface"
+import type { GeocodingRepository } from "./geocoding.repository.interface"
 
 import {
   BIGDATACLOUD_API_URL,
   CityInfo,
   DEFAULT_CITY_INFO,
+  DEFAULT_GEOCODING_OPTIONS,
   GeocodingError,
   GeocodingOptions,
   GeocodingResponse,
-} from "./user-context.model"
+} from "./geocoding.model"
 
-export class GeocodingRepositoryImpl implements GeocodingRepository {
+export class GeocodingRepositoryBigDataCloud implements GeocodingRepository {
   private createError(message: string, statusCode?: number): GeocodingError {
     return new GeocodingError(message, statusCode)
   }
@@ -39,8 +40,8 @@ export class GeocodingRepositoryImpl implements GeocodingRepository {
     longitude: number,
     options?: GeocodingOptions
   ): Promise<CityInfo> {
-    const language = options?.language || "en"
-    const timeout = options?.timeout || 10000
+    const language = options?.language ?? DEFAULT_GEOCODING_OPTIONS.language
+    const timeout = options?.timeout ?? DEFAULT_GEOCODING_OPTIONS.timeout
 
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), timeout)
@@ -97,6 +98,6 @@ export class GeocodingRepositoryImpl implements GeocodingRepository {
   }
 }
 
-export const createGeocodingRepository = () => {
-  return new GeocodingRepositoryImpl()
+export const createGeocodingRepository = (): GeocodingRepository => {
+  return new GeocodingRepositoryBigDataCloud()
 }

@@ -1,13 +1,13 @@
-import type { TimezoneRepository } from "./user-context.repository.interface"
+import type { TimezoneRepository } from "./timezone.repository.interface"
 
 import {
   DEFAULT_TIMEZONE,
   TimezoneDetectionMethod,
   TimezoneError,
   TimezoneInfo,
-} from "./user-context.model"
+} from "./timezone.model"
 
-export class TimezoneRepositoryImpl implements TimezoneRepository {
+export class TimezoneRepositoryBrowser implements TimezoneRepository {
   private currentTimezone: TimezoneInfo | null = null
 
   private isSupported(): boolean {
@@ -41,7 +41,7 @@ export class TimezoneRepositoryImpl implements TimezoneRepository {
   }
 
   public getUserLocale(): string {
-    return navigator.language || "en-US"
+    return typeof navigator !== "undefined" ? navigator.language || "en-US" : "en-US"
   }
 
   public getTimezone(): TimezoneInfo {
@@ -282,6 +282,6 @@ export class TimezoneRepositoryImpl implements TimezoneRepository {
   }
 }
 
-export const createTimezoneRepository = () => {
-  return new TimezoneRepositoryImpl()
+export const createTimezoneRepository = (): TimezoneRepository => {
+  return new TimezoneRepositoryBrowser()
 }

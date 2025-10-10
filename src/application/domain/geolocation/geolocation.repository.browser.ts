@@ -1,6 +1,7 @@
-import type { GeolocationRepository } from "./user-context.repository.interface"
+import type { GeolocationRepository } from "./geolocation.repository.interface"
 
 import {
+  DEFAULT_GEOLOCATION_OPTIONS,
   DEFAULT_LOCATION,
   DefaultLocation,
   GeolocationError,
@@ -9,15 +10,15 @@ import {
   GeolocationOptions,
   GeolocationPosition,
   ManualLocation,
-} from "./user-context.model"
+} from "./geolocation.model"
 
-export class GeolocationRepositoryImpl implements GeolocationRepository {
+export class GeolocationRepositoryBrowser implements GeolocationRepository {
   private defaultLocation: DefaultLocation = DEFAULT_LOCATION
   private mode: GeolocationMode = GeolocationMode.AUTO
   private manualLocation: ManualLocation | null = null
 
   private isSupported(): boolean {
-    return "geolocation" in navigator
+    return typeof navigator !== "undefined" && "geolocation" in navigator
   }
 
   private createError(code: GeolocationErrorCode, message: string): GeolocationError {
@@ -67,89 +68,34 @@ export class GeolocationRepositoryImpl implements GeolocationRepository {
     }
   }
 
+  private createManualPosition(): GeolocationPosition {
+    if (!this.manualLocation) {
+      throw this.createError(
+        GeolocationErrorCode.NOT_SUPPORTED,
+        "No hay ubicación manual establecida"
+      )
+    }
+
+    return {
+      coords: {
+        latitude: this.manualLocation.latitude,
+        longitude: this.manualLocation.longitude,
+        accuracy: this.manualLocation.accuracy ?? 0,
+        altitude: null,
+        altitudeAccuracy: null,
+        heading: null,
+        speed: null,
+      },
+      timestamp: Date.now(),
+    }
+  }
+
   public setDefaultLocation(location: DefaultLocation): void {
     this.defaultLocation = location
   }
 
   public getDefaultLocation(): DefaultLocation {
     return { ...this.defaultLocation }
-  }
-
-  public async getCurrentPosition(options?: GeolocationOptions): Promise<GeolocationPosition> {
-    if (!this.isSupported()) {
-      throw this.createError(
-        4 as GeolocationErrorCode,
-        "La geolocalización no está soportada en este navegador"
-      )
-    }
-
-    const defaultOptions: GeolocationOptions = {
-      enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 0,
-      ...options,
-    }
-
-    return new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          resolve(this.mapPosition(position as GeolocationPosition))
-        },
-        (error) => {
-          reject(this.mapGeolocationError(error))
-        },
-        defaultOptions
-      )
-    })
-  }
-
-  public watchPosition(
-    onSuccess: (position: GeolocationPosition) => void,
-    onError: (error: Error) => void,
-    options?: GeolocationOptions
-  ): number | null {
-    if (!this.isSupported()) {
-      onError(
-        this.createError(
-          4 as GeolocationErrorCode,
-          "La geolocalización no está soportada en este navegador"
-        )
-      )
-      return null
-    }
-
-    const defaultOptions: GeolocationOptions = {
-      enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 0,
-      ...options,
-    }
-
-    return navigator.geolocation.watchPosition(
-      (position) => {
-        onSuccess(this.mapPosition(position as GeolocationPosition))
-      },
-      (error) => {
-        onError(this.mapGeolocationError(error))
-      },
-      defaultOptions
-    )
-  }
-
-  public clearWatch(watchId: number): void {
-    if (this.isSupported()) {
-      navigator.geolocation.clearWatch(watchId)
-    }
-  }
-
-  public async getCurrentPositionOrDefault(
-    options?: GeolocationOptions
-  ): Promise<GeolocationPosition> {
-    try {
-      return await this.getCurrentPosition(options)
-    } catch {
-      return this.createDefaultPosition()
-    }
   }
 
   public setMode(mode: GeolocationMode): void {
@@ -172,22 +118,76 @@ export class GeolocationRepositoryImpl implements GeolocationRepository {
     return this.manualLocation ? { ...this.manualLocation } : null
   }
 
-  private createManualPosition(): GeolocationPosition {
-    if (!this.manualLocation) {
-      throw this.createError(4 as GeolocationErrorCode, "No hay ubicación manual establecida")
+  public async getCurrentPosition(options?: GeolocationOptions): Promise<GeolocationPosition> {
+    if (!this.isSupported()) {
+      throw this.createError(
+        GeolocationErrorCode.NOT_SUPPORTED,
+        "La geolocalización no está soportada en este navegador"
+      )
     }
 
-    return {
-      coords: {
-        latitude: this.manualLocation.latitude,
-        longitude: this.manualLocation.longitude,
-        accuracy: this.manualLocation.accuracy ?? 0,
-        altitude: null,
-        altitudeAccuracy: null,
-        heading: null,
-        speed: null,
+    const opts: Required<GeolocationOptions> = {
+      ...DEFAULT_GEOLOCATION_OPTIONS,
+      ...options,
+    }
+
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          resolve(this.mapPosition(position as GeolocationPosition))
+        },
+        (error) => {
+          reject(this.mapGeolocationError(error))
+        },
+        opts
+      )
+    })
+  }
+
+  public watchPosition(
+    onSuccess: (position: GeolocationPosition) => void,
+    onError: (error: Error) => void,
+    options?: GeolocationOptions
+  ): number | null {
+    if (!this.isSupported()) {
+      onError(
+        this.createError(
+          GeolocationErrorCode.NOT_SUPPORTED,
+          "La geolocalización no está soportada en este navegador"
+        )
+      )
+      return null
+    }
+
+    const opts: Required<GeolocationOptions> = {
+      ...DEFAULT_GEOLOCATION_OPTIONS,
+      ...options,
+    }
+
+    return navigator.geolocation.watchPosition(
+      (position) => {
+        onSuccess(this.mapPosition(position as GeolocationPosition))
       },
-      timestamp: Date.now(),
+      (error) => {
+        onError(this.mapGeolocationError(error))
+      },
+      opts
+    )
+  }
+
+  public clearWatch(watchId: number): void {
+    if (this.isSupported()) {
+      navigator.geolocation.clearWatch(watchId)
+    }
+  }
+
+  public async getCurrentPositionOrDefault(
+    options?: GeolocationOptions
+  ): Promise<GeolocationPosition> {
+    try {
+      return await this.getCurrentPosition(options)
+    } catch {
+      return this.createDefaultPosition()
     }
   }
 
@@ -208,6 +208,6 @@ export class GeolocationRepositoryImpl implements GeolocationRepository {
   }
 }
 
-export const createGeolocationRepository = () => {
-  return new GeolocationRepositoryImpl()
+export const createGeolocationRepository = (): GeolocationRepository => {
+  return new GeolocationRepositoryBrowser()
 }

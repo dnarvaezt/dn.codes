@@ -1,4 +1,4 @@
-import type { CitySearchRepository } from "./user-context.repository.interface"
+import type { CitySearchRepository } from "./city-search.repository.interface"
 
 import {
   CitySearchError,
@@ -8,9 +8,9 @@ import {
   GEOAPIFY_AUTOCOMPLETE_URL,
   GeoapifyAutocompleteResponse,
   GeoapifyFeature,
-} from "./user-context.model"
+} from "./city-search.model"
 
-export class CitySearchRepositoryImpl implements CitySearchRepository {
+export class CitySearchRepositoryGeoapify implements CitySearchRepository {
   private readonly apiKey: string
 
   constructor(apiKey: string) {
@@ -126,6 +126,6 @@ export class CitySearchRepositoryImpl implements CitySearchRepository {
   }
 }
 
-export const createCitySearchRepository = (apiKey: string) => {
-  return new CitySearchRepositoryImpl(apiKey)
+export const createCitySearchRepository = (apiKey: string): CitySearchRepository => {
+  return new CitySearchRepositoryGeoapify(apiKey)
 }
