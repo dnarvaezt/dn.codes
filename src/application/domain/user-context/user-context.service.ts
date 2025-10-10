@@ -294,21 +294,3 @@ export class UserContextService {
     this.listeners = []
   }
 }
-
-export const createUserContextService = (
-  geolocationRepository: GeolocationRepository,
-  geocodingRepository: GeocodingRepository,
-  citySearchRepository: CitySearchRepository,
-  timezoneRepository: TimezoneRepository,
-  languageRepository: LanguageRepository,
-  weatherRepository?: WeatherRepository
-) => {
-  return new UserContextService(
-    geolocationRepository,
-    geocodingRepository,
-    citySearchRepository,
-    timezoneRepository,
-    languageRepository,
-    weatherRepository
-  )
-}

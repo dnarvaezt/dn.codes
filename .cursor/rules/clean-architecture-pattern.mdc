@@ -12,7 +12,21 @@ Este proyecto implementa **Clean Architecture** con **Domain-Driven Design (DDD)
 
 ### 1. Application Layer (`src/application/`)
 
-Lógica de negocio pura, independiente de frameworks.
+Lógica de negocio pura, **completamente independiente de frameworks y UI**.
+
+**REGLA CRÍTICA**: Esta capa NO debe importar:
+
+- ❌ React, Next.js, Vue, Angular u otro framework de UI
+- ❌ Librerías de componentes UI
+- ❌ Hooks de React (`useState`, `useEffect`, etc.)
+- ❌ Context API de React
+- ❌ Nada relacionado con presentación o infraestructura
+
+**Solo puede depender de**:
+
+- ✅ TypeScript/JavaScript puro
+- ✅ Librerías de utilidades puras (lodash, date-fns, etc.)
+- ✅ Abstracciones propias del dominio
 
 #### 1.1 Core (`application/core/`)
 
@@ -35,11 +49,19 @@ application/domain/[entity]/
 ├── [entity].service.ts                  # Lógica de negocio
 ├── [entity].repository.interface.ts     # Contrato de persistencia
 ├── [entity].repository.memory.ts        # Implementación (memory/mock)
-├── [entity].provider.ts                 # Provider React
+├── [entity].provider.ts                 # Factory/Provider (sin React, patrón de diseño puro)
 ├── [entity].mock.data.ts                # Datos de prueba
 ├── [entity].exceptions.ts               # Excepciones específicas
 └── index.ts                             # Barrel export
 ```
+
+**IMPORTANTE sobre `[entity].provider.ts`**:
+
+- ✅ Es un patrón Factory o Provider genérico (sin framework)
+- ✅ Instancia y configura el servicio con sus dependencias
+- ✅ Solo usa TypeScript/JavaScript puro
+- ❌ NO es un React Context Provider
+- ❌ NO importa React ni usa hooks
 
 **Dominios existentes**: activity, appointment, article, category, client, employee, invoice, product, stock, transaction
 
@@ -133,11 +155,23 @@ infrastructure/
 - Lógica de negocio centralizada
 - Reutilización mediante herencia
 
-### 5. 🔌 Provider Pattern (React)
+### 5. 🔌 Provider Pattern (Dos Niveles)
 
-- Cada dominio tiene su `[entity].provider.ts`
-- Contextos para inyectar servicios en UI
-- Proporciona acceso al servicio del dominio
+#### Nivel 1: Domain Provider (Application Layer)
+
+- `application/domain/[entity]/[entity].provider.ts`
+- Factory/Provider pattern genérico (sin React)
+- Instancia servicios con dependencias inyectadas
+- Solo TypeScript puro
+- **NO importa nada de Infrastructure**
+
+#### Nivel 2: Zustand Store (Infrastructure Layer)
+
+- `infrastructure/store/[entity]-store.ts`
+- Zustand store para gestión de estado global
+- Importa y usa el Provider/Service del dominio (Application)
+- Conecta el dominio (Application) con la UI (Infrastructure)
+- Usa Zustand en lugar de React Context API
 
 ### 6. 🪝 Custom Hooks Pattern
 
@@ -151,6 +185,22 @@ infrastructure/
 - Simplifica imports
 - Oculta estructura interna
 
+### 8. 🗄️ Zustand para Estado Global
+
+- Zustand es la solución obligatoria para estado global en Infrastructure
+- **Prohibido** usar React Context API para estado compartido
+- Los stores de Zustand viven en `infrastructure/store/`
+- Los stores importan y usan servicios/providers de Application
+- Patrón: Store → Provider → Service → Repository
+
+**Ventajas de Zustand sobre Context**:
+
+- Sin providers anidados
+- Mejor rendimiento (evita re-renders innecesarios)
+- API más limpia y directa
+- Menos boilerplate
+- TypeScript nativo
+
 ---
 
 ## Flujo de Dependencias
@@ -158,11 +208,9 @@ infrastructure/
 ```text
 UI Components (infrastructure/modules)
     ↓ usa
-Custom Hooks (infrastructure/hooks)
-    ↓ usa
-Providers (application/domain/[entity])
-    ↓ usa
-Services (application/domain/[entity])
+Zustand Stores (infrastructure/store)
+    ↓ importa y usa
+Providers/Services (application/domain/[entity])
     ↓ usa
 Repositories (application/domain/[entity])
     ↓ usa
@@ -171,7 +219,55 @@ Models & Interfaces (application/domain/[entity])
 Core Abstractions (application/core)
 ```
 
-**Regla de oro**: Las dependencias siempre apuntan hacia adentro. `infrastructure` puede depender de `application`, pero **NUNCA** al revés.
+**Reglas de oro**:
+
+1. Las dependencias siempre apuntan hacia adentro
+2. `infrastructure` puede depender de `application` ✅
+3. `application` **NUNCA** depende de `infrastructure` ❌
+4. Zustand stores (Infrastructure) importan de Application, no al revés
+
+### Diagrama de Flujo Completo con Zustand
+
+```text
+┌─────────────────────────────────────────────┐
+│         INFRASTRUCTURE LAYER                │
+│                                             │
+│  ┌──────────────┐         ┌──────────────┐ │
+│  │  Component   │ ───────>│ Zustand Store│ │
+│  │   (.tsx)     │ usa     │ (use*Store)  │ │
+│  └──────────────┘         └──────┬────────┘ │
+│                                  │          │
+│                                  │ importa  │
+└──────────────────────────────────┼──────────┘
+                                   │
+                                   ▼
+┌──────────────────────────────────┼──────────┐
+│         APPLICATION LAYER        │          │
+│                                  │          │
+│  ┌──────────────┐         ┌──────▼───────┐ │
+│  │  Repository  │ <───────│   Provider   │ │
+│  │  Interface   │ inyecta │   (Factory)  │ │
+│  └──────▲───────┘         └──────┬───────┘ │
+│         │                        │          │
+│         │ usa              crea  │          │
+│         │                        ▼          │
+│  ┌──────┴───────┐         ┌──────────────┐ │
+│  │ Repository   │         │   Service    │ │
+│  │ Memory/API   │         │   (Logic)    │ │
+│  └──────────────┘         └──────────────┘ │
+│                                             │
+└─────────────────────────────────────────────┘
+
+FLUJO DE DATOS:
+1. Component usa Zustand store (useClientStore)
+2. Store importa Provider/Service de Application
+3. Store delega lógica al Service
+4. Service usa Repository (a través de interface)
+5. Repository maneja persistencia
+
+❌ NUNCA: Application importa de Infrastructure
+✅ SIEMPRE: Infrastructure importa de Application
+```
 
 ---
 
@@ -529,7 +625,7 @@ infrastructure/modules/
 
 ### ❌ No Hacer
 
-- Importar de `infrastructure/` en `application/`
+- Importar de `infrastructure/` en `application/` (violación crítica)
 - Lógica de negocio en componentes `.tsx`
 - Acceso directo a repositorios desde UI
 - Mezclar capas en un mismo archivo
@@ -539,16 +635,58 @@ infrastructure/modules/
 - Módulos sin estructura completa (tsx + hook + scss)
 - **Usar nombres de archivos o carpetas que NO sean kebab-case**
 - Usar `PascalCase`, `camelCase` o `snake_case` en nombres de archivos o carpetas
+- **Usar React Context API en lugar de Zustand en `infrastructure/store/`**
+- **Importar React o frameworks en `application/`**
 
 ### ❌ Imports y Exports: Reglas Estrictas
 
-#### ❌ Imports Prohibidos
+#### ❌ Imports Prohibidos en Application Layer (CRÍTICO)
+
+**La capa `application/` NUNCA debe importar**:
 
 ```typescript
-// ❌ PROHIBIDO: Application importando de Infrastructure
+// ❌ PROHIBIDO: Imports de React o frameworks
+import React from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { NextPage } from 'next';
+import { useRouter } from 'next/router';
+
+// ❌ PROHIBIDO: Imports de Infrastructure
+import { Button } from '@/infrastructure/components/ui/button';
+import { useTheme } from '@/infrastructure/store/theme-store';
+import { ClientPage } from '@/infrastructure/modules/client';
+
+// ❌ PROHIBIDO: Imports de librerías de UI
+import { Card } from 'antd';
+import { Button } from '@shadcn/ui';
+```
+
+**Solo puede importar**:
+
+```typescript
+// ✅ CORRECTO: TypeScript/JavaScript puro
+import { v4 as uuidv4 } from 'uuid';
+import { format } from 'date-fns';
+import _ from 'lodash';
+
+// ✅ CORRECTO: Otros dominios de Application
+import { User } from '@/application/domain/user';
+import { ProductService } from '@/application/domain/product';
+
+// ✅ CORRECTO: Core abstractions
+import { EntityService } from '@/application/core/entity';
+```
+
+**Regla de oro**: Si un archivo en `application/` necesita importar algo de `react` o `infrastructure/`, está en la capa incorrecta.
+
+#### ❌ Imports Prohibidos (Generales)
+
+```typescript
+// ❌ PROHIBIDO: Application importando de Infrastructure (VIOLACIÓN CRÍTICA)
 // Archivo: application/domain/client/client.service.ts
 import { ClientPage } from '@/infrastructure/modules/client';
-import { useClientStore } from '@/infrastructure/store';
+import { useClientStore } from '@/infrastructure/store/client-store';
+import { Button } from '@/infrastructure/components/ui/button';
 
 // ❌ PROHIBIDO: Imports directos saltándose el barrel export
 import { Client } from '@/application/domain/client/client.model';
@@ -557,6 +695,10 @@ import { ClientService } from '@/application/domain/client/client.service';
 // ❌ PROHIBIDO: Componentes importando repositorios directamente
 // Archivo: infrastructure/modules/client/client-page/client-page.hook.ts
 import { ClientRepository } from '@/application/domain/client/client.repository.memory';
+
+// ❌ PROHIBIDO: Usar Context API en lugar de Zustand
+// Archivo: infrastructure/store/client-store.ts
+import { createContext, useContext } from 'react'; // ❌ Usar Zustand en su lugar
 ```
 
 #### ✅ Imports Correctos
@@ -566,11 +708,25 @@ import { ClientRepository } from '@/application/domain/client/client.repository.
 import { Client, ClientService, ClientProvider } from '@/application/domain/client';
 
 // ✅ CORRECTO: Infrastructure puede importar de Application
-// Archivo: infrastructure/modules/client/client-page/client-page.hook.ts
-import { ClientService } from '@/application/domain/client';
+// Archivo: infrastructure/store/client-store.ts
+import { create } from 'zustand';
+import { ClientService, ClientProvider } from '@/application/domain/client';
 
-// ✅ CORRECTO: Hooks usan servicios, no repositorios
-import { useClientContext } from '@/application/domain/client';
+// ✅ CORRECTO: Componentes usan Zustand stores
+// Archivo: infrastructure/modules/client/client-page/client-page.hook.ts
+import { useClientStore } from '@/infrastructure/store/client-store';
+
+// ✅ CORRECTO: Stores delegan lógica a servicios del dominio
+export const useClientStore = create((set) => {
+  const clientService = ClientProvider.getInstance();
+  return {
+    clients: [],
+    loadClients: async () => {
+      const data = await clientService.getAll(); // Delega al dominio
+      set({ clients: data });
+    }
+  };
+});
 ```
 
 #### ❌ Exports Prohibidos en index.ts
@@ -734,6 +890,11 @@ index.ts
 - [ ] Existe `index.ts` que solo reexporta con `export *`
 - [ ] NO hay carpetas `/models/`, `/services/`, `/repositories/`
 - [ ] NO hay archivos con PascalCase, camelCase o snake_case
+- [ ] **NO hay imports de React** en ningún archivo
+- [ ] **NO hay imports de frameworks UI** (Next.js, antd, shadcn)
+- [ ] **NO hay imports de `infrastructure/`** en ningún archivo
+- [ ] **`[entity].provider.ts` NO usa Context API de React**
+- [ ] **`[entity].provider.ts` es un Factory/Provider genérico** (TypeScript puro)
 
 #### Para Features (`infrastructure/modules/[entity]/[entity]-[feature]/`)
 
@@ -772,12 +933,17 @@ Si encuentras CUALQUIERA de estos, la estructura está INCORRECTA:
 - [ ] Un `index.ts` con lógica o exports selectivos
 - [ ] Carpetas como `/models/`, `/services/`, `/components/` dentro de un dominio
 - [ ] Diferentes estructuras entre módulos del mismo proyecto
+- [ ] **Imports de React en `application/`** (useState, useEffect, Context API, etc.)
+- [ ] **Imports de frameworks UI en `application/`** (Next.js, antd, shadcn, etc.)
+- [ ] **Imports de `infrastructure/` en `application/`** (violación crítica del flujo de dependencias)
+- [ ] **React Context Provider en `application/domain/[entity]/[entity].provider.ts`**
+- [ ] **Uso de React Context API en lugar de Zustand en `infrastructure/store/`**
 
 ---
 
 ## Mantra
 
-"Capas claras, dependencias hacia adentro, dominios consistentes, lógica separada de UI. Clean Architecture no es opcional, es obligatoria."
+"Capas claras, dependencias hacia adentro, dominios consistentes, lógica separada de UI. **Application NO importa React ni frameworks ni Infrastructure. Infrastructure conecta dominio con UI usando Zustand.** Clean Architecture no es opcional, es obligatoria."
 
 ---
 
@@ -805,7 +971,7 @@ Para Application:
   - Servicio → [entity].service.ts
   - Repositorio Interface → [entity].repository.interface.ts
   - Repositorio Implementación → [entity].repository.[tipo].ts
-  - Provider React → [entity].provider.ts
+  - Provider/Factory (sin React) → [entity].provider.ts
   - Excepciones → [entity].exceptions.ts
   - Mock Data → [entity].mock.data.ts
   - Barrel Export → index.ts
@@ -935,6 +1101,150 @@ Si estás pensando alguna de estas cosas, **DETENTE**:
 
 ---
 
+## Ejemplos Prácticos: Provider Pattern Correcto
+
+### ✅ CORRECTO: Provider en Application Layer (Sin React)
+
+```typescript
+// application/domain/user/user.provider.ts
+import { UserService } from './user.service';
+import { UserRepositoryMemory } from './user.repository.memory';
+
+/**
+ * Factory/Provider genérico (sin React)
+ * Solo instancia y configura dependencias
+ */
+export class UserProvider {
+  private static instance: UserService | null = null;
+
+  static getInstance(): UserService {
+    if (!this.instance) {
+      const repository = new UserRepositoryMemory();
+      this.instance = new UserService(repository);
+    }
+    return this.instance;
+  }
+
+  static createNew(): UserService {
+    const repository = new UserRepositoryMemory();
+    return new UserService(repository);
+  }
+}
+
+// O alternativamente, función factory simple:
+export const createUserService = (): UserService => {
+  const repository = new UserRepositoryMemory();
+  return new UserService(repository);
+};
+```
+
+**Características**:
+
+- ✅ Solo TypeScript puro
+- ✅ No importa React
+- ✅ Patrón Factory/Singleton
+- ✅ Inyección de dependencias
+
+### ✅ CORRECTO: Zustand Store en Infrastructure Layer
+
+```typescript
+// infrastructure/store/user-store.ts
+import { create } from 'zustand';
+import { UserService } from '@/application/domain/user';
+import { UserProvider } from '@/application/domain/user';
+import type { User } from '@/application/domain/user';
+
+interface UserState {
+  // Estado
+  currentUser: User | null;
+  isLoading: boolean;
+
+  // Acciones
+  loadUser: (id: string) => Promise<void>;
+  updateUser: (user: User) => Promise<void>;
+  clearUser: () => void;
+}
+
+/**
+ * Zustand Store (solo en Infrastructure)
+ * Conecta el dominio con la UI
+ */
+export const useUserStore = create<UserState>((set) => {
+  // Obtiene el servicio del dominio (Application)
+  const userService = UserProvider.getInstance();
+
+  return {
+    // Estado inicial
+    currentUser: null,
+    isLoading: false,
+
+    // Acciones que usan el servicio del dominio
+    loadUser: async (id: string) => {
+      set({ isLoading: true });
+      try {
+        const user = await userService.getById(id);
+        set({ currentUser: user, isLoading: false });
+      } catch (error) {
+        set({ isLoading: false });
+        throw error;
+      }
+    },
+
+    updateUser: async (user: User) => {
+      set({ isLoading: true });
+      try {
+        await userService.update(user);
+        set({ currentUser: user, isLoading: false });
+      } catch (error) {
+        set({ isLoading: false });
+        throw error;
+      }
+    },
+
+    clearUser: () => set({ currentUser: null }),
+  };
+});
+```
+
+**Características**:
+
+- ✅ Usa Zustand (permitido en Infrastructure)
+- ✅ Importa el Provider/Service del dominio (Application → Infrastructure ✓)
+- ✅ No contiene lógica de negocio (delega al servicio)
+- ✅ Solo conecta dominio con UI
+- ✅ No usa React Context API
+
+### ❌ INCORRECTO: Importar de Infrastructure en Application
+
+```typescript
+// ❌ application/domain/user/user.provider.ts
+import React, { createContext } from 'react'; // ❌ NO importar React
+import { useUserStore } from '@/infrastructure/store/user-store'; // ❌ NO importar de Infrastructure
+
+// ❌ Esto está MAL - Context API en Application Layer
+export const UserContext = createContext<UserService | null>(null);
+
+// ❌ Esto está MAL - Usar store de Infrastructure en Application
+export class UserProvider {
+  static getInstance(): UserService {
+    const store = useUserStore(); // ❌ NO usar hooks de Infrastructure
+    return store.userService;
+  }
+}
+```
+
+**Por qué está mal**:
+
+- ❌ Importa React en Application Layer
+- ❌ Importa de `infrastructure/` en `application/` (violación crítica)
+- ❌ Mezcla lógica de dominio con UI
+- ❌ Acopla el dominio al framework
+- ❌ Usa hooks de React en lógica de dominio
+
+**Regla de oro**: `application/` NUNCA importa de `infrastructure/`. Solo `infrastructure/` puede importar de `application/`.
+
+---
+
 ## Resumen Ejecutivo: 10 Reglas de Oro
 
 Para consulta rápida antes de crear o modificar código:
@@ -1018,6 +1328,11 @@ Antes de considerar el código terminado, responde SÍ a TODO:
 - [ ] ¿Cada dominio tiene sus 6 archivos?
 - [ ] ¿Los index.ts solo usan `export *`?
 - [ ] ¿NO hay imports de infrastructure en application?
+- [ ] **¿NO hay imports de React en application/?**
+- [ ] **¿NO hay imports de frameworks UI en application/?**
+- [ ] **¿[entity].provider.ts en application/ es TypeScript puro (sin React)?**
+- [ ] **¿Se está usando Zustand en lugar de React Context en infrastructure/store/?**
+- [ ] **¿Los stores de Zustand importan de Application (no al revés)?**
 - [ ] ¿Los hooks usan servicios, no repositorios?
 - [ ] ¿Todos los módulos tienen la misma estructura?
 - [ ] ¿NO violé ninguna de las 10 reglas de oro?

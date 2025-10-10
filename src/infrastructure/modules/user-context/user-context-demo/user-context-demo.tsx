@@ -1,154 +1,57 @@
 "use client"
 
-import type { CitySearchResult } from "@/application/domain/user-context"
-import type { ComboboxOption } from "@/infrastructure/components/ui"
-
 import { Combobox } from "@/infrastructure/components/ui"
-import { useDebounce } from "@/infrastructure/hooks"
-import { useUserContextStore } from "@/infrastructure/store"
 import Image from "next/image"
-import { useEffect, useMemo, useState } from "react"
+import { useUserContextDemo } from "./user-context-demo.hook"
+import "./user-context-demo.scss"
 
 export const UserContextDemo = () => {
-  const city = useUserContextStore((state) => state.city)
-  const timezone = useUserContextStore((state) => state.timezone)
-  const weather = useUserContextStore((state) => state.weather)
-  const language = useUserContextStore((state) => state.language)
-  const location = useUserContextStore((state) => state.location)
-  const isInitialized = useUserContextStore((state) => state.isInitialized)
-  const isLoading = useUserContextStore((state) => state.isLoading)
-  const error = useUserContextStore((state) => state.error)
-  const service = useUserContextStore((state) => state.service)
-  const setCity = useUserContextStore((state) => state.setCity)
-  const searchCities = useUserContextStore((state) => state.searchCities)
-  const setLanguage = useUserContextStore((state) => state.setLanguage)
-  const resetLanguageToAuto = useUserContextStore((state) => state.resetLanguageToAuto)
-
-  const isPartiallyInitialized = isInitialized && !service
-
-  const [cityQuery, setCityQuery] = useState("")
-  const [cityResults, setCityResults] = useState<CitySearchResult[]>([])
-  const [searchLoading, setSearchLoading] = useState(false)
-  const [searchError, setSearchError] = useState<string | null>(null)
-  const [currentTime, setCurrentTime] = useState(new Date())
-  const [is24Hour, setIs24Hour] = useState(true)
-
-  // Debounce para evitar llamadas excesivas a la API
-  const debouncedQuery = useDebounce(cityQuery, 300)
-
-  // Actualizar la hora cada segundo
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(new Date())
-    }, 1000)
-
-    return () => clearInterval(interval)
-  }, [])
-
-  // Formatear hora según el timezone
-  const formatLocalTime = useMemo(() => {
-    if (!timezone?.timezone) return "N/A"
-
-    try {
-      return new Intl.DateTimeFormat(language.fullCode || "es-ES", {
-        timeZone: timezone.timezone,
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: !is24Hour,
-      }).format(currentTime)
-    } catch {
-      return "N/A"
-    }
-  }, [timezone?.timezone, language.fullCode, currentTime, is24Hour])
-
-  // Formatear fecha según el timezone
-  const formatLocalDate = useMemo(() => {
-    if (!timezone?.timezone) return "N/A"
-
-    try {
-      return new Intl.DateTimeFormat(language.fullCode || "es-ES", {
-        timeZone: timezone.timezone,
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }).format(currentTime)
-    } catch {
-      return "N/A"
-    }
-  }, [timezone?.timezone, language.fullCode, currentTime])
-
-  // Convertir resultados a formato de Combobox
-  const comboboxOptions: ComboboxOption[] = useMemo(() => {
-    const options = cityResults.map((city) => ({
-      value: city.placeId,
-      label: city.formatted,
-      secondaryLabel: city.city && city.state ? `${city.city}, ${city.state}` : city.city,
-      data: city,
-    }))
-    return options
-  }, [cityResults])
-
-  // Efecto para buscar ciudades cuando el query con debounce cambie
-  useEffect(() => {
-    if (isPartiallyInitialized) {
-      return
-    }
-
-    const performSearch = async () => {
-      if (!debouncedQuery.trim()) {
-        setCityResults([])
-        setSearchError(null)
-        return
-      }
-
-      try {
-        setSearchLoading(true)
-        setSearchError(null)
-        const results = await searchCities(debouncedQuery)
-        setCityResults(results)
-      } catch (err) {
-        setSearchError(err instanceof Error ? err.message : "Error al buscar ciudades")
-        setCityResults([])
-      } finally {
-        setSearchLoading(false)
-      }
-    }
-
-    performSearch()
-  }, [debouncedQuery, searchCities, isPartiallyInitialized])
-
-  const handleSelectCity = async (option: ComboboxOption) => {
-    const cityData = option.data as CitySearchResult
-    await setCity(cityData)
-    setCityResults([])
-    setCityQuery("")
-    setSearchError(null)
-  }
+  const {
+    city,
+    timezone,
+    weather,
+    language,
+    location,
+    isInitialized,
+    isLoading,
+    error,
+    isPartiallyInitialized,
+    cityQuery,
+    setCityQuery,
+    searchLoading,
+    searchError,
+    comboboxOptions,
+    handleSelectCity,
+    formatLocalTime,
+    formatLocalDate,
+    is24Hour,
+    toggleTimeFormat,
+    setLanguage,
+    resetLanguageToAuto,
+  } = useUserContextDemo()
 
   if (!isInitialized && isLoading) {
     return (
       <div className="user-context-demo">
-        <div className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
-          <p className="text-center text-muted-foreground">Inicializando contexto de usuario...</p>
+        <div className="user-context-demo__card">
+          <p className="user-context-demo__loading">Inicializando contexto de usuario...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="user-context-demo space-y-6">
+    <div className="user-context-demo">
       {/* Estado actual */}
-      <div className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
-        <h3 className="mb-4 text-lg font-semibold">Estado Actual</h3>
+      <div className="user-context-demo__card">
+        <h3 className="user-context-demo__title">Estado Actual</h3>
 
         {error && !isPartiallyInitialized && (
-          <div className="bg-destructive/10 mb-4 rounded-md p-3 text-sm text-destructive">
-            <p className="font-semibold">Error:</p>
+          <div className="user-context-demo__error">
+            <p className="user-context-demo__error-title">Error:</p>
             <p>{error.message}</p>
             {error.message.includes("geolocalización") && (
-              <p className="mt-2 text-xs">
+              <p className="user-context-demo__error-message">
                 💡 Tip: Asegúrate de permitir el acceso a la ubicación en tu navegador
               </p>
             )}
@@ -156,63 +59,69 @@ export const UserContextDemo = () => {
         )}
 
         {isPartiallyInitialized && (
-          <div className="mb-4 rounded-md border border-blue-500/50 bg-blue-500/10 p-3 text-sm text-blue-700 dark:text-blue-400">
-            <p className="font-semibold">ℹ️ Modo limitado</p>
-            <p className="mt-1 text-xs">
+          <div className="user-context-demo__info-box user-context-demo__info-box--limited">
+            <p className="user-context-demo__info-title">ℹ️ Modo limitado</p>
+            <p className="user-context-demo__info-text">
               Funcionando con timezone y idioma del navegador. Configura la API key para habilitar
               todas las funcionalidades.
             </p>
           </div>
         )}
 
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Ciudad:</span>
-            <span className="font-medium">{city?.city || "N/A"}</span>
+        <div className="user-context-demo__details">
+          <div className="user-context-demo__detail-row">
+            <span className="user-context-demo__detail-label">Ciudad:</span>
+            <span className="user-context-demo__detail-value">{city?.city || "N/A"}</span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">País:</span>
-            <span className="font-medium">{city?.country || "N/A"}</span>
+          <div className="user-context-demo__detail-row">
+            <span className="user-context-demo__detail-label">País:</span>
+            <span className="user-context-demo__detail-value">{city?.country || "N/A"}</span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Timezone:</span>
-            <span className="font-medium">{timezone?.timezone || "N/A"}</span>
+          <div className="user-context-demo__detail-row">
+            <span className="user-context-demo__detail-label">Timezone:</span>
+            <span className="user-context-demo__detail-value">{timezone?.timezone || "N/A"}</span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Offset:</span>
-            <span className="font-medium">{timezone?.offsetString || "N/A"}</span>
+          <div className="user-context-demo__detail-row">
+            <span className="user-context-demo__detail-label">Offset:</span>
+            <span className="user-context-demo__detail-value">
+              {timezone?.offsetString || "N/A"}
+            </span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Fecha Local:</span>
-            <span className="font-medium capitalize">{formatLocalDate}</span>
+          <div className="user-context-demo__detail-row">
+            <span className="user-context-demo__detail-label">Fecha Local:</span>
+            <span className="user-context-demo__detail-value user-context-demo__detail-value--capitalize">
+              {formatLocalDate}
+            </span>
           </div>
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Hora Local:</span>
+          <div className="user-context-demo__detail-row">
+            <span className="user-context-demo__detail-label">Hora Local:</span>
             <div className="flex items-center gap-2">
-              <span className="font-mono font-medium">{formatLocalTime}</span>
+              <span className="user-context-demo__detail-value user-context-demo__detail-value--mono">
+                {formatLocalTime}
+              </span>
               <button
-                onClick={() => setIs24Hour(!is24Hour)}
-                className="hover:bg-muted/80 rounded-md bg-muted px-2 py-0.5 text-xs"
+                onClick={toggleTimeFormat}
+                className="user-context-demo__time-toggle"
                 title={is24Hour ? "Cambiar a 12 horas" : "Cambiar a 24 horas"}
               >
                 {is24Hour ? "24h" : "12h"}
               </button>
             </div>
           </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">DST:</span>
-            <span className="font-medium">{timezone?.isDST ? "Sí" : "No"}</span>
+          <div className="user-context-demo__detail-row">
+            <span className="user-context-demo__detail-label">DST:</span>
+            <span className="user-context-demo__detail-value">{timezone?.isDST ? "Sí" : "No"}</span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Idioma:</span>
-            <span className="font-medium">
+          <div className="user-context-demo__detail-row">
+            <span className="user-context-demo__detail-label">Idioma:</span>
+            <span className="user-context-demo__detail-value">
               {language.language.toUpperCase()}
               {language.isManual && " (Manual)"}
             </span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Detección:</span>
-            <span className="font-medium">
+          <div className="user-context-demo__detail-row">
+            <span className="user-context-demo__detail-label">Detección:</span>
+            <span className="user-context-demo__detail-value">
               {location?.detectionMethod === "auto" ? "Automática" : "Manual"}
             </span>
           </div>
@@ -220,39 +129,43 @@ export const UserContextDemo = () => {
       </div>
 
       {/* Clima Actual */}
-      <div className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
-        <h3 className="mb-4 text-lg font-semibold">Clima Actual</h3>
+      <div className="user-context-demo__card">
+        <h3 className="user-context-demo__title">Clima Actual</h3>
 
         {weather ? (
           <div className="space-y-4">
             {/* Condición principal con ícono */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
+            <div className="user-context-demo__weather-main">
+              <div className="user-context-demo__weather-icon-group">
                 {weather.weather[0] && (
                   <Image
                     src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
                     alt={weather.weather[0].description}
                     width={64}
                     height={64}
-                    className="h-16 w-16"
+                    className="user-context-demo__weather-icon"
                   />
                 )}
                 <div>
-                  <p className="text-3xl font-bold">{Math.round(weather.main.temp)}°C</p>
-                  <p className="capitalize text-muted-foreground">
+                  <p className="user-context-demo__weather-temp">
+                    {Math.round(weather.main.temp)}°C
+                  </p>
+                  <p className="user-context-demo__weather-description">
                     {weather.weather[0]?.description || "N/A"}
                   </p>
                 </div>
               </div>
-              <div className="text-right">
-                <p className="text-sm text-muted-foreground">Sensación térmica</p>
-                <p className="text-lg font-semibold">{Math.round(weather.main.feelsLike)}°C</p>
+              <div className="user-context-demo__weather-feels-like">
+                <p className="user-context-demo__weather-label">Sensación térmica</p>
+                <p className="user-context-demo__weather-value">
+                  {Math.round(weather.main.feelsLike)}°C
+                </p>
               </div>
             </div>
 
             {/* Detalles del clima */}
-            <div className="border-t pt-4">
-              <div className="grid grid-cols-2 gap-3 text-sm">
+            <div className="user-context-demo__weather-section">
+              <div className="user-context-demo__weather-grid">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Mín/Máx:</span>
                   <span className="font-medium">
@@ -291,8 +204,8 @@ export const UserContextDemo = () => {
             </div>
 
             {/* Amanecer y atardecer */}
-            <div className="border-t pt-4">
-              <div className="grid grid-cols-2 gap-3 text-sm">
+            <div className="user-context-demo__weather-section">
+              <div className="user-context-demo__weather-grid">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">🌅 Amanecer:</span>
                   <span className="font-medium">
@@ -317,9 +230,9 @@ export const UserContextDemo = () => {
             </div>
           </div>
         ) : (
-          <div className="rounded-md border border-blue-500/50 bg-blue-500/10 p-4 text-center text-sm text-blue-700 dark:text-blue-400">
-            <p className="font-semibold">ℹ️ Información del clima no disponible</p>
-            <p className="mt-1 text-xs">
+          <div className="user-context-demo__info-box user-context-demo__info-box--info">
+            <p className="user-context-demo__info-title">ℹ️ Información del clima no disponible</p>
+            <p className="user-context-demo__info-text">
               {isPartiallyInitialized
                 ? "Configura las API keys para ver el clima"
                 : "El clima se cargará automáticamente cuando se detecte tu ubicación"}
@@ -329,18 +242,16 @@ export const UserContextDemo = () => {
       </div>
 
       {/* Cambiar ciudad */}
-      <div className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
-        <h3 className="mb-4 text-lg font-semibold">Cambiar Ciudad</h3>
+      <div className="user-context-demo__card">
+        <h3 className="user-context-demo__title">Cambiar Ciudad</h3>
 
         {isPartiallyInitialized ? (
-          <div className="rounded-md border border-yellow-500/50 bg-yellow-500/10 p-4 text-sm text-yellow-700 dark:text-yellow-400">
-            <p className="font-semibold">⚠️ Búsqueda de ciudades no disponible</p>
-            <p className="mt-1 text-xs">
+          <div className="user-context-demo__info-box user-context-demo__info-box--warning">
+            <p className="user-context-demo__info-title">⚠️ Búsqueda de ciudades no disponible</p>
+            <p className="user-context-demo__info-text">
               Configura{" "}
-              <code className="rounded bg-yellow-900/20 px-1 py-0.5">
-                NEXT_PUBLIC_GEOAPIFY_API_KEY
-              </code>{" "}
-              en tu archivo .env.local para habilitar esta funcionalidad.
+              <code className="user-context-demo__info-code">NEXT_PUBLIC_GEOAPIFY_API_KEY</code> en
+              tu archivo .env.local para habilitar esta funcionalidad.
             </p>
           </div>
         ) : (
@@ -361,28 +272,28 @@ export const UserContextDemo = () => {
       </div>
 
       {/* Cambiar idioma */}
-      <div className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
-        <h3 className="mb-4 text-lg font-semibold">Cambiar Idioma</h3>
+      <div className="user-context-demo__card">
+        <h3 className="user-context-demo__title">Cambiar Idioma</h3>
 
-        <div className="flex gap-2">
+        <div className="user-context-demo__language-buttons">
           <button
             onClick={() => setLanguage("es")}
             disabled={language.language === "es" && language.isManual}
-            className="flex-1 rounded-md border bg-background px-4 py-2 text-sm hover:bg-accent disabled:opacity-50"
+            className="user-context-demo__language-button"
           >
             Español
           </button>
           <button
             onClick={() => setLanguage("en")}
             disabled={language.language === "en" && language.isManual}
-            className="flex-1 rounded-md border bg-background px-4 py-2 text-sm hover:bg-accent disabled:opacity-50"
+            className="user-context-demo__language-button"
           >
             English
           </button>
           <button
             onClick={resetLanguageToAuto}
             disabled={!language.isManual}
-            className="flex-1 rounded-md border bg-background px-4 py-2 text-sm hover:bg-accent disabled:opacity-50"
+            className="user-context-demo__language-button"
           >
             Automático
           </button>

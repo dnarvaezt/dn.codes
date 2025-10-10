@@ -9,6 +9,7 @@ import {
   SupportedLanguage,
   TimezoneRepository,
   UserContextInitOptions,
+  UserContextProvider,
   UserContextService,
   UserContextState,
   WeatherRepository,
@@ -63,7 +64,8 @@ export const useUserContextStore = create<UserContextStore>()(
         languageRepository,
         weatherRepository
       ) => {
-        const service = new UserContextService(
+        // Usa el Provider del dominio para inicializar el servicio (patrón Singleton)
+        const service = UserContextProvider.initializeService(
           geolocationRepository,
           geocodingRepository,
           citySearchRepository,
