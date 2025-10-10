@@ -1,7 +1,7 @@
-import { Footer, Navbar } from "@/components/layout"
-import { Providers } from "@/components/providers"
-import { StructuredData } from "@/components/seo"
-import "@/styles/globals.scss"
+import { Footer, Navbar } from "@/presentation/components/layout"
+import { Providers } from "@/presentation/components/providers"
+import { StructuredData } from "@/presentation/components/seo"
+import "@/presentation/styles/globals.scss"
 import { Geist, Geist_Mono } from "next/font/google"
 
 import type { Metadata } from "next"

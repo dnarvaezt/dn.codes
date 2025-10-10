@@ -1,11 +1,21 @@
 "use client"
 
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui"
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/presentation/components/ui"
 import { Github as GitHubIcon, Linkedin as LinkedInIcon, Mail } from "lucide-react"
 import dynamic from "next/dynamic"
 
 const UserContextDemo = dynamic(
-  () => import("@/components/user-context-demo").then((mod) => ({ default: mod.UserContextDemo })),
+  () =>
+    import("@/presentation/components/user-context-demo").then((mod) => ({
+      default: mod.UserContextDemo,
+    })),
   {
     ssr: false,
     loading: () => (
