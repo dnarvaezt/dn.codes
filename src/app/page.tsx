@@ -7,13 +7,13 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/presentation/components/ui"
+} from "@/infrastructure/components/ui"
 import { Github as GitHubIcon, Linkedin as LinkedInIcon, Mail } from "lucide-react"
 import dynamic from "next/dynamic"
 
 const UserContextDemo = dynamic(
   () =>
-    import("@/presentation/components/user-context-demo").then((mod) => ({
+    import("@/infrastructure/modules/user-context").then((mod) => ({
       default: mod.UserContextDemo,
     })),
   {
