@@ -2,7 +2,6 @@ import { cn } from "@/presentation/utils"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
 import * as React from "react"
-import "./dialog.scss"
 
 const Dialog = DialogPrimitive.Root
 

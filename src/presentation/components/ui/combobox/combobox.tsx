@@ -12,7 +12,6 @@ import {
   CommandList,
 } from "../command"
 import { Popover, PopoverContent, PopoverTrigger } from "../popover"
-import "./combobox.scss"
 
 import type { ComboboxOption, ComboboxProps } from "./combobox.types"
 
@@ -44,7 +43,7 @@ export const Combobox = <T = string,>({
   }
 
   return (
-    <div className={`combobox ${className}`}>
+    <div className={className}>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -53,13 +52,13 @@ export const Combobox = <T = string,>({
             aria-expanded={open}
             aria-label={ariaLabel}
             disabled={disabled || loading}
-            className={`combobox__trigger ${error ? "combobox__trigger--error" : ""}`}
+            className="w-full justify-between"
           >
-            <span className="combobox__value">{displayValue}</span>
-            <ChevronsUpDown className="combobox__icon" />
+            <span className="truncate text-left">{displayValue}</span>
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="combobox__content" align="start">
+        <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
           <Command shouldFilter={false}>
             <CommandInput
               placeholder={placeholder}
@@ -69,13 +68,17 @@ export const Combobox = <T = string,>({
             />
             <CommandList>
               {loading && (
-                <div className="combobox__loading" role="status" aria-live="polite">
+                <div
+                  className="flex items-center justify-center p-4 text-sm text-muted-foreground"
+                  role="status"
+                  aria-live="polite"
+                >
                   {loadingMessage}
                 </div>
               )}
 
               {error && !loading && (
-                <div className="combobox__error" role="alert" aria-live="assertive">
+                <div className="p-4 text-sm text-destructive" role="alert" aria-live="assertive">
                   {error}
                 </div>
               )}
@@ -91,19 +94,21 @@ export const Combobox = <T = string,>({
                       key={String(option.value)}
                       value={String(option.value)}
                       onSelect={() => handleSelect(option)}
-                      className="combobox__item"
+                      className="flex items-start gap-2"
                     >
                       <Check
-                        className={`combobox__check ${
+                        className={`h-4 w-4 ${
                           String(selectedValue) === String(option.value)
-                            ? "combobox__check--visible"
-                            : ""
+                            ? "opacity-100"
+                            : "opacity-0"
                         }`}
                       />
-                      <div className="combobox__item-content">
-                        <div className="combobox__item-main">{option.label}</div>
+                      <div className="flex flex-col gap-0.5">
+                        <div className="text-sm font-medium">{option.label}</div>
                         {option.secondaryLabel && (
-                          <div className="combobox__item-secondary">{option.secondaryLabel}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {option.secondaryLabel}
+                          </div>
                         )}
                       </div>
                     </CommandItem>

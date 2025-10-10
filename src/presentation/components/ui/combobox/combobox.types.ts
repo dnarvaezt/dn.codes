@@ -3,7 +3,7 @@ export interface ComboboxOption<T = string> {
   label: string
   secondaryLabel?: string
   disabled?: boolean
-  data?: any
+  data?: unknown
 }
 
 export interface ComboboxProps<T = string> {
