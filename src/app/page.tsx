@@ -1,4 +1,4 @@
-import { HomePage } from "@/infrastructure/templates"
+import { HomePage } from "@/infrastructure/modules/home-page"
 
 const Home = () => {
   return <HomePage />

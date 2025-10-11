@@ -6,7 +6,7 @@ import { createGeolocationRepository, GeolocationProvider } from "@/application/
 import { createLanguageRepository, LanguageProvider } from "@/application/domain/language"
 import { createTimezoneRepository, TimezoneProvider } from "@/application/domain/timezone"
 import { createWeatherRepository, WeatherProvider } from "@/application/domain/weather"
-import { useUserContextStore } from "@/infrastructure/store"
+import { useUserContextStore } from "@/infrastructure/modules/user-context/user-context-store"
 import { ThemeProvider } from "next-themes"
 import { useEffect } from "react"
 

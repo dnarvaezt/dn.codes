@@ -1,8 +1,8 @@
 import type { CitySearchResult } from "@/application/domain/city-search"
 import type { ComboboxOption } from "@/infrastructure/components/ui"
 
-import { useDebounce } from "@/infrastructure/hooks"
-import { useUserContextStore } from "@/infrastructure/store"
+import { useUserContextStore } from "@/infrastructure/modules/user-context/user-context-store"
+import { useDebounce } from "@/infrastructure/utils"
 import { useEffect, useMemo, useState } from "react"
 
 export const useUserContextDemo = () => {

@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/infrastructure/components/ui"
-import { projects } from "@/infrastructure/config"
+import { projects } from "@/infrastructure/modules/home-page/site-data"
 
 export const ProjectsSection = () => {
   return (

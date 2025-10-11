@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/infrastructure/components/ui"
-import { skills } from "@/infrastructure/config"
+import { skills } from "@/infrastructure/modules/home-page/site-data"
 
 export const SkillsSection = () => {
   return (

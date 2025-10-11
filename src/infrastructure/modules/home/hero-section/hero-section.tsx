@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/infrastructure/components/ui"
-import { socialLinks } from "@/infrastructure/config"
+import { socialLinks } from "@/infrastructure/modules/home-page/site-data"
 import { Github, Linkedin, Mail } from "lucide-react"
 
 const openExternalLink = (url: string) => window.open(url, "_blank", "noopener,noreferrer")

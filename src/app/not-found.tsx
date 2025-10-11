@@ -1,4 +1,4 @@
-import { notFoundConfig } from "@/infrastructure/config"
+import { notFoundConfig } from "@/app/not-found.config"
 import Link from "next/link"
 
 const NotFound = () => {

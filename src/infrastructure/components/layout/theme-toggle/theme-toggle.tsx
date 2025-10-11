@@ -1,7 +1,7 @@
 "use client"
 
+import { useThemeStore } from "@/infrastructure/components/layout/theme-toggle/theme-store"
 import { Button } from "@/infrastructure/components/ui"
-import { useThemeStore } from "@/infrastructure/store"
 import { Moon, Sun } from "lucide-react"
 import { useEffect } from "react"
 

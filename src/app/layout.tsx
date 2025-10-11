@@ -1,6 +1,7 @@
-import { layoutConfig, siteMetadata } from "@/infrastructure/config"
-import "@/infrastructure/styles/globals.scss"
-import { DefaultLayout } from "@/infrastructure/templates"
+import { layoutConfig } from "@/app/layout.config"
+import { siteMetadata } from "@/app/metadata"
+import "@/infrastructure/assets/globals.scss"
+import { DefaultLayout } from "@/infrastructure/components/layout"
 
 export const metadata = siteMetadata
 

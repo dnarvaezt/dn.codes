@@ -1,4 +1,4 @@
-import { useUserContextStore } from "@/infrastructure/store"
+import { useUserContextStore } from "@/infrastructure/modules/user-context/user-context-store"
 
 export const useUserInfo = () => {
   const city = useUserContextStore((state) => state.city)
