@@ -2,22 +2,32 @@ import type { CitySearchResult } from "@/application/domain/city-search"
 import type { ComboboxOption } from "@/infrastructure/components/ui"
 
 import { useUserContextStore } from "@/infrastructure/modules/user-context/user-context-store"
-import { useDebounce } from "@/infrastructure/utils"
 import { useEffect, useMemo, useState } from "react"
 
+const useDebounce = <T>(value: T, delay: number = 300): T => {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value)
+  useEffect(() => {
+    const handler = setTimeout(() => setDebouncedValue(value), delay)
+    return () => clearTimeout(handler)
+  }, [value, delay])
+  return debouncedValue
+}
+
 export const useUserContextDemo = () => {
-  const city = useUserContextStore((state) => state.city)
-  const timezone = useUserContextStore((state) => state.timezone)
-  const weather = useUserContextStore((state) => state.weather)
-  const language = useUserContextStore((state) => state.language)
-  const isInitialized = useUserContextStore((state) => state.isInitialized)
-  const isLoading = useUserContextStore((state) => state.isLoading)
-  const error = useUserContextStore((state) => state.error)
-  const citySearchService = useUserContextStore((state) => state.citySearchService)
-  const setCity = useUserContextStore((state) => state.setCity)
-  const searchCities = useUserContextStore((state) => state.searchCities)
-  const setLanguage = useUserContextStore((state) => state.setLanguage)
-  const resetLanguageToAuto = useUserContextStore((state) => state.resetLanguageToAuto)
+  const {
+    city,
+    timezone,
+    weather,
+    language,
+    isInitialized,
+    isLoading,
+    error,
+    citySearchService,
+    setCity,
+    searchCities,
+    setLanguage,
+    resetLanguageToAuto,
+  } = useUserContextStore()
 
   const isPartiallyInitialized = isInitialized && !citySearchService
 
@@ -40,9 +50,8 @@ export const useUserContextDemo = () => {
 
   const formatLocalTime = useMemo(() => {
     if (!timezone?.timezone) return "N/A"
-
     try {
-      return new Intl.DateTimeFormat(language.fullCode || "es-ES", {
+      return new Intl.DateTimeFormat(language.fullCode, {
         timeZone: timezone.timezone,
         hour: "2-digit",
         minute: "2-digit",
@@ -56,9 +65,8 @@ export const useUserContextDemo = () => {
 
   const formatLocalDate = useMemo(() => {
     if (!timezone?.timezone) return "N/A"
-
     try {
-      return new Intl.DateTimeFormat(language.fullCode || "es-ES", {
+      return new Intl.DateTimeFormat(language.fullCode, {
         timeZone: timezone.timezone,
         weekday: "long",
         year: "numeric",
@@ -70,15 +78,16 @@ export const useUserContextDemo = () => {
     }
   }, [timezone?.timezone, language.fullCode, currentTime])
 
-  const comboboxOptions: ComboboxOption[] = useMemo(() => {
-    const options = cityResults.map((city) => ({
-      value: city.placeId,
-      label: city.formatted,
-      secondaryLabel: city.city && city.state ? `${city.city}, ${city.state}` : city.city,
-      data: city,
-    }))
-    return options
-  }, [cityResults])
+  const comboboxOptions: ComboboxOption[] = useMemo(
+    () =>
+      cityResults.map((city) => ({
+        value: city.placeId,
+        label: city.formatted,
+        secondaryLabel: city.city && city.state ? `${city.city}, ${city.state}` : city.city,
+        data: city,
+      })),
+    [cityResults]
+  )
 
   useEffect(() => {
     if (isPartiallyInitialized) {
@@ -109,16 +118,13 @@ export const useUserContextDemo = () => {
   }, [debouncedQuery, searchCities, isPartiallyInitialized])
 
   const handleSelectCity = async (option: ComboboxOption) => {
-    const cityData = option.data as CitySearchResult
-    await setCity(cityData)
+    await setCity(option.data as CitySearchResult)
     setCityResults([])
     setCityQuery("")
     setSearchError(null)
   }
 
-  const toggleTimeFormat = () => {
-    setIs24Hour(!is24Hour)
-  }
+  const toggleTimeFormat = () => setIs24Hour(!is24Hour)
 
   return {
     // Estado del contexto de usuario

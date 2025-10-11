@@ -1,8 +1,8 @@
 "use client"
 
-import { useThemeStore } from "@/infrastructure/components/layout/theme-toggle/theme-store"
 import { Button } from "@/infrastructure/components/ui"
 import { Moon, Sun } from "lucide-react"
+import { useThemeStore } from "./theme-store"
 
 export const ThemeToggle = () => {
   const toggleTheme = useThemeStore((state) => state.toggleTheme)

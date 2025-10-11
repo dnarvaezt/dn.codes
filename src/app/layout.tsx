@@ -1,26 +1,23 @@
-import { layoutConfig } from "@/app/layout.config"
 import { siteMetadata } from "@/app/metadata"
 import "@/infrastructure/assets/globals.scss"
 import { DefaultLayout } from "@/infrastructure/components/layout"
+import { Geist, Geist_Mono } from "next/font/google"
+
+const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"], display: "swap" })
+const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"], display: "swap" })
 
 export const metadata = siteMetadata
 
 const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
-  const { fonts, htmlLang, preconnect, manifest, icons } = layoutConfig
-
-  const fontVariables = [fonts.sans.variable, fonts.mono.variable].filter(Boolean).join(" ")
-
   return (
-    <html lang={htmlLang} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
-        {preconnect.map((url) => (
-          <link key={url} rel="preconnect" href={url} crossOrigin="" />
-        ))}
-        {manifest && <link rel="manifest" href={manifest} />}
-        {icons.icon && <link rel="icon" href={icons.icon.href} type={icons.icon.type} />}
-        {icons.appleTouchIcon && <link rel="apple-touch-icon" href={icons.appleTouchIcon.href} />}
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link rel="manifest" href="/manifest.webmanifest" />
+        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/icon.svg" />
       </head>
-      <body className={`${fontVariables} antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <DefaultLayout>{children}</DefaultLayout>
       </body>
     </html>

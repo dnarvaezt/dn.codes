@@ -1,9 +1,8 @@
-import { classNames } from "@/infrastructure/utils"
 import * as PopoverPrimitive from "@radix-ui/react-popover"
 import * as React from "react"
+import { classNames } from "./class-names"
 
 const Popover = PopoverPrimitive.Root
-
 const PopoverTrigger = PopoverPrimitive.Trigger
 
 const PopoverContent = React.forwardRef<

@@ -2,7 +2,7 @@
 
 import { Check, ChevronsUpDown } from "lucide-react"
 import { useState } from "react"
-import { Button } from "../button"
+import { Button } from "./button"
 import {
   Command,
   CommandEmpty,
@@ -10,8 +10,8 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "../command"
-import { Popover, PopoverContent, PopoverTrigger } from "../popover"
+} from "./command"
+import { Popover, PopoverContent, PopoverTrigger } from "./popover"
 
 import type { ComboboxOption, ComboboxProps } from "./combobox.types"
 

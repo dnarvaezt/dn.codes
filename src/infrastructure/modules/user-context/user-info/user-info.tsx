@@ -1,10 +1,14 @@
 "use client"
 
-import { useUserInfo } from "./user-info.hook"
+import { useUserContextStore } from "@/infrastructure/modules/user-context/user-context-store"
 import "./user-info.scss"
 
 export const UserInfo = () => {
-  const { city, timezone, language, isInitialized, isLoading } = useUserInfo()
+  const city = useUserContextStore((state) => state.city)
+  const timezone = useUserContextStore((state) => state.timezone)
+  const language = useUserContextStore((state) => state.language)
+  const isInitialized = useUserContextStore((state) => state.isInitialized)
+  const isLoading = useUserContextStore((state) => state.isLoading)
 
   if (isLoading) {
     return (

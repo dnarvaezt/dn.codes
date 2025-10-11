@@ -1,16 +1,9 @@
 "use client"
 
-import dynamic from "next/dynamic"
+import { UserInfo } from "@/infrastructure/modules/user-context/user-info/user-info"
 import Link from "next/link"
-import { ThemeToggle } from "../theme-toggle"
 import "./navbar.scss"
-
-const UserInfo = dynamic(
-  () => import("@/infrastructure/modules/user-context").then((mod) => ({ default: mod.UserInfo })),
-  {
-    ssr: false,
-  }
-)
+import { ThemeToggle } from "./theme-toggle"
 
 export const Navbar = () => {
   return (
