@@ -1,18 +1,14 @@
 "use client"
 
-import { CitySearchProvider, createCitySearchRepository } from "@/application/domain/city-search"
-import { createGeocodingRepository, GeocodingProvider } from "@/application/domain/geocoding"
-import { createGeolocationRepository, GeolocationProvider } from "@/application/domain/geolocation"
-import { createLanguageRepository, LanguageProvider } from "@/application/domain/language"
-import { createTimezoneRepository, TimezoneProvider } from "@/application/domain/timezone"
-import { createWeatherRepository, WeatherProvider } from "@/application/domain/weather"
+import { CitySearchService, createCitySearchRepository } from "@/application/domain/city-search"
+import { createGeocodingRepository, GeocodingService } from "@/application/domain/geocoding"
+import { createGeolocationRepository, GeolocationService } from "@/application/domain/geolocation"
+import { createLanguageRepository, LanguageService } from "@/application/domain/language"
+import { createTimezoneRepository, TimezoneService } from "@/application/domain/timezone"
+import { createWeatherRepository, WeatherService } from "@/application/domain/weather"
 import { useUserContextStore } from "@/infrastructure/modules/user-context/user-context-store"
 import { ThemeProvider } from "next-themes"
 import { useEffect } from "react"
-
-interface ProvidersProps {
-  children: React.ReactNode
-}
 
 const UserContextInitializer = ({ children }: { children: React.ReactNode }) => {
   const initializeServices = useUserContextStore((state) => state.initializeServices)
@@ -28,21 +24,15 @@ const UserContextInitializer = ({ children }: { children: React.ReactNode }) => 
     }
 
     try {
-      const geolocationRepository = createGeolocationRepository()
-      const geocodingRepository = createGeocodingRepository()
-      const citySearchRepository = createCitySearchRepository(geoapifyApiKey)
-      const timezoneRepository = createTimezoneRepository()
-      const languageRepository = createLanguageRepository()
-
-      const geolocationService = GeolocationProvider.initializeService(geolocationRepository)
-      const geocodingService = GeocodingProvider.initializeService(geocodingRepository)
-      const citySearchService = CitySearchProvider.initializeService(citySearchRepository)
-      const timezoneService = TimezoneProvider.initializeService(timezoneRepository)
-      const languageService = LanguageProvider.initializeService(languageRepository)
+      const geolocationService = new GeolocationService(createGeolocationRepository())
+      const geocodingService = new GeocodingService(createGeocodingRepository())
+      const citySearchService = new CitySearchService(createCitySearchRepository(geoapifyApiKey))
+      const timezoneService = new TimezoneService(createTimezoneRepository())
+      const languageService = new LanguageService(createLanguageRepository())
 
       const weatherApiKey = process.env.NEXT_PUBLIC_OPENWEATHERMAP_API_KEY
       const weatherService = weatherApiKey
-        ? WeatherProvider.initializeService(createWeatherRepository(weatherApiKey))
+        ? new WeatherService(createWeatherRepository(weatherApiKey))
         : undefined
 
       initializeServices({
@@ -65,7 +55,7 @@ const UserContextInitializer = ({ children }: { children: React.ReactNode }) => 
   return <>{children}</>
 }
 
-export const Providers = ({ children }: ProvidersProps) => {
+export const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
       <UserContextInitializer>{children}</UserContextInitializer>

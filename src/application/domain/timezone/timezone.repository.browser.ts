@@ -1,28 +1,37 @@
-import type { TimezoneRepository } from "./timezone.repository.interface"
+import { TimezoneInfo } from "./timezone.model"
 
-import {
-  DEFAULT_TIMEZONE,
-  TimezoneDetectionMethod,
-  TimezoneError,
-  TimezoneInfo,
-} from "./timezone.model"
+interface TimezoneRepository {
+  getTimezone(): TimezoneInfo
+  getTimezoneByCoordinates(latitude: number, longitude: number): Promise<TimezoneInfo>
+}
+
+class TimezoneError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = "TimezoneError"
+  }
+}
+
+const DEFAULT_TIMEZONE: TimezoneInfo = {
+  timezone: "UTC",
+  offset: 0,
+  offsetString: "+00:00",
+  locale: "en-US",
+  isManual: false,
+  detectionMethod: "browser",
+  isDST: false,
+}
 
 export class TimezoneRepositoryBrowser implements TimezoneRepository {
-  private currentTimezone: TimezoneInfo | null = null
-
   private isSupported(): boolean {
     return typeof Intl !== "undefined" && typeof Intl.DateTimeFormat === "function"
   }
 
-  private createError(message: string): TimezoneError {
-    return new TimezoneError(message)
-  }
-
-  public getOffset(): number {
+  private getOffset(): number {
     return -new Date().getTimezoneOffset()
   }
 
-  public getOffsetString(): string {
+  private getOffsetString(): string {
     const offset = this.getOffset()
     const sign = offset >= 0 ? "+" : "-"
     const absOffset = Math.abs(offset)
@@ -32,15 +41,15 @@ export class TimezoneRepositoryBrowser implements TimezoneRepository {
     return `${sign}${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`
   }
 
-  public getTimezoneName(): string {
+  private getTimezoneName(): string {
     if (!this.isSupported()) {
-      throw this.createError("Intl.DateTimeFormat no está soportado en este navegador")
+      throw new TimezoneError("Intl.DateTimeFormat no está soportado en este navegador")
     }
 
     return Intl.DateTimeFormat().resolvedOptions().timeZone
   }
 
-  public getUserLocale(): string {
+  private getUserLocale(): string {
     return typeof navigator !== "undefined" ? navigator.language || "en-US" : "en-US"
   }
 
@@ -61,22 +70,6 @@ export class TimezoneRepositoryBrowser implements TimezoneRepository {
         throw error
       }
       return { ...DEFAULT_TIMEZONE }
-    }
-  }
-
-  public setManualTimezone(timezone: string): void {
-    if (!this.isValidTimezone(timezone)) {
-      throw this.createError(`La zona horaria '${timezone}' no es válida`)
-    }
-
-    this.currentTimezone = {
-      timezone,
-      offset: this.getOffset(),
-      offsetString: this.getOffsetString(),
-      locale: this.getUserLocale(),
-      isManual: true,
-      detectionMethod: "manual",
-      isDST: this.isDaylightSavingTime(timezone),
     }
   }
 
@@ -155,53 +148,8 @@ export class TimezoneRepositoryBrowser implements TimezoneRepository {
   }
 
   private findClosestTimezone(latitude: number, longitude: number): string {
-    if (latitude >= 35 && latitude <= 70 && longitude >= -10 && longitude <= 40) {
-      return "Europe/Madrid"
-    }
-
-    if (latitude >= -60 && latitude <= 50 && longitude >= -170 && longitude <= -30) {
-      if (latitude >= 25 && latitude <= 50 && longitude >= -125 && longitude <= -65) {
-        return "America/New_York"
-      }
-      if (latitude >= -35 && latitude <= 15 && longitude >= -80 && longitude <= -60) {
-        return "America/Bogota"
-      }
-      if (latitude >= -55 && latitude <= -20 && longitude >= -75 && longitude <= -35) {
-        return "America/Argentina/Buenos_Aires"
-      }
-      if (latitude >= 15 && latitude <= 35 && longitude >= -120 && longitude <= -80) {
-        return "America/Mexico_City"
-      }
-      return "America/New_York"
-    }
-
-    if (latitude >= -10 && latitude <= 50 && longitude >= 60 && longitude <= 150) {
-      if (latitude >= 20 && latitude <= 45 && longitude >= 70 && longitude <= 90) {
-        return "Asia/Kolkata"
-      }
-      if (latitude >= 20 && latitude <= 45 && longitude >= 100 && longitude <= 125) {
-        return "Asia/Shanghai"
-      }
-      if (latitude >= 25 && latitude <= 45 && longitude >= 125 && longitude <= 145) {
-        return "Asia/Tokyo"
-      }
-      return "Asia/Dubai"
-    }
-
-    if (latitude >= -40 && latitude <= 40 && longitude >= -20 && longitude <= 55) {
-      return "Africa/Cairo"
-    }
-
-    if (latitude >= -50 && latitude <= -10 && longitude >= 110 && longitude <= 155) {
-      return "Australia/Sydney"
-    }
-
     const offsetHours = Math.round(longitude / 15)
-    if (offsetHours >= 0) {
-      return `Etc/GMT-${offsetHours}`
-    } else {
-      return `Etc/GMT+${Math.abs(offsetHours)}`
-    }
+    return offsetHours >= 0 ? `Etc/GMT-${offsetHours}` : `Etc/GMT+${Math.abs(offsetHours)}`
   }
 
   public async getTimezoneByCoordinates(
@@ -242,43 +190,6 @@ export class TimezoneRepositoryBrowser implements TimezoneRepository {
         },
       }
     }
-  }
-
-  public getCurrentTimezone(): TimezoneInfo {
-    if (this.currentTimezone) {
-      return { ...this.currentTimezone }
-    }
-
-    return this.getTimezone()
-  }
-
-  public resetToAutomatic(): void {
-    this.currentTimezone = null
-  }
-
-  public isManuallySet(): boolean {
-    return this.currentTimezone?.isManual ?? false
-  }
-
-  public getDetectionMethod(): TimezoneDetectionMethod {
-    return this.currentTimezone?.detectionMethod ?? "browser"
-  }
-
-  public isValidTimezone(timezone: string): boolean {
-    if (!timezone || typeof timezone !== "string") {
-      return false
-    }
-
-    try {
-      Intl.DateTimeFormat(undefined, { timeZone: timezone })
-      return true
-    } catch {
-      return false
-    }
-  }
-
-  public getDefaultTimezone(): TimezoneInfo {
-    return { ...DEFAULT_TIMEZONE }
   }
 }
 

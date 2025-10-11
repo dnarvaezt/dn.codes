@@ -1,14 +1,82 @@
-import type { WeatherRepository } from "./weather.repository.interface"
+import { WeatherInfo, WeatherOptions } from "./weather.model"
 
-import {
-  DEFAULT_WEATHER_INFO,
-  DEFAULT_WEATHER_OPTIONS,
-  OPENWEATHERMAP_API_URL,
-  OpenWeatherMapResponse,
-  WeatherError,
-  WeatherInfo,
-  WeatherOptions,
-} from "./weather.model"
+interface WeatherRepository {
+  getWeatherByCoordinates(
+    latitude: number,
+    longitude: number,
+    options?: WeatherOptions
+  ): Promise<WeatherInfo>
+}
+
+interface OpenWeatherMapResponse {
+  coord: {
+    lon: number
+    lat: number
+  }
+  weather: Array<{
+    id: number
+    main: string
+    description: string
+    icon: string
+  }>
+  base: string
+  main: {
+    temp: number
+    feels_like: number
+    temp_min: number
+    temp_max: number
+    pressure: number
+    humidity: number
+    sea_level?: number
+    grnd_level?: number
+  }
+  visibility: number
+  wind: {
+    speed: number
+    deg: number
+    gust?: number
+  }
+  clouds: {
+    all: number
+  }
+  rain?: {
+    "1h"?: number
+    "3h"?: number
+  }
+  snow?: {
+    "1h"?: number
+    "3h"?: number
+  }
+  dt: number
+  sys: {
+    type?: number
+    id?: number
+    country: string
+    sunrise: number
+    sunset: number
+  }
+  timezone: number
+  id: number
+  name: string
+  cod: number
+}
+
+class WeatherError extends Error {
+  constructor(
+    message: string,
+    public readonly statusCode?: number
+  ) {
+    super(message)
+    this.name = "WeatherError"
+  }
+}
+
+const OPENWEATHERMAP_API_URL = "https://api.openweathermap.org/data/2.5/weather"
+const DEFAULT_WEATHER_OPTIONS: Required<WeatherOptions> = {
+  units: "metric",
+  language: "en",
+  timeout: 10000,
+}
 
 export class WeatherRepositoryOpenWeatherMap implements WeatherRepository {
   private readonly apiKey: string
@@ -20,10 +88,6 @@ export class WeatherRepositoryOpenWeatherMap implements WeatherRepository {
     this.apiKey = apiKey
   }
 
-  private createError(message: string, statusCode?: number): WeatherError {
-    return new WeatherError(message, statusCode)
-  }
-
   private buildApiUrl(latitude: number, longitude: number, options?: WeatherOptions): string {
     const units = options?.units ?? DEFAULT_WEATHER_OPTIONS.units
     const language = options?.language ?? DEFAULT_WEATHER_OPTIONS.language
@@ -31,20 +95,6 @@ export class WeatherRepositoryOpenWeatherMap implements WeatherRepository {
     const params = new URLSearchParams({
       lat: String(latitude),
       lon: String(longitude),
-      appid: this.apiKey,
-      units,
-      lang: language,
-    })
-
-    return `${OPENWEATHERMAP_API_URL}?${params.toString()}`
-  }
-
-  private buildCityApiUrl(cityName: string, options?: WeatherOptions): string {
-    const units = options?.units ?? DEFAULT_WEATHER_OPTIONS.units
-    const language = options?.language ?? DEFAULT_WEATHER_OPTIONS.language
-
-    const params = new URLSearchParams({
-      q: cityName,
       appid: this.apiKey,
       units,
       lang: language,
@@ -128,7 +178,7 @@ export class WeatherRepositoryOpenWeatherMap implements WeatherRepository {
       })
 
       if (!response.ok) {
-        throw this.createError(
+        throw new WeatherError(
           `Error al obtener información del clima: ${response.statusText}`,
           response.status
         )
@@ -138,77 +188,16 @@ export class WeatherRepositoryOpenWeatherMap implements WeatherRepository {
 
       return this.mapResponseToWeatherInfo(data)
     } catch (error) {
-      if (error instanceof WeatherError) {
-        throw error
-      }
+      if (error instanceof WeatherError) throw error
 
       if (error instanceof Error) {
         if (error.name === "AbortError") {
-          throw this.createError("Timeout al obtener información del clima")
+          throw new WeatherError("Timeout al obtener información del clima")
         }
-        throw this.createError(`Error al obtener información del clima: ${error.message}`)
+        throw new WeatherError(`Error al obtener información del clima: ${error.message}`)
       }
 
-      throw this.createError("Error desconocido al obtener información del clima")
-    } finally {
-      clearTimeout(timeoutId)
-    }
-  }
-
-  public async getWeatherByCoordinatesOrDefault(
-    latitude: number,
-    longitude: number,
-    options?: WeatherOptions
-  ): Promise<WeatherInfo> {
-    try {
-      return await this.getWeatherByCoordinates(latitude, longitude, options)
-    } catch {
-      return {
-        ...DEFAULT_WEATHER_INFO,
-        coordinates: {
-          latitude,
-          longitude,
-        },
-      }
-    }
-  }
-
-  public async getWeatherByCity(cityName: string, options?: WeatherOptions): Promise<WeatherInfo> {
-    const timeout = options?.timeout ?? DEFAULT_WEATHER_OPTIONS.timeout
-
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), timeout)
-
-    try {
-      const url = this.buildCityApiUrl(cityName, options)
-
-      const response = await fetch(url, {
-        signal: controller.signal,
-      })
-
-      if (!response.ok) {
-        throw this.createError(
-          `Error al obtener información del clima para ${cityName}: ${response.statusText}`,
-          response.status
-        )
-      }
-
-      const data: OpenWeatherMapResponse = await response.json()
-
-      return this.mapResponseToWeatherInfo(data)
-    } catch (error) {
-      if (error instanceof WeatherError) {
-        throw error
-      }
-
-      if (error instanceof Error) {
-        if (error.name === "AbortError") {
-          throw this.createError("Timeout al obtener información del clima")
-        }
-        throw this.createError(`Error al obtener información del clima: ${error.message}`)
-      }
-
-      throw this.createError("Error desconocido al obtener información del clima")
+      throw new WeatherError("Error desconocido al obtener información del clima")
     } finally {
       clearTimeout(timeoutId)
     }

@@ -1,14 +1,60 @@
-import type { CitySearchRepository } from "./city-search.repository.interface"
+import { CitySearchOptions, CitySearchResult } from "./city-search.model"
 
-import {
-  CitySearchError,
-  CitySearchOptions,
-  CitySearchResult,
-  DEFAULT_CITY_SEARCH_OPTIONS,
-  GEOAPIFY_AUTOCOMPLETE_URL,
-  GeoapifyAutocompleteResponse,
-  GeoapifyFeature,
-} from "./city-search.model"
+interface CitySearchRepository {
+  searchCities(text: string, options?: CitySearchOptions): Promise<CitySearchResult[]>
+}
+
+interface GeoapifyAutocompleteResponse {
+  type: string
+  features: GeoapifyFeature[]
+  query: {
+    text: string
+    parsed: {
+      city?: string
+      expected_type?: string
+    }
+  }
+}
+
+interface GeoapifyFeature {
+  type: string
+  properties: {
+    place_id: string
+    name?: string
+    city?: string
+    country?: string
+    country_code?: string
+    state?: string
+    formatted: string
+    lat: number
+    lon: number
+    result_type: string
+    rank: {
+      importance: number
+    }
+  }
+  geometry: {
+    type: string
+    coordinates: [number, number]
+  }
+}
+
+class CitySearchError extends Error {
+  constructor(
+    message: string,
+    public readonly statusCode?: number
+  ) {
+    super(message)
+    this.name = "CitySearchError"
+  }
+}
+
+const GEOAPIFY_AUTOCOMPLETE_URL = "https://api.geoapify.com/v1/geocode/autocomplete"
+const DEFAULT_CITY_SEARCH_OPTIONS: Required<Omit<CitySearchOptions, "countryFilter">> = {
+  limit: 10,
+  language: "en",
+  timeout: 10000,
+}
 
 export class CitySearchRepositoryGeoapify implements CitySearchRepository {
   private readonly apiKey: string
@@ -18,10 +64,6 @@ export class CitySearchRepositoryGeoapify implements CitySearchRepository {
       throw new Error("API key de Geoapify es requerida")
     }
     this.apiKey = apiKey
-  }
-
-  private createError(message: string, statusCode?: number): CitySearchError {
-    return new CitySearchError(message, statusCode)
   }
 
   private buildSearchUrl(text: string, options?: CitySearchOptions): string {
@@ -75,7 +117,10 @@ export class CitySearchRepositoryGeoapify implements CitySearchRepository {
       })
 
       if (!response.ok) {
-        throw this.createError(`Error al buscar ciudades: ${response.statusText}`, response.status)
+        throw new CitySearchError(
+          `Error al buscar ciudades: ${response.statusText}`,
+          response.status
+        )
       }
 
       const data: GeoapifyAutocompleteResponse = await response.json()
@@ -84,45 +129,21 @@ export class CitySearchRepositoryGeoapify implements CitySearchRepository {
         return []
       }
 
-      const results = data.features.map((feature) => this.mapFeatureToResult(feature))
-
-      return results
+      return data.features.map((feature) => this.mapFeatureToResult(feature))
     } catch (error) {
-      if (error instanceof CitySearchError) {
-        throw error
-      }
+      if (error instanceof CitySearchError) throw error
 
       if (error instanceof Error) {
         if (error.name === "AbortError") {
-          throw this.createError("Timeout al buscar ciudades")
+          throw new CitySearchError("Timeout al buscar ciudades")
         }
-        throw this.createError(`Error al buscar ciudades: ${error.message}`)
+        throw new CitySearchError(`Error al buscar ciudades: ${error.message}`)
       }
 
-      throw this.createError("Error desconocido al buscar ciudades")
+      throw new CitySearchError("Error desconocido al buscar ciudades")
     } finally {
       clearTimeout(timeoutId)
     }
-  }
-
-  public async searchCitiesOrEmpty(
-    text: string,
-    options?: CitySearchOptions
-  ): Promise<CitySearchResult[]> {
-    try {
-      return await this.searchCities(text, options)
-    } catch {
-      return []
-    }
-  }
-
-  public async getCityById(
-    placeId: string,
-    searchText: string,
-    options?: CitySearchOptions
-  ): Promise<CitySearchResult | null> {
-    const results = await this.searchCities(searchText, options)
-    return results.find((result) => result.placeId === placeId) ?? null
   }
 }
 

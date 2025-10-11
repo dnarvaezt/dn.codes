@@ -1,52 +1,33 @@
-import type { LanguageRepository } from "./language.repository.interface"
+import { LanguageInfo, SupportedLanguage } from "./language.model"
 
-import {
-  DEFAULT_LANGUAGE,
-  LanguageDetectionMethod,
-  LanguageError,
-  LanguageInfo,
-  SUPPORTED_LANGUAGES,
-  SupportedLanguage,
-} from "./language.model"
+interface LanguageRepository {
+  getCurrentLanguage(): LanguageInfo
+  setManualLanguage(language: SupportedLanguage): void
+  resetToAutomatic(): void
+}
+
+class LanguageError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = "LanguageError"
+  }
+}
+
+const DEFAULT_LANGUAGE: LanguageInfo = {
+  language: "en",
+  fullCode: "en-US",
+  isManual: false,
+  detectionMethod: "browser",
+}
+
+const SUPPORTED_LANGUAGES: readonly SupportedLanguage[] = ["es", "en"] as const
 
 export class LanguageRepositoryBrowser implements LanguageRepository {
   private currentLanguage: LanguageInfo | null = null
 
-  private createError(message: string): LanguageError {
-    return new LanguageError(message)
-  }
-
-  private extractLanguageCode(fullCode: string): SupportedLanguage {
-    const baseLanguage = fullCode.toLowerCase().split("-")[0]
-
-    if (this.isSupported(baseLanguage)) {
-      return baseLanguage as SupportedLanguage
-    }
-
-    return DEFAULT_LANGUAGE.language
-  }
-
-  public getBrowserLanguage(): string {
-    return typeof navigator !== "undefined"
-      ? navigator.language || DEFAULT_LANGUAGE.fullCode
-      : DEFAULT_LANGUAGE.fullCode
-  }
-
-  public getLanguage(): LanguageInfo {
-    const browserLanguage = this.getBrowserLanguage()
-    const language = this.extractLanguageCode(browserLanguage)
-
-    return {
-      language,
-      fullCode: browserLanguage,
-      isManual: false,
-      detectionMethod: "browser",
-    }
-  }
-
   public setManualLanguage(language: SupportedLanguage): void {
-    if (!this.isSupported(language)) {
-      throw this.createError(
+    if (!SUPPORTED_LANGUAGES.includes(language)) {
+      throw new LanguageError(
         `El idioma '${language}' no está soportado. Solo se soportan: ${SUPPORTED_LANGUAGES.join(", ")}`
       )
     }
@@ -64,31 +45,25 @@ export class LanguageRepositoryBrowser implements LanguageRepository {
       return { ...this.currentLanguage }
     }
 
-    return this.getLanguage()
+    const browserLanguage =
+      typeof navigator !== "undefined"
+        ? navigator.language || DEFAULT_LANGUAGE.fullCode
+        : DEFAULT_LANGUAGE.fullCode
+    const baseLanguage = browserLanguage.toLowerCase().split("-")[0]
+    const language = SUPPORTED_LANGUAGES.includes(baseLanguage as SupportedLanguage)
+      ? (baseLanguage as SupportedLanguage)
+      : DEFAULT_LANGUAGE.language
+
+    return {
+      language,
+      fullCode: browserLanguage,
+      isManual: false,
+      detectionMethod: "browser",
+    }
   }
 
   public resetToAutomatic(): void {
     this.currentLanguage = null
-  }
-
-  public isManuallySet(): boolean {
-    return this.currentLanguage?.isManual ?? false
-  }
-
-  public isSupported(language: string): boolean {
-    return SUPPORTED_LANGUAGES.includes(language as SupportedLanguage)
-  }
-
-  public getDetectionMethod(): LanguageDetectionMethod {
-    return this.currentLanguage?.detectionMethod ?? "browser"
-  }
-
-  public getDefaultLanguage(): LanguageInfo {
-    return { ...DEFAULT_LANGUAGE }
-  }
-
-  public getSupportedLanguages(): readonly SupportedLanguage[] {
-    return SUPPORTED_LANGUAGES
   }
 }
 

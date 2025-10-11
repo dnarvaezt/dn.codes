@@ -43,7 +43,6 @@ interface UserContextStore extends UserContextState {
   searchCities: (query: string) => Promise<CitySearchResult[]>
   setLanguage: (language: SupportedLanguage) => void
   resetLanguageToAuto: () => void
-  reset: () => void
   setPartialInitialization: () => void
 }
 
@@ -286,24 +285,6 @@ export const useUserContextStore = create<UserContextStore>()(
           set({ error })
           throw error
         }
-      },
-
-      reset: () => {
-        set({
-          location: null,
-          city: null,
-          timezone: null,
-          weather: null,
-          language: {
-            language: "en",
-            fullCode: "en-US",
-            isManual: false,
-            detectionMethod: "browser",
-          },
-          isInitialized: false,
-          isLoading: false,
-          error: null,
-        })
       },
 
       setPartialInitialization: () => {

@@ -9,6 +9,20 @@ interface ThemeState {
   toggleTheme: () => void
 }
 
+const applyTheme = (theme: Theme) => {
+  if (typeof window === "undefined") return
+
+  const root = window.document.documentElement
+  root.removeAttribute("data-theme")
+
+  if (theme === "system") {
+    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+    root.setAttribute("data-theme", systemTheme)
+  } else {
+    root.setAttribute("data-theme", theme)
+  }
+}
+
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set, get) => ({
@@ -29,17 +43,3 @@ export const useThemeStore = create<ThemeState>()(
     }
   )
 )
-
-const applyTheme = (theme: Theme) => {
-  if (typeof window === "undefined") return
-
-  const root = window.document.documentElement
-  root.removeAttribute("data-theme")
-
-  if (theme === "system") {
-    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
-    root.setAttribute("data-theme", systemTheme)
-  } else {
-    root.setAttribute("data-theme", theme)
-  }
-}

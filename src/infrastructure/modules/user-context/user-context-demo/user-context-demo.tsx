@@ -11,7 +11,6 @@ export const UserContextDemo = () => {
     timezone,
     weather,
     language,
-    location,
     isInitialized,
     isLoading,
     error,

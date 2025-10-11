@@ -1,5 +1,3 @@
 export * from "./geolocation.model"
-export * from "./geolocation.provider"
 export * from "./geolocation.repository.browser"
-export * from "./geolocation.repository.interface"
 export * from "./geolocation.service"

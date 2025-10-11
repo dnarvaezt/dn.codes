@@ -1,5 +1,10 @@
 import type { LanguageInfo, SupportedLanguage } from "./language.model"
-import type { LanguageRepository } from "./language.repository.interface"
+
+interface LanguageRepository {
+  getCurrentLanguage(): LanguageInfo
+  setManualLanguage(language: SupportedLanguage): void
+  resetToAutomatic(): void
+}
 
 export class LanguageService {
   constructor(private readonly repository: LanguageRepository) {}
@@ -14,13 +19,5 @@ export class LanguageService {
 
   public resetToAutomatic(): void {
     this.repository.resetToAutomatic()
-  }
-
-  public isSupported(language: string): boolean {
-    return this.repository.isSupported(language)
-  }
-
-  public getSupportedLanguages(): readonly SupportedLanguage[] {
-    return this.repository.getSupportedLanguages()
   }
 }

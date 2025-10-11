@@ -10,7 +10,6 @@ export const useUserContextDemo = () => {
   const timezone = useUserContextStore((state) => state.timezone)
   const weather = useUserContextStore((state) => state.weather)
   const language = useUserContextStore((state) => state.language)
-  const location = useUserContextStore((state) => state.location)
   const isInitialized = useUserContextStore((state) => state.isInitialized)
   const isLoading = useUserContextStore((state) => state.isLoading)
   const error = useUserContextStore((state) => state.error)
@@ -127,7 +126,6 @@ export const useUserContextDemo = () => {
     timezone,
     weather,
     language,
-    location,
     isInitialized,
     isLoading,
     error,
@@ -136,14 +134,12 @@ export const useUserContextDemo = () => {
     // Estado de búsqueda de ciudades
     cityQuery,
     setCityQuery,
-    cityResults,
     searchLoading,
     searchError,
     comboboxOptions,
     handleSelectCity,
 
     // Formato de tiempo
-    currentTime,
     is24Hour,
     formatLocalTime,
     formatLocalDate,

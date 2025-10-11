@@ -2,9 +2,8 @@
 
 import { Button } from "@/infrastructure/components/ui"
 import { socialLinks } from "@/infrastructure/modules/home-page/site-data"
+import { openExternalLink } from "@/infrastructure/utils"
 import { Github, Linkedin, Mail } from "lucide-react"
-
-const openExternalLink = (url: string) => window.open(url, "_blank", "noopener,noreferrer")
 
 const iconClass = "mr-2 h-4 w-4"
 
