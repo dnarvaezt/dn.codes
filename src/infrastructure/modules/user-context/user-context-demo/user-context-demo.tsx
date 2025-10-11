@@ -119,12 +119,6 @@ export const UserContextDemo = () => {
               {language.isManual && " (Manual)"}
             </span>
           </div>
-          <div className="user-context-demo__detail-row">
-            <span className="user-context-demo__detail-label">Detección:</span>
-            <span className="user-context-demo__detail-value">
-              {location?.detectionMethod === "auto" ? "Automática" : "Manual"}
-            </span>
-          </div>
         </div>
       </div>
 

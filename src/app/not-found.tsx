@@ -1,16 +1,27 @@
+import { notFoundConfig } from "@/infrastructure/config"
 import Link from "next/link"
 
 const NotFound = () => {
+  const {
+    title,
+    heading,
+    description,
+    buttonText,
+    buttonHref,
+    containerClassName,
+    titleClassName,
+    headingClassName,
+    descriptionClassName,
+    buttonClassName,
+  } = notFoundConfig
+
   return (
-    <div className="container mx-auto flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
-      <h1 className="mb-4 text-6xl font-bold">404</h1>
-      <h2 className="mb-4 text-2xl font-semibold">Página no encontrada</h2>
-      <p className="mb-8 text-muted-foreground">La página que buscas no existe o ha sido movida.</p>
-      <Link
-        href="/"
-        className="hover:bg-primary/90 rounded-md bg-primary px-6 py-3 text-primary-foreground"
-      >
-        Volver al inicio
+    <div className={containerClassName}>
+      <h1 className={titleClassName}>{title}</h1>
+      <h2 className={headingClassName}>{heading}</h2>
+      <p className={descriptionClassName}>{description}</p>
+      <Link href={buttonHref} className={buttonClassName}>
+        {buttonText}
       </Link>
     </div>
   )

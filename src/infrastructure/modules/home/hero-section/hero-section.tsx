@@ -1,3 +1,5 @@
+"use client"
+
 import { Button } from "@/infrastructure/components/ui"
 import { socialLinks } from "@/infrastructure/config"
 import { Github, Linkedin, Mail } from "lucide-react"
