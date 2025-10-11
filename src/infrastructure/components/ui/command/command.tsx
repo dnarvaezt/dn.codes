@@ -1,9 +1,9 @@
 "use client"
 
+import { classNames } from "@/infrastructure/utils"
 import { Command as CommandPrimitive } from "cmdk"
 import { Search } from "lucide-react"
 import * as React from "react"
-import { classNames } from "./class-names"
 
 const Command = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive>,

@@ -1,6 +1,7 @@
 "use client"
 
 import { useUserContextStore } from "@/infrastructure/modules/user-context/user-context-store"
+import { useLocalTime } from "./use-local-time"
 import "./user-info.scss"
 
 export const UserInfo = () => {
@@ -9,6 +10,7 @@ export const UserInfo = () => {
   const language = useUserContextStore((state) => state.language)
   const isInitialized = useUserContextStore((state) => state.isInitialized)
   const isLoading = useUserContextStore((state) => state.isLoading)
+  const localTime = useLocalTime(timezone?.offset ?? 0)
 
   if (isLoading) {
     return (
@@ -30,10 +32,10 @@ export const UserInfo = () => {
           <span>
             {city.city}, {city.country}
           </span>
-          {timezone && (
+          {timezone && localTime && (
             <>
               <span className="user-info__separator">•</span>
-              <span>🕐 {timezone.timezone}</span>
+              <span>🕐 {localTime}</span>
             </>
           )}
           <span className="user-info__separator">•</span>

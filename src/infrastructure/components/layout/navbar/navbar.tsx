@@ -2,8 +2,8 @@
 
 import { UserInfo } from "@/infrastructure/modules/user-context/user-info/user-info"
 import Link from "next/link"
+import { ThemeToggle } from "../theme-toggle"
 import "./navbar.scss"
-import { ThemeToggle } from "./theme-toggle"
 
 export const Navbar = () => {
   return (

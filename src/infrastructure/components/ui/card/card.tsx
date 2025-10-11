@@ -1,5 +1,5 @@
+import { classNames } from "@/infrastructure/utils"
 import * as React from "react"
-import { classNames } from "./class-names"
 
 const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (

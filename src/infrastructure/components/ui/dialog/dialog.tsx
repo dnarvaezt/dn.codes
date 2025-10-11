@@ -1,7 +1,7 @@
+import { classNames } from "@/infrastructure/utils"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
 import * as React from "react"
-import { classNames } from "./class-names"
 
 const Dialog = DialogPrimitive.Root
 
