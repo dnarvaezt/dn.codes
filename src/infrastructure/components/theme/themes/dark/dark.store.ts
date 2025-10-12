@@ -1,13 +1,3 @@
-import { create } from "zustand"
+import { createThemeStore } from "../../theme.store-factory"
 
-interface DarkThemeState {
-  isActive: boolean
-  activate: () => void
-  deactivate: () => void
-}
-
-export const useDarkThemeStore = create<DarkThemeState>((set) => ({
-  isActive: false,
-  activate: () => set({ isActive: true }),
-  deactivate: () => set({ isActive: false }),
-}))
+export const useDarkThemeStore = createThemeStore()
