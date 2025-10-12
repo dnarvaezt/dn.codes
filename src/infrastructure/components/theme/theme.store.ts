@@ -47,6 +47,7 @@ export const useThemeStore = create<ThemeState>()(
           const theme = getThemeByMode(state.mode)
           const strategy = new DOMThemeStrategy()
           strategy.apply(theme)
+          state.currentTheme = theme
         }
       },
     }

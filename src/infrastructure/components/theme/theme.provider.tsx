@@ -5,12 +5,13 @@ import { useThemeStore } from "./theme.store"
 import { ThemeMode } from "./theme.type"
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const mode = useThemeStore((state) => state.mode)
+  const currentTheme = useThemeStore((state) => state.currentTheme)
   const setTheme = useThemeStore((state) => state.setTheme)
 
   useEffect(() => {
-    setTheme(mode)
-  }, [mode, setTheme])
+    const storedMode = useThemeStore.getState().mode
+    setTheme(storedMode)
+  }, [setTheme])
 
   useEffect(() => {
     const handleSystemThemeChange = () => {
@@ -49,6 +50,12 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
       window.removeEventListener("storage", handleStorageChange)
     }
   }, [setTheme])
+
+  const ThemeSpecificProvider = currentTheme.provider
+
+  if (ThemeSpecificProvider) {
+    return <ThemeSpecificProvider>{children}</ThemeSpecificProvider>
+  }
 
   return <>{children}</>
 }
