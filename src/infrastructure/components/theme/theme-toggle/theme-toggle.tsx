@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/infrastructure/components/ui/dropdown-menu"
 import { Moon, Sun } from "lucide-react"
-import { useThemeStore } from "../theme-provider/theme.store"
+import { useThemeStore } from "../theme.store"
 import { ThemeMode } from "../theme.type"
 import "./theme-toggle.scss"
 

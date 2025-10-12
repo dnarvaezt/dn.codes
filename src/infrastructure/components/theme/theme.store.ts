@@ -1,10 +1,10 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import { DOMThemeStrategy } from "../theme.strategy"
-import { ThemeMode } from "../theme.type"
-import { darkTheme, lightTheme } from "../themes"
+import { DOMThemeStrategy } from "./theme.strategy"
+import { ThemeMode } from "./theme.type"
+import { darkTheme, lightTheme } from "./themes"
 
-import type { Theme } from "../theme.interface"
+import type { Theme } from "./theme.interface"
 interface ThemeState {
   currentTheme: Theme
   mode: ThemeMode

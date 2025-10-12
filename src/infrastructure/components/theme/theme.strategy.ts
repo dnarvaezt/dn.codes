@@ -1,14 +1,52 @@
-import type { Theme, ThemeStrategy } from "./theme.interface"
+import type { Theme, ThemeColors, ThemeStrategy } from "./theme.interface"
+
+const themeColorKeys: Array<keyof ThemeColors> = [
+  "background",
+  "foreground",
+  "card",
+  "cardForeground",
+  "popover",
+  "popoverForeground",
+  "primary",
+  "primaryForeground",
+  "secondary",
+  "secondaryForeground",
+  "muted",
+  "mutedForeground",
+  "accent",
+  "accentForeground",
+  "destructive",
+  "destructiveForeground",
+  "border",
+  "input",
+  "ring",
+]
+
+const camelToKebab = (str: string): string => {
+  return str.replace(/([A-Z])/g, "-$1").toLowerCase()
+}
 
 export class DOMThemeStrategy implements ThemeStrategy {
-  apply(theme: Theme): void {
+  async apply(theme: Theme): Promise<void> {
     const root = document.documentElement
-    root.classList.remove("light", "dark")
-    root.classList.add(theme.name)
+    const colors = await theme.colors()
+
+    Object.entries(colors).forEach(([key, value]) => {
+      const cssVar = `--${camelToKebab(key)}`
+      root.style.setProperty(cssVar, value)
+    })
+
+    root.setAttribute("data-theme", theme.name)
   }
 
-  remove(): void {
+  async remove(): Promise<void> {
     const root = document.documentElement
-    root.classList.remove("light", "dark")
+
+    themeColorKeys.forEach((key) => {
+      const cssVar = `--${camelToKebab(key)}`
+      root.style.removeProperty(cssVar)
+    })
+
+    root.removeAttribute("data-theme")
   }
 }

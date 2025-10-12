@@ -24,10 +24,10 @@ export interface ThemeColors {
 
 export interface Theme {
   name: ThemeMode
-  colors: () => ThemeColors
+  colors: () => Promise<ThemeColors>
 }
 
 export interface ThemeStrategy {
-  apply(theme: Theme): void
-  remove(): void
+  apply(theme: Theme): Promise<void>
+  remove(): Promise<void>
 }

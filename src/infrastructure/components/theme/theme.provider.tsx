@@ -1,10 +1,10 @@
 "use client"
 
-import { useEffect } from "react"
-import { ThemeMode } from "../theme.type"
+import { ReactNode, useEffect } from "react"
 import { useThemeStore } from "./theme.store"
+import { ThemeMode } from "./theme.type"
 
-export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
+export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const mode = useThemeStore((state) => state.mode)
   const setTheme = useThemeStore((state) => state.setTheme)
 

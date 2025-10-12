@@ -5,7 +5,7 @@
     &--light {
       @apply rotate-0 scale-100;
 
-      .dark & {
+      [data-theme="dark"] & {
         @apply rotate-90 scale-0;
       }
     }
@@ -13,7 +13,7 @@
     &--dark {
       @apply absolute rotate-90 scale-0;
 
-      .dark & {
+      [data-theme="dark"] & {
         @apply rotate-0 scale-100;
       }
     }
