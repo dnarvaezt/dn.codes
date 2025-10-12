@@ -1,2 +1,2 @@
-export * from "./dark.provider"
+export * from "./dark.store"
 export * from "./dark.theme"

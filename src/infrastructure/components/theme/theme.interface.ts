@@ -1,4 +1,3 @@
-import { ComponentType, ReactNode } from "react"
 import { ThemeMode } from "./theme.type"
 
 export interface ThemeColors {
@@ -23,17 +22,13 @@ export interface ThemeColors {
   ring: string
 }
 
-export interface ThemeProviderProps {
-  children: ReactNode
+export interface ThemeInstance {
+  name: ThemeMode
+  activate: () => Promise<void>
+  deactivate: () => Promise<void>
 }
 
 export interface Theme {
   name: ThemeMode
-  colors: () => Promise<ThemeColors>
-  provider?: ComponentType<ThemeProviderProps>
-}
-
-export interface ThemeStrategy {
-  apply(theme: Theme): Promise<void>
-  remove(): Promise<void>
+  createInstance: () => ThemeInstance
 }

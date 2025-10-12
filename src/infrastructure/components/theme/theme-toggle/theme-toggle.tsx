@@ -9,13 +9,13 @@ import {
   DropdownMenuTrigger,
 } from "@/infrastructure/components/ui/dropdown-menu"
 import { Moon, Sun } from "lucide-react"
-import { useThemeStore } from "../theme.store"
+import { useThemeControllerStore } from "../theme-controller"
 import { ThemeMode } from "../theme.type"
 import "./theme-toggle.scss"
 
 export const ThemeToggle = () => {
-  const mode = useThemeStore((state) => state.mode)
-  const setTheme = useThemeStore((state) => state.setTheme)
+  const mode = useThemeControllerStore((state) => state.mode)
+  const setTheme = useThemeControllerStore((state) => state.setTheme)
 
   return (
     <DropdownMenu>
