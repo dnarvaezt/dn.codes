@@ -1,0 +1,23 @@
+.not-found-page {
+  @apply container mx-auto flex min-h-[60vh] flex-col items-center justify-center px-4 text-center;
+
+  &__title {
+    @apply mb-4 text-6xl font-bold;
+  }
+
+  &__subtitle {
+    @apply mb-4 text-2xl font-semibold;
+  }
+
+  &__description {
+    @apply mb-8 text-muted-foreground;
+  }
+
+  &__link {
+    @apply rounded-md bg-primary px-6 py-3 text-primary-foreground;
+
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+}

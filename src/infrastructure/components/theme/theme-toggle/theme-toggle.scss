@@ -1,0 +1,29 @@
+.theme-toggle {
+  &__icon {
+    @apply h-5 w-5 transition-all;
+
+    &--light {
+      @apply rotate-0 scale-100;
+
+      .dark & {
+        @apply rotate-90 scale-0;
+      }
+    }
+
+    &--dark {
+      @apply absolute rotate-90 scale-0;
+
+      .dark & {
+        @apply rotate-0 scale-100;
+      }
+    }
+  }
+
+  &__content {
+    @apply min-w-[10rem];
+  }
+
+  &__menu-icon {
+    @apply mr-2 h-4 w-4;
+  }
+}

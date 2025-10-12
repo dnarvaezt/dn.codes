@@ -1,3 +1,3 @@
 export * from "./layout"
-export * from "./providers"
+export * from "./theme"
 export * from "./ui"

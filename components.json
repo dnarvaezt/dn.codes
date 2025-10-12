@@ -5,16 +5,14 @@
   "tsx": true,
   "tailwind": {
     "config": "tailwind.config.ts",
-    "css": "src/presentation/styles/globals.scss",
+    "css": "src/infrastructure/assets/globals.scss",
     "baseColor": "neutral",
     "cssVariables": true,
     "prefix": ""
   },
   "aliases": {
-    "components": "@/presentation/components",
-    "utils": "@/presentation/utils",
-    "ui": "@/presentation/components/ui",
-    "lib": "@/presentation/lib",
-    "hooks": "@/presentation/hooks"
+    "components": "@/infrastructure/components",
+    "utils": "@/infrastructure/utils",
+    "ui": "@/infrastructure/components/ui"
   }
 }
