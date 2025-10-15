@@ -1,4 +1,9 @@
 .static-layout {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: relative;
+
   &__theme-toggle {
     @apply fixed bottom-8 right-8 z-50;
   }

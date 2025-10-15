@@ -2,13 +2,9 @@
 
 import { useEffect, useState } from "react"
 import { useWeatherStore } from "../../../../weather-store"
-import { useWeatherBackground } from "../../weather-background.hook"
-import { createStableRandom, generateWeatherSeed } from "../../weather-background.utils"
+import { createStableRandom, generateWeatherSeed } from "../../utils"
+import { useWeatherBackgroundStore } from "../../weather-background.store"
 import "./weather-thunder.scss"
-
-interface WeatherThunderProps {
-  shouldShow: boolean
-}
 
 // Funciones auxiliares para calcular intensidad de tormenta
 const calculateStormIntensity = (
@@ -62,13 +58,13 @@ const getThunderParameters = (stormIntensity: number) => {
   return params
 }
 
-export const WeatherThunder = ({ shouldShow }: WeatherThunderProps) => {
+export const WeatherThunder = () => {
   const { weather } = useWeatherStore()
-  const { weatherType } = useWeatherBackground(weather)
+  const { weatherType, shouldShowThunder } = useWeatherBackgroundStore()
   const [isFlashing, setIsFlashing] = useState(false)
 
   useEffect(() => {
-    if (!shouldShow || !weather) return
+    if (!shouldShowThunder || !weather) return
 
     const mainWeather = weather.weather[0]?.main.toLowerCase()
     const description = weather.weather[0]?.description.toLowerCase()
@@ -111,7 +107,7 @@ export const WeatherThunder = ({ shouldShow }: WeatherThunderProps) => {
       const delay = (thunderParams.baseDelay + random.float(0, thunderParams.delayVariation)) * 1000
       timeoutId = setTimeout(() => {
         flashThunder()
-        if (shouldShow) {
+        if (shouldShowThunder) {
           scheduleNextFlash()
         }
       }, delay)
@@ -123,9 +119,9 @@ export const WeatherThunder = ({ shouldShow }: WeatherThunderProps) => {
       clearTimeout(timeoutId)
       setIsFlashing(false)
     }
-  }, [weather, weatherType, shouldShow])
+  }, [weather, weatherType, shouldShowThunder])
 
-  if (!shouldShow) return null
+  if (!shouldShowThunder) return null
 
   return (
     <div

@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import { useWeatherStore } from "../../weather-store"
 import {
   WeatherClouds,
@@ -8,35 +9,38 @@ import {
   WeatherSnow,
   WeatherThunder,
 } from "./components"
-import { useWeatherBackground } from "./weather-background.hook"
+import { WeatherClassGenerator } from "./utils"
 import "./weather-background.scss"
+import { useWeatherBackgroundStore } from "./weather-background.store"
 
 export const WeatherBackground = () => {
   const { weather, isLoading } = useWeatherStore()
+  const { weatherContext, computeFromWeather } = useWeatherBackgroundStore()
 
-  const { weatherType, shouldShowRain, shouldShowSnow, shouldShowClouds, shouldShowThunder } =
-    useWeatherBackground(weather)
+  useEffect(() => {
+    computeFromWeather(weather)
+  }, [weather, computeFromWeather])
 
-  // Durante la carga inicial, usar un estado de transición suave
+  // Generar clases CSS precisas basadas en el contexto meteorológico completo
   const backgroundClass = isLoading
     ? "weather-background weather-background--loading"
-    : `weather-background weather-background--${weatherType}`
+    : WeatherClassGenerator.generateClasses(weatherContext)
 
   return (
     <div className={backgroundClass}>
       <div className="weather-background__gradient" />
 
-      <WeatherClouds shouldShow={shouldShowClouds} isLoading={isLoading} />
+      <WeatherClouds />
 
       {!isLoading && (
         <>
           <WeatherParticles />
 
-          <WeatherRain shouldShow={shouldShowRain} />
+          <WeatherRain />
 
-          <WeatherSnow shouldShow={shouldShowSnow} />
+          <WeatherSnow />
 
-          <WeatherThunder shouldShow={shouldShowThunder} />
+          <WeatherThunder />
         </>
       )}
     </div>

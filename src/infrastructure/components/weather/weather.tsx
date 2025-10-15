@@ -50,6 +50,7 @@ export const Weather = () => {
 
         <div className="weather__main">
           <div className="weather__icon-wrapper">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={iconUrl} alt={mainWeather.description} className="weather__icon" />
           </div>
           <div className="weather__temperature">

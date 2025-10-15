@@ -43,12 +43,12 @@
   // Estados específicos del clima - Día
   &--sunny {
     .weather-background__gradient {
-      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+      background: linear-gradient(135deg, #87ceeb 0%, #98d8e8 100%);
     }
 
     .weather-background__particle {
-      background: rgba(255, 215, 0, 0.6);
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+      background: rgba(255, 215, 0, 0.7);
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
     }
   }
 
@@ -98,11 +98,12 @@
 
   &--cloudy {
     .weather-background__gradient {
-      background: linear-gradient(135deg, #bdc3c7 0%, #2c3e50 100%);
+      background: linear-gradient(135deg, #a8a8a8 0%, #696969 100%);
     }
 
     .weather-background__particle {
-      background: rgba(189, 195, 199, 0.6);
+      background: rgba(169, 169, 169, 0.6);
+      box-shadow: 0 0 15px rgba(169, 169, 169, 0.3);
     }
   }
 
@@ -148,78 +149,80 @@
 
   &--partly-cloudy {
     .weather-background__gradient {
-      background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+      background: linear-gradient(135deg, #b0e0e6 0%, #87ceeb 100%);
     }
 
     .weather-background__particle {
-      background: rgba(33, 150, 243, 0.6);
-      box-shadow: 0 0 15px rgba(33, 150, 243, 0.3);
+      background: rgba(176, 224, 230, 0.6);
+      box-shadow: 0 0 18px rgba(176, 224, 230, 0.4);
     }
   }
 
   &--rainy {
     .weather-background__gradient {
-      background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+      background: linear-gradient(135deg, #6c7b95 0%, #4a5568 100%);
     }
 
     .weather-background__particle {
-      background: rgba(116, 185, 255, 0.6);
+      background: rgba(108, 123, 149, 0.6);
+      box-shadow: 0 0 12px rgba(108, 123, 149, 0.4);
     }
   }
 
   &--heavy-rain {
     .weather-background__gradient {
-      background: linear-gradient(135deg, #4834d4 0%, #2f3640 100%);
+      background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
     }
 
     .weather-background__particle {
-      background: rgba(72, 52, 212, 0.6);
-      box-shadow: 0 0 15px rgba(72, 52, 212, 0.4);
+      background: rgba(45, 55, 72, 0.7);
+      box-shadow: 0 0 18px rgba(45, 55, 72, 0.5);
     }
   }
 
   &--snowy {
     .weather-background__gradient {
-      background: linear-gradient(135deg, #ddd6fe 0%, #c7d2fe 100%);
+      background: linear-gradient(135deg, #e6f3ff 0%, #cce7ff 100%);
     }
 
     .weather-background__particle {
-      background: rgba(221, 214, 254, 0.6);
+      background: rgba(230, 243, 255, 0.8);
+      box-shadow: 0 0 20px rgba(230, 243, 255, 0.6);
     }
   }
 
   &--heavy-snow {
     .weather-background__gradient {
-      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
     }
 
     .weather-background__particle {
-      background: rgba(248, 249, 250, 0.8);
-      box-shadow: 0 0 20px rgba(248, 249, 250, 0.5);
+      background: rgba(209, 236, 241, 0.9);
+      box-shadow: 0 0 25px rgba(209, 236, 241, 0.7);
     }
   }
 
   &--stormy {
     .weather-background__gradient {
-      background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+      background: linear-gradient(135deg, #1a202c 0%, #0f1419 100%);
       animation: storm-flash 4s ease-in-out infinite;
     }
 
     .weather-background__particle {
-      background: rgba(45, 55, 72, 0.6);
-      box-shadow: 0 0 15px rgba(45, 55, 72, 0.4);
+      background: rgba(26, 32, 44, 0.8);
+      box-shadow: 0 0 20px rgba(26, 32, 44, 0.6);
     }
   }
 
   &--foggy {
     .weather-background__gradient {
-      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-      backdrop-filter: blur(2px);
+      background: linear-gradient(135deg, #8e9aaf 0%, #6c7b95 100%);
+      backdrop-filter: blur(4px);
     }
 
     .weather-background__particle {
-      background: rgba(248, 249, 250, 0.3);
-      box-shadow: 0 0 30px rgba(248, 249, 250, 0.6);
+      background: rgba(142, 154, 175, 0.5);
+      box-shadow: 0 0 35px rgba(142, 154, 175, 0.7);
       animation: fog-drift 10s ease-in-out infinite;
     }
 
@@ -233,9 +236,9 @@
       bottom: 0;
       background: radial-gradient(
         ellipse at center,
-        rgba(248, 249, 250, 0.1) 0%,
-        rgba(248, 249, 250, 0.3) 50%,
-        rgba(248, 249, 250, 0.6) 100%
+        rgba(142, 154, 175, 0.15) 0%,
+        rgba(142, 154, 175, 0.4) 50%,
+        rgba(142, 154, 175, 0.7) 100%
       );
       animation: fog-pulse 15s ease-in-out infinite;
       pointer-events: none;
@@ -282,61 +285,51 @@
   // Estados nocturnos
   &--night {
     .weather-background__gradient {
-      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      background: linear-gradient(135deg, #0f1419 0%, #1a202c 100%);
     }
 
     .weather-background__particle {
-      background: rgba(30, 60, 114, 0.6);
-      box-shadow: 0 0 25px rgba(30, 60, 114, 0.5);
+      background: rgba(15, 20, 25, 0.8);
+      box-shadow: 0 0 30px rgba(15, 20, 25, 0.6);
     }
   }
 
   &--clear-night {
     .weather-background__gradient {
-      background: linear-gradient(135deg, #0f0c29 0%, #302b63 100%);
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
     }
 
     .weather-background__particle {
-      background: rgba(255, 255, 255, 0.8);
-      box-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 0 35px rgba(255, 255, 255, 0.7);
     }
   }
 
   &--rainy-night {
     .weather-background__gradient {
-      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+      background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
     }
 
     .weather-background__particle {
-      background: rgba(52, 73, 94, 0.6);
+      background: rgba(26, 32, 44, 0.7);
+      box-shadow: 0 0 15px rgba(26, 32, 44, 0.5);
     }
   }
 
   &--heavy-rain-night {
     .weather-background__gradient {
-      background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+      background: linear-gradient(135deg, #0f1419 0%, #1a202c 100%);
     }
 
     .weather-background__particle {
-      background: rgba(45, 55, 72, 0.6);
-      box-shadow: 0 0 15px rgba(45, 55, 72, 0.4);
+      background: rgba(15, 20, 25, 0.8);
+      box-shadow: 0 0 20px rgba(15, 20, 25, 0.6);
     }
   }
 
   &--snowy-night {
     .weather-background__gradient {
-      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-    }
-
-    .weather-background__particle {
-      background: rgba(255, 255, 255, 0.7);
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-    }
-  }
-
-  &--heavy-snow-night {
-    .weather-background__gradient {
-      background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+      background: linear-gradient(135deg, #0f1419 0%, #1a202c 100%);
     }
 
     .weather-background__particle {
@@ -345,46 +338,58 @@
     }
   }
 
-  &--stormy-night {
+  &--heavy-snow-night {
     .weather-background__gradient {
-      background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+      background: linear-gradient(135deg, #0f1419 0%, #1a202c 100%);
     }
 
     .weather-background__particle {
-      background: rgba(45, 55, 72, 0.6);
-      box-shadow: 0 0 20px rgba(45, 55, 72, 0.5);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.7);
+    }
+  }
+
+  &--stormy-night {
+    .weather-background__gradient {
+      background: linear-gradient(135deg, #0a0a0a 0%, #0f1419 100%);
+    }
+
+    .weather-background__particle {
+      background: rgba(10, 10, 10, 0.9);
+      box-shadow: 0 0 25px rgba(10, 10, 10, 0.7);
     }
   }
 
   &--cloudy-night {
     .weather-background__gradient {
-      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+      background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
     }
 
     .weather-background__particle {
-      background: rgba(52, 73, 94, 0.6);
+      background: rgba(26, 32, 44, 0.7);
+      box-shadow: 0 0 18px rgba(26, 32, 44, 0.5);
     }
   }
 
   &--partly-cloudy-night {
     .weather-background__gradient {
-      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      background: linear-gradient(135deg, #0f1419 0%, #1a202c 100%);
     }
 
     .weather-background__particle {
-      background: rgba(30, 60, 114, 0.6);
-      box-shadow: 0 0 20px rgba(30, 60, 114, 0.4);
+      background: rgba(15, 20, 25, 0.8);
+      box-shadow: 0 0 22px rgba(15, 20, 25, 0.6);
     }
   }
 
   &--foggy-night {
     .weather-background__gradient {
-      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+      background: linear-gradient(135deg, #0f1419 0%, #1a202c 100%);
     }
 
     .weather-background__particle {
-      background: rgba(255, 255, 255, 0.2);
-      box-shadow: 0 0 40px rgba(255, 255, 255, 0.3);
+      background: rgba(142, 154, 175, 0.4);
+      box-shadow: 0 0 45px rgba(142, 154, 175, 0.5);
     }
   }
 
@@ -408,6 +413,105 @@
     .weather-background__particle {
       background: rgba(252, 182, 159, 0.6);
       box-shadow: 0 0 25px rgba(252, 182, 159, 0.5);
+    }
+  }
+
+  // Estados de presión atmosférica
+  &--low-pressure {
+    .weather-background__gradient {
+      background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+      animation: pressure-pulse 3s ease-in-out infinite;
+    }
+
+    .weather-background__particle {
+      background: rgba(45, 55, 72, 0.7);
+      box-shadow: 0 0 15px rgba(45, 55, 72, 0.5);
+    }
+  }
+
+  &--high-pressure {
+    .weather-background__gradient {
+      background: linear-gradient(135deg, #e6f3ff 0%, #cce7ff 100%);
+    }
+
+    .weather-background__particle {
+      background: rgba(230, 243, 255, 0.8);
+      box-shadow: 0 0 20px rgba(230, 243, 255, 0.6);
+    }
+  }
+
+  // Estados de humedad
+  &--dry-atmosphere {
+    .weather-background__gradient {
+      background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+    }
+
+    .weather-background__particle {
+      background: rgba(255, 216, 155, 0.6);
+      box-shadow: 0 0 25px rgba(255, 216, 155, 0.5);
+    }
+  }
+
+  &--humid-atmosphere {
+    .weather-background__gradient {
+      background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    }
+
+    .weather-background__particle {
+      background: rgba(116, 185, 255, 0.6);
+      box-shadow: 0 0 20px rgba(116, 185, 255, 0.5);
+    }
+  }
+
+  // Estados de visibilidad
+  &--very-poor-visibility {
+    .weather-background__gradient {
+      background: linear-gradient(135deg, #636e72 0%, #2d3436 100%);
+      backdrop-filter: blur(8px);
+    }
+
+    .weather-background__particle {
+      background: rgba(99, 110, 114, 0.3);
+      box-shadow: 0 0 50px rgba(99, 110, 114, 0.8);
+      animation: fog-drift 12s ease-in-out infinite;
+    }
+  }
+
+  // Estados de viento extremo
+  &--extreme-wind {
+    .weather-background__gradient {
+      background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+      animation: wind-sway 2s ease-in-out infinite;
+    }
+
+    .weather-background__particle {
+      background: rgba(116, 185, 255, 0.7);
+      box-shadow: 0 0 25px rgba(116, 185, 255, 0.6);
+      animation: wind-sway 1.5s ease-in-out infinite;
+    }
+  }
+
+  // Combinaciones atmosféricas complejas
+  &--stormy-extreme {
+    .weather-background__gradient {
+      background: linear-gradient(135deg, #0a0a0a 0%, #2d3436 100%);
+      animation: storm-flash 2s ease-in-out infinite;
+    }
+
+    .weather-background__particle {
+      background: rgba(10, 10, 10, 0.9);
+      box-shadow: 0 0 30px rgba(10, 10, 10, 0.8);
+    }
+  }
+
+  &--heavy-rain-extreme {
+    .weather-background__gradient {
+      background: linear-gradient(135deg, #1a202c 0%, #0f1419 100%);
+    }
+
+    .weather-background__particle {
+      background: rgba(26, 32, 44, 0.9);
+      box-shadow: 0 0 25px rgba(26, 32, 44, 0.7);
     }
   }
 }
@@ -457,5 +561,18 @@
   50% {
     opacity: 0.6;
     transform: translateX(10px) rotate(2deg);
+  }
+}
+
+// Animación para presión baja
+@keyframes pressure-pulse {
+  0%,
+  100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.01);
   }
 }

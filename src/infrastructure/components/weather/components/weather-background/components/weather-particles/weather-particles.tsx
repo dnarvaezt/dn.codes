@@ -1,73 +1,69 @@
 import { useMemo } from "react"
 import { useWeatherStore } from "../../../../weather-store"
-import { useWeatherBackground } from "../../weather-background.hook"
-import { createStableRandom, generateWeatherSeed } from "../../weather-background.utils"
+import {
+  calculateAtmosphericIntensity,
+  calculateAtmosphericOpacity,
+  createValidatedParticle,
+  generateStableArray,
+  generateWeatherSeed,
+  validateParticleCount,
+  validateWeatherData,
+} from "../../utils"
+import { useWeatherBackgroundStore } from "../../weather-background.store"
 import "./weather-particles.scss"
 
-interface Particle {
-  id: number
-  size: string
-  left: number
-  top: number
-  animationDelay: number
-  opacity: number
-}
+import type { AtmosphericParticle } from "../../utils"
+// Usar la interfaz centralizada con animationDuration
+type Particle = AtmosphericParticle & { size: string }
 
 export const WeatherParticles = () => {
   const { weather } = useWeatherStore()
-  const { weatherType } = useWeatherBackground(weather)
+  const { weatherType } = useWeatherBackgroundStore()
+
   const particles = useMemo((): Particle[] => {
-    // Usar datos reales de visibilidad y humedad
-    const visibility = weather?.visibility || 10000 // En metros, default 10km
-    const humidity = weather?.main.humidity || 50 // Porcentaje de humedad
+    // No generar partículas si no hay datos del clima
+    if (!weather || !weatherType) return []
 
-    // Calcular cantidad de partículas basada en visibilidad (menos visibilidad = más partículas)
-    const visibilityKm = visibility / 1000
-    let particleCount = 8 // Visibilidad normal
+    // Validar datos del clima usando utilidades centralizadas
+    const weatherData = validateWeatherData(weather)
 
-    // Ajustar según visibilidad (partículas atmosféricas)
-    if (visibilityKm < 1)
-      particleCount = 25 // Niebla densa
-    else if (visibilityKm < 3)
-      particleCount = 20 // Niebla moderada
-    else if (visibilityKm < 10) particleCount = 15 // Visibilidad reducida
+    // Calcular intensidad usando utilidad centralizada
+    const particleCount = calculateAtmosphericIntensity(weatherData.visibility, weatherType)
+    const validParticleCount = validateParticleCount(particleCount, 0, 25, 8)
 
-    // Ajustar según tipo de clima
-    if (weatherType.includes("sunny") || weatherType.includes("clear"))
-      particleCount = Math.max(particleCount, 20)
-    else if (weatherType.includes("stormy")) particleCount = Math.max(particleCount, 6)
-    else if (weatherType.includes("rain")) particleCount = Math.max(particleCount, 8)
-    else if (weatherType.includes("snow")) particleCount = Math.max(particleCount, 10)
-    else if (weatherType.includes("fog")) particleCount = Math.max(particleCount, 15)
-    else if (weatherType.includes("windy")) particleCount = Math.max(particleCount, 15)
+    // Calcular opacidad usando utilidad centralizada
+    const particleOpacity = calculateAtmosphericOpacity(
+      0.6,
+      weatherData.humidity,
+      weatherData.visibility
+    )
 
-    // Calcular opacidad basada en humedad y visibilidad
-    const baseOpacity = 0.6
-    const humidityFactor = humidity / 100 // 0 a 1
-    const visibilityFactor = Math.max(0.3, visibilityKm / 10) // 0.3 a 1
-    const particleOpacity = baseOpacity * humidityFactor * visibilityFactor
-
-    const particlesArray: Particle[] = []
     const seed = generateWeatherSeed(weather, weatherType)
-
-    for (let i = 0; i < particleCount; i++) {
-      const random = createStableRandom(seed, i)
+    return generateStableArray<Particle>(seed, validParticleCount, (random, i) => {
       let size = "small"
       const sizeRandom = random.random()
       if (sizeRandom >= 0.7) size = "large"
       else if (sizeRandom >= 0.5) size = "medium"
 
-      particlesArray.push({
-        id: i,
-        size,
-        left: random.float(0, 100),
-        top: random.float(0, 100),
-        animationDelay: random.float(0, 5),
-        opacity: particleOpacity + random.float(-0.1, 0.1), // Variación ±0.1
+      // Usar utilidad centralizada para crear partícula validada
+      const baseParticle = createValidatedParticle(random, i, {
+        leftRange: [0, 100],
+        topRange: [0, 100],
+        delayRange: [0, 5],
+        opacityBase: particleOpacity,
+        opacityVariation: 0.1,
       })
-    }
-    return particlesArray
+
+      return {
+        ...baseParticle,
+        size,
+        animationDuration: 6, // Duración fija para partículas atmosféricas
+      }
+    })
   }, [weather, weatherType])
+
+  // No renderizar si no hay partículas
+  if (particles.length === 0) return null
 
   return (
     <div className="weather-background__particles">

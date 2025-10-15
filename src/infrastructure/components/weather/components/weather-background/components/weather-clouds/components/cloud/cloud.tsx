@@ -1,5 +1,5 @@
 import { CSSProperties, useMemo } from "react"
-import { createStableRandom } from "../../../../weather-background.utils"
+import { createStableRandom } from "../../../../utils"
 import "./cloud.scss"
 
 type StableRandom = {
