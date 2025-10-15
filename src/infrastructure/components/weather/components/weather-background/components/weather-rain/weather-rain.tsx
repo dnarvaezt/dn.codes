@@ -11,6 +11,7 @@ interface WeatherRainProps {
 interface Raindrop {
   id: number
   left: number
+  top: number
   animationDelay: number
   animationDuration: number
 }
@@ -57,6 +58,7 @@ export const WeatherRain = ({ shouldShow }: WeatherRainProps) => {
       raindropsArray.push({
         id: i,
         left: random.float(0, 100),
+        top: random.float(-100, -20), // Posición inicial aleatoria entre -100vh y -20vh
         animationDelay: random.float(0, 2),
         animationDuration: animationDuration + random.float(-0.25, 0.25), // Variación ±0.25s
       })
@@ -74,6 +76,7 @@ export const WeatherRain = ({ shouldShow }: WeatherRainProps) => {
           className="weather-background__raindrop"
           style={{
             left: `${drop.left}%`,
+            top: `${drop.top}vh`,
             animationDelay: `${drop.animationDelay}s`,
             animationDuration: `${drop.animationDuration}s`,
           }}
