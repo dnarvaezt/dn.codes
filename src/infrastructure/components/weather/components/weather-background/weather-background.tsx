@@ -1,14 +1,20 @@
 "use client"
 
 import { useWeatherStore } from "../../weather-store"
-import { WeatherClouds, WeatherParticles, WeatherRain, WeatherSnow } from "./components"
+import {
+  WeatherClouds,
+  WeatherParticles,
+  WeatherRain,
+  WeatherSnow,
+  WeatherThunder,
+} from "./components"
 import { useWeatherBackground } from "./weather-background.hook"
 import "./weather-background.scss"
 
 export const WeatherBackground = () => {
   const { weather, isLoading } = useWeatherStore()
 
-  const { weatherType, shouldShowRain, shouldShowSnow, shouldShowClouds } =
+  const { weatherType, shouldShowRain, shouldShowSnow, shouldShowClouds, shouldShowThunder } =
     useWeatherBackground(weather)
 
   // Durante la carga inicial, usar un estado de transición suave
@@ -29,6 +35,8 @@ export const WeatherBackground = () => {
           <WeatherRain shouldShow={shouldShowRain} />
 
           <WeatherSnow shouldShow={shouldShowSnow} />
+
+          <WeatherThunder shouldShow={shouldShowThunder} />
         </>
       )}
     </div>

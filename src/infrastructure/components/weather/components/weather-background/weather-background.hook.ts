@@ -191,11 +191,18 @@ export const useWeatherBackground = (weather: WeatherInfo | null) => {
     )
   }, [weather])
 
+  const shouldShowThunder = useMemo(() => {
+    if (!weather) return false
+    const mainWeather = weather.weather[0]?.main.toLowerCase()
+    return mainWeather === "thunderstorm"
+  }, [weather])
+
   return {
     weatherType: getWeatherType,
     shouldShowRain,
     shouldShowSnow,
     shouldShowClouds,
+    shouldShowThunder,
     season: getSeason,
     timeOfDay: getTimeOfDay,
   }
