@@ -1,22 +1,16 @@
 .default-layout {
-  @apply flex flex-col;
-  width: 100%;
+  @apply flex w-full flex-col overflow-y-auto overflow-x-hidden;
   height: 100vh;
   height: 100dvh;
-  overflow-y: auto;
-  overflow-x: hidden;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
 
   &__main {
-    @apply flex-1;
-    width: 100%;
+    @apply relative w-full flex-1 flex-shrink-0;
     min-height: 0;
-    flex-shrink: 0;
-    position: relative;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     height: 100vh;
     height: 100dvh;
     min-height: -webkit-fill-available;

@@ -1,0 +1,86 @@
+.weather-background__particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.weather-background__particle {
+  position: absolute;
+  border-radius: 50%;
+  animation: float 6s ease-in-out infinite;
+  opacity: 0.6;
+
+  &--small {
+    width: 4px;
+    height: 4px;
+    animation-duration: 8s;
+    animation-delay: 0s;
+  }
+
+  &--medium {
+    width: 8px;
+    height: 8px;
+    animation-duration: 10s;
+    animation-delay: 2s;
+  }
+
+  &--large {
+    width: 12px;
+    height: 12px;
+    animation-duration: 12s;
+    animation-delay: 4s;
+  }
+}
+
+// Animación para partículas
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+  }
+}
+
+// Animaciones específicas para condiciones extremas
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes wind-sway {
+  0%,
+  100% {
+    transform: translateX(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateX(5px) rotate(1deg);
+  }
+  75% {
+    transform: translateX(-5px) rotate(-1deg);
+  }
+}
+
+@keyframes fog-drift {
+  0% {
+    transform: translateX(-50px) scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateX(0px) scale(1.1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateX(50px) scale(1);
+    opacity: 0.3;
+  }
+}

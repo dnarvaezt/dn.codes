@@ -204,6 +204,7 @@ export class WeatherRepositoryOpenWeatherMap implements WeatherRepository {
   }
 }
 
-export const createWeatherRepository = (apiKey: string): WeatherRepository => {
+export const createWeatherRepository = (): WeatherRepository => {
+  const apiKey = process.env.NEXT_PUBLIC_OPENWEATHERMAP_API_KEY || ""
   return new WeatherRepositoryOpenWeatherMap(apiKey)
 }

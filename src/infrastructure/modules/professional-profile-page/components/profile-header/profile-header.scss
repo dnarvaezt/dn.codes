@@ -1,0 +1,109 @@
+.profile-header {
+  @apply w-full;
+
+  &__container {
+    @apply mx-auto max-w-7xl px-4 py-8;
+    @apply lg:px-8;
+    @apply grid grid-cols-1 gap-8;
+    @apply lg:grid-cols-[1fr_auto];
+  }
+
+  &__main {
+    @apply flex flex-col gap-6;
+    @apply md:flex-row md:items-start;
+  }
+
+  &__avatar-section {
+    @apply flex-shrink-0;
+  }
+
+  &__avatar {
+    @apply relative h-32 w-32 rounded-2xl;
+    @apply md:h-40 md:w-40;
+    @apply ring-4 ring-border;
+    @apply transition-all duration-300;
+    @apply hover:scale-105 hover:ring-primary;
+  }
+
+  &__avatar-image {
+    @apply h-full w-full rounded-2xl object-cover;
+  }
+
+  &__status {
+    @apply absolute bottom-2 right-2;
+    @apply h-5 w-5 rounded-full;
+    @apply border-4 border-background;
+    background-color: hsl(142 76% 36%);
+    animation: pulse-status 2s ease-in-out infinite;
+  }
+
+  &__info {
+    @apply flex flex-1 flex-col gap-4;
+  }
+
+  &__name-section {
+    @apply flex flex-col gap-1;
+  }
+
+  &__name {
+    @apply text-3xl font-bold text-foreground;
+    @apply md:text-4xl;
+  }
+
+  &__title {
+    @apply text-lg text-primary;
+    @apply font-medium;
+  }
+
+  &__bio {
+    @apply text-base leading-relaxed text-muted-foreground;
+    @apply max-w-2xl;
+  }
+
+  &__meta {
+    @apply flex flex-col gap-3;
+    @apply md:flex-row md:flex-wrap md:gap-6;
+  }
+
+  &__meta-item {
+    @apply flex items-center gap-2;
+    @apply text-sm text-muted-foreground;
+  }
+
+  &__icon {
+    @apply h-5 w-5 flex-shrink-0;
+    color: hsl(var(--muted-foreground) / 0.7);
+  }
+
+  &__link {
+    @apply transition-colors hover:text-primary;
+    @apply hover:underline;
+  }
+
+  &__weather {
+    @apply flex items-start justify-center;
+    @apply lg:justify-end;
+  }
+}
+
+@keyframes pulse-status {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (max-width: 640px) {
+  .profile-header {
+    &__main {
+      @apply items-center text-center;
+    }
+
+    &__meta {
+      @apply items-center;
+    }
+  }
+}

@@ -2,11 +2,11 @@
   @apply container mx-auto flex min-h-[60vh] flex-col items-center justify-center px-4 text-center;
 
   &__title {
-    @apply mb-4 text-6xl font-bold;
+    @apply mb-4 text-6xl font-bold text-foreground;
   }
 
   &__subtitle {
-    @apply mb-4 text-2xl font-semibold;
+    @apply mb-4 text-2xl font-semibold text-foreground;
   }
 
   &__description {
@@ -15,9 +15,7 @@
 
   &__link {
     @apply rounded-md bg-primary px-6 py-3 text-primary-foreground;
-
-    &:hover {
-      opacity: 0.9;
-    }
+    @apply transition-all duration-200;
+    @apply hover:bg-primary/90;
   }
 }

@@ -1,4 +1,5 @@
-import { StaticLayout } from "@/infrastructure/components"
+import { StaticLayout, WeatherBackground } from "@/infrastructure/components"
+import { ProfileHeader } from "./components"
 import { useProfessionalProfilePage } from "./professional-profile-page.hook"
 import "./professional-profile-page.scss"
 
@@ -8,8 +9,9 @@ export const ProfessionalProfilePage = () => {
   return (
     <StaticLayout>
       <div className="professional-profile-page">
-        <h1 className="professional-profile-page__title">Perfil Profesional</h1>
+        <ProfileHeader />
       </div>
+      <WeatherBackground />
     </StaticLayout>
   )
 }
