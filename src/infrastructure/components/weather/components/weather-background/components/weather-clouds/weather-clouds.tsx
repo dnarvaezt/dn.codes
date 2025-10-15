@@ -2,6 +2,7 @@ import { useMemo } from "react"
 import { useWeatherStore } from "../../../../weather-store"
 import { useWeatherBackground } from "../../weather-background.hook"
 import { createStableRandom, generateWeatherSeed } from "../../weather-background.utils"
+import { Cloud } from "./components"
 import "./weather-clouds.scss"
 
 interface WeatherCloudsProps {
@@ -9,11 +10,8 @@ interface WeatherCloudsProps {
   isLoading?: boolean
 }
 
-interface Cloud {
+interface CloudItem {
   id: number
-  size: string
-  width: number
-  height: number
   top: number
   left: number
   animationDelay: number
@@ -41,88 +39,96 @@ export const WeatherClouds = ({ shouldShow, isLoading = false }: WeatherCloudsPr
     return 3
   }
 
-  const getCloudSize = (sizeRandom: number, random: any) => {
-    if (sizeRandom >= 0.8) {
-      return {
-        size: "large" as const,
-        width: random.float(120, 160),
-        height: random.float(40, 60),
-      }
-    }
-    if (sizeRandom >= 0.4) {
-      return {
-        size: "medium" as const,
-        width: random.float(70, 120),
-        height: random.float(25, 45),
-      }
-    }
+  type StableRandom = {
+    random: () => number
+    float: (min: number, max: number) => number
+  }
+
+  const computeFinalCloudCount = (
+    visibility: number | undefined,
+    cloudCoverage: number | undefined,
+    currentWeatherType: string
+  ): number => {
+    const visibilityKm = (visibility ?? 10000) / 1000
+    const baseCloudCount = getBaseCloudCount(visibilityKm)
+    const coverageMultiplier = Math.max(0.5, (cloudCoverage ?? 0) / 50)
+    let cloudCount = Math.floor(baseCloudCount * coverageMultiplier)
+
+    const weatherMultiplier = getWeatherTypeMultiplier(currentWeatherType)
+    cloudCount = Math.max(cloudCount, weatherMultiplier)
+    cloudCount = Math.min(cloudCount, 20)
+    return cloudCount
+  }
+
+  type CloudParams = {
+    topMin: number
+    topMax: number
+    leftMin: number
+    leftMax: number
+    delayMin: number
+    delayMax: number
+    durationBase: number
+    durationVariance: number
+  }
+
+  const createCloud = (idx: number, seed: number, params: CloudParams): CloudItem => {
+    const random = createStableRandom(seed, idx) as StableRandom
     return {
-      size: "small" as const,
-      width: random.float(40, 80),
-      height: random.float(15, 30),
+      id: idx,
+      top: random.float(params.topMin, params.topMax),
+      left: random.float(params.leftMin, params.leftMax),
+      animationDelay: random.float(params.delayMin, params.delayMax),
+      animationDuration:
+        params.durationBase + random.float(-params.durationVariance, params.durationVariance),
     }
   }
 
-  const clouds = useMemo((): Cloud[] => {
+  const generateClouds = (seed: number, count: number, params: CloudParams): CloudItem[] => {
+    const cloudsArray: CloudItem[] = []
+    for (let i = 0; i < count; i++) {
+      cloudsArray.push(createCloud(i, seed, params))
+    }
+    return cloudsArray
+  }
+
+  const seedLoading = generateWeatherSeed(null, "loading")
+  const seedNormal = generateWeatherSeed(weather, weatherType)
+
+  const clouds = useMemo((): CloudItem[] => {
     if (!shouldShow) return []
 
-    // Durante la carga, mostrar nubes básicas con animación
+    // Durante la carga, generar con parámetros específicos
     if (isLoading) {
-      const cloudsArray: Cloud[] = []
-      const seed = generateWeatherSeed(null, "loading")
-
-      // Generar 6-8 nubes básicas para la carga
-      for (let i = 0; i < 7; i++) {
-        const random = createStableRandom(seed, i)
-        const sizeData = getCloudSize(random.random(), random)
-
-        cloudsArray.push({
-          id: i,
-          ...sizeData,
-          top: random.float(5, 50),
-          left: random.float(-300, -100), // Mayor rango de posiciones iniciales
-          animationDelay: random.float(0, 40), // Delays mucho más variados (0-40s)
-          animationDuration: 25 + random.float(-8, 8), // Duración más variada
-        })
-      }
-      return cloudsArray
+      return generateClouds(seedLoading, 7, {
+        topMin: 5,
+        topMax: 50,
+        leftMin: -300,
+        leftMax: -100,
+        delayMin: 0,
+        delayMax: 40,
+        durationBase: 25,
+        durationVariance: 8,
+      })
     }
 
     // Lógica normal cuando no está cargando
-    const visibility = weather?.visibility || 10000
-    const cloudCoverage = weather?.clouds.all || 0
-
-    const visibilityKm = visibility / 1000
-    const baseCloudCount = getBaseCloudCount(visibilityKm)
-    const coverageMultiplier = Math.max(0.5, cloudCoverage / 50)
-    let cloudCount = Math.floor(baseCloudCount * coverageMultiplier)
-
-    const weatherMultiplier = getWeatherTypeMultiplier(weatherType)
-    cloudCount = Math.max(cloudCount, weatherMultiplier)
-    cloudCount = Math.min(cloudCount, 20)
+    const cloudCount = computeFinalCloudCount(weather?.visibility, weather?.clouds.all, weatherType)
 
     const windSpeed = weather?.wind.speed || 0
     const windMultiplier = Math.max(0.3, Math.min(4, windSpeed / 3))
-    const animationDuration = 30 / windMultiplier
+    const durationBase = 30 / windMultiplier
 
-    const cloudsArray: Cloud[] = []
-    const seed = generateWeatherSeed(weather, weatherType)
-
-    for (let i = 0; i < cloudCount; i++) {
-      const random = createStableRandom(seed, i)
-      const sizeData = getCloudSize(random.random(), random)
-
-      cloudsArray.push({
-        id: i,
-        ...sizeData,
-        top: random.float(5, 50),
-        left: random.float(-400, -100), // Posiciones iniciales más dispersas
-        animationDelay: random.float(0, 60), // Delays mucho más variados (0-60s)
-        animationDuration: animationDuration + random.float(-15, 15), // Mayor variación en duración
-      })
-    }
-    return cloudsArray
-  }, [weather, weatherType, shouldShow, isLoading])
+    return generateClouds(seedNormal, cloudCount, {
+      topMin: 5,
+      topMax: 50,
+      leftMin: -400,
+      leftMax: -100,
+      delayMin: 0,
+      delayMax: 60,
+      durationBase,
+      durationVariance: 15,
+    })
+  }, [weather, weatherType, shouldShow, isLoading, seedLoading, seedNormal])
 
   if (!shouldShow) return null
 
@@ -131,14 +137,14 @@ export const WeatherClouds = ({ shouldShow, isLoading = false }: WeatherCloudsPr
       className={`weather-background__clouds ${isLoading ? "weather-background__clouds--loading" : ""}`}
     >
       {clouds.map((cloud) => (
-        <div
+        <Cloud
           key={cloud.id}
-          className={`weather-background__cloud weather-background__cloud--${cloud.size} ${isLoading ? "weather-background__cloud--loading" : ""}`}
+          seed={isLoading ? seedLoading : seedNormal}
+          index={cloud.id}
+          isLoading={isLoading}
           style={{
             top: `${cloud.top}%`,
             left: `${cloud.left}px`,
-            width: `${cloud.width}px`,
-            height: `${cloud.height}px`,
             animationDelay: `${cloud.animationDelay}s`,
             animationDuration: `${cloud.animationDuration}s`,
           }}
