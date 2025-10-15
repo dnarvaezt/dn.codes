@@ -1,2 +1,1 @@
-export * from "./components"
-export * from "./professional-profile-page"
+export { ProfessionalProfilePage } from "./professional-profile-page"
