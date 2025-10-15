@@ -9,7 +9,7 @@
     "format:check": "prettier --check .",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "prepare": "husky",
+    "prepare": "husky || true",
     "start": "next start",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
