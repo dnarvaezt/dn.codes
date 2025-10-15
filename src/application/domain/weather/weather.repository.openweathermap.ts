@@ -80,12 +80,11 @@ const DEFAULT_WEATHER_OPTIONS: Required<WeatherOptions> = {
 
 export class WeatherRepositoryOpenWeatherMap implements WeatherRepository {
   private readonly apiKey: string
+  private readonly hasApiKey: boolean
 
   constructor(apiKey: string) {
-    if (!apiKey || apiKey.trim().length === 0) {
-      throw new Error("API key de OpenWeatherMap es requerida")
-    }
-    this.apiKey = apiKey
+    this.hasApiKey = !!(apiKey && apiKey.trim().length > 0)
+    this.apiKey = apiKey || ""
   }
 
   private buildApiUrl(latitude: number, longitude: number, options?: WeatherOptions): string {
@@ -165,6 +164,10 @@ export class WeatherRepositoryOpenWeatherMap implements WeatherRepository {
     longitude: number,
     options?: WeatherOptions
   ): Promise<WeatherInfo> {
+    if (!this.hasApiKey) {
+      throw new WeatherError("API key de OpenWeatherMap no configurada")
+    }
+
     const timeout = options?.timeout ?? DEFAULT_WEATHER_OPTIONS.timeout
 
     const controller = new AbortController()

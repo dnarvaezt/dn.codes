@@ -12,8 +12,18 @@ interface WeatherState {
 }
 
 export const useWeatherStore = create<WeatherState>((set) => {
-  const geolocationService = new GeolocationService(createGeolocationRepository())
-  const weatherService = new WeatherService(createWeatherRepository())
+  let geolocationService: GeolocationService | null = null
+  let weatherService: WeatherService | null = null
+
+  const getServices = () => {
+    if (!geolocationService) {
+      geolocationService = new GeolocationService(createGeolocationRepository())
+    }
+    if (!weatherService) {
+      weatherService = new WeatherService(createWeatherRepository())
+    }
+    return { geolocationService, weatherService }
+  }
 
   return {
     weather: null,
@@ -25,12 +35,14 @@ export const useWeatherStore = create<WeatherState>((set) => {
       set({ isLoading: true, error: null })
 
       try {
-        const position = await geolocationService.getPosition({
+        const { geolocationService: geoService, weatherService: weatherSvc } = getServices()
+
+        const position = await geoService.getPosition({
           enableHighAccuracy: true,
           timeout: 10000,
         })
 
-        const weather = await weatherService.getWeatherByCoordinates(
+        const weather = await weatherSvc.getWeatherByCoordinates(
           position.coords.latitude,
           position.coords.longitude,
           {
