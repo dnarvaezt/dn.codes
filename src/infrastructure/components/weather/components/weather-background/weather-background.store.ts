@@ -6,7 +6,7 @@ import {
   WeatherVisibilityService,
 } from "./utils"
 
-import type { WeatherInfo } from "@/application/domain/weather"
+import type { Weather } from "@/application/domain/weather"
 
 type WeatherBackgroundState = {
   weatherType: string
@@ -16,7 +16,7 @@ type WeatherBackgroundState = {
   shouldShowClouds: boolean
   shouldShowThunder: boolean
 
-  computeFromWeather: (weather: WeatherInfo | null) => void
+  computeFromWeather: (weather: Weather | null) => void
 }
 
 class WeatherBackgroundStoreManager {
@@ -30,7 +30,7 @@ class WeatherBackgroundStoreManager {
     )
   }
 
-  computeState(weather: WeatherInfo | null): Omit<WeatherBackgroundState, "computeFromWeather"> {
+  computeState(weather: Weather | null): Omit<WeatherBackgroundState, "computeFromWeather"> {
     const weatherType = this.weatherTypeService.getWeatherType(weather)
     const weatherContext = this.weatherTypeService.getWeatherContext(weather)
     const visibilityFlags = this.weatherVisibilityService.getVisibilityFlags(weather)

@@ -1,9 +1,9 @@
-import { LanguageInfo, SupportedLanguage } from "./language.model"
+import type { LanguageInfo, SupportedLanguage } from "./language.model"
 
-interface LanguageRepository {
-  getCurrentLanguage(): LanguageInfo
-  setManualLanguage(language: SupportedLanguage): void
-  resetToAutomatic(): void
+export abstract class LanguageRepository {
+  abstract getCurrentLanguage(): LanguageInfo
+  abstract setManualLanguage(language: SupportedLanguage): void
+  abstract resetToAutomatic(): void
 }
 
 class LanguageError extends Error {
@@ -41,14 +41,12 @@ export class LanguageRepositoryBrowser implements LanguageRepository {
   }
 
   public getCurrentLanguage(): LanguageInfo {
-    if (this.currentLanguage) {
-      return { ...this.currentLanguage }
-    }
+    if (this.currentLanguage) return { ...this.currentLanguage }
 
     const browserLanguage =
-      typeof navigator !== "undefined"
-        ? navigator.language || DEFAULT_LANGUAGE.fullCode
-        : DEFAULT_LANGUAGE.fullCode
+      typeof navigator === "undefined"
+        ? DEFAULT_LANGUAGE.fullCode
+        : navigator.language || DEFAULT_LANGUAGE.fullCode
     const baseLanguage = browserLanguage.toLowerCase().split("-")[0]
     const language = SUPPORTED_LANGUAGES.includes(baseLanguage as SupportedLanguage)
       ? (baseLanguage as SupportedLanguage)
@@ -65,8 +63,4 @@ export class LanguageRepositoryBrowser implements LanguageRepository {
   public resetToAutomatic(): void {
     this.currentLanguage = null
   }
-}
-
-export const createLanguageRepository = (): LanguageRepository => {
-  return new LanguageRepositoryBrowser()
 }

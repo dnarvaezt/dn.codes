@@ -1,9 +1,9 @@
-import { createGeolocationRepository, GeolocationService } from "@/application/domain/geolocation"
-import { createWeatherRepository, WeatherInfo, WeatherService } from "@/application/domain/weather"
+import { geolocationRepository } from "@/application/domain/geolocation"
+import { Weather, weatherRepository } from "@/application/domain/weather"
 import { create } from "zustand"
 
 interface WeatherState {
-  weather: WeatherInfo | null
+  weather: Weather | null
   isLoading: boolean
   error: string | null
   lastUpdated: number | null
@@ -12,18 +12,10 @@ interface WeatherState {
 }
 
 export const useWeatherStore = create<WeatherState>((set) => {
-  let geolocationService: GeolocationService | null = null
-  let weatherService: WeatherService | null = null
-
-  const getServices = () => {
-    if (!geolocationService) {
-      geolocationService = new GeolocationService(createGeolocationRepository())
-    }
-    if (!weatherService) {
-      weatherService = new WeatherService(createWeatherRepository())
-    }
-    return { geolocationService, weatherService }
-  }
+  const getServices = () => ({
+    geolocationService: geolocationRepository,
+    weatherService: weatherRepository,
+  })
 
   return {
     weather: null,
@@ -38,18 +30,13 @@ export const useWeatherStore = create<WeatherState>((set) => {
         const { geolocationService: geoService, weatherService: weatherSvc } = getServices()
 
         const position = await geoService.getPosition({
-          enableHighAccuracy: true,
-          timeout: 10000,
+          options: { enableHighAccuracy: true, timeout: 10000 },
         })
 
-        const weather = await weatherSvc.getWeatherByCoordinates(
-          position.coords.latitude,
-          position.coords.longitude,
-          {
-            units: "metric",
-            language: "es",
-          }
-        )
+        const weather = await weatherSvc.getWeatherByCoordinates({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        })
 
         set({
           weather,

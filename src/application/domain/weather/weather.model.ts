@@ -1,4 +1,4 @@
-export interface WeatherInfo {
+export interface Weather {
   coordinates: {
     latitude: number
     longitude: number
@@ -47,10 +47,4 @@ export interface WeatherInfo {
   timezone: number
   cityId: number
   cityName: string
-}
-
-export interface WeatherOptions {
-  units?: "metric" | "imperial" | "standard"
-  language?: string
-  timeout?: number
 }

@@ -1,8 +1,8 @@
-import type { WeatherInfo } from "@/application/domain/weather"
+import type { Weather } from "@/application/domain/weather"
 
 export interface WeatherTypeStrategy {
-  getWeatherType(weather: WeatherInfo): string
-  shouldShow(weather: WeatherInfo): boolean
+  getWeatherType(weather: Weather): string
+  shouldShow(weather: Weather): boolean
 }
 
 type TimeOfDay = "dawn" | "day" | "dusk" | "night"
@@ -31,7 +31,7 @@ export class WeatherTypeService {
     this.strategies.set(type, strategy)
   }
 
-  getWeatherType(weather: WeatherInfo | null): string {
+  getWeatherType(weather: Weather | null): string {
     if (!weather) return "default"
 
     const mainWeather = weather.weather[0]?.main.toLowerCase()
@@ -45,7 +45,7 @@ export class WeatherTypeService {
     return this.getFallbackWeatherType(weather)
   }
 
-  getWeatherContext(weather: WeatherInfo | null): WeatherContext | null {
+  getWeatherContext(weather: Weather | null): WeatherContext | null {
     if (!weather) return null
 
     const timeOfDay = this.getTimeOfDay(weather)
@@ -70,7 +70,7 @@ export class WeatherTypeService {
     }
   }
 
-  private getTimeOfDay(weather: WeatherInfo): TimeOfDay {
+  private getTimeOfDay(weather: Weather): TimeOfDay {
     const now = new Date((weather.dt + weather.timezone) * 1000)
     const sunrise = new Date((weather.sys.sunrise + weather.timezone) * 1000)
     const sunset = new Date((weather.sys.sunset + weather.timezone) * 1000)
@@ -97,7 +97,7 @@ export class WeatherTypeService {
     return "day"
   }
 
-  private getSeason(weather: WeatherInfo): Season {
+  private getSeason(weather: Weather): Season {
     const now = new Date((weather.dt + weather.timezone) * 1000)
     const month = now.getMonth() + 1 // 1-12
 
@@ -108,7 +108,7 @@ export class WeatherTypeService {
     return "winter"
   }
 
-  private getIntensity(weather: WeatherInfo): Intensity {
+  private getIntensity(weather: Weather): Intensity {
     const mainWeather = weather.weather[0]?.main.toLowerCase()
     const description = weather.weather[0]?.description.toLowerCase()
 
@@ -131,14 +131,14 @@ export class WeatherTypeService {
     return this.getWindIntensity(weather)
   }
 
-  private getThunderstormIntensity(weather: WeatherInfo, description: string): Intensity {
+  private getThunderstormIntensity(weather: Weather, description: string): Intensity {
     if (description.includes("heavy") || description.includes("severe")) {
       return weather.wind.gust && weather.wind.gust > 25 ? "extreme" : "heavy"
     }
     return "moderate"
   }
 
-  private getRainIntensity(weather: WeatherInfo): Intensity {
+  private getRainIntensity(weather: Weather): Intensity {
     const rainVolume = Math.max(weather.rain?.oneHour || 0, (weather.rain?.threeHours || 0) / 3)
     if (rainVolume > 10) return "extreme"
     if (rainVolume > 5) return "heavy"
@@ -146,7 +146,7 @@ export class WeatherTypeService {
     return "light"
   }
 
-  private getSnowIntensity(weather: WeatherInfo): Intensity {
+  private getSnowIntensity(weather: Weather): Intensity {
     const snowVolume = Math.max(weather.snow?.oneHour || 0, (weather.snow?.threeHours || 0) / 3)
     if (snowVolume > 5) return "extreme"
     if (snowVolume > 2.5) return "heavy"
@@ -154,14 +154,14 @@ export class WeatherTypeService {
     return "light"
   }
 
-  private getWindIntensity(weather: WeatherInfo): Intensity {
+  private getWindIntensity(weather: Weather): Intensity {
     if (weather.wind.speed > 20) return "extreme"
     if (weather.wind.speed > 15) return "heavy"
     if (weather.wind.speed > 10) return "moderate"
     return "light"
   }
 
-  private getAtmosphericConditions(weather: WeatherInfo) {
+  private getAtmosphericConditions(weather: Weather) {
     // Presión atmosférica
     let pressure: Pressure
     if (weather.main.pressure < 1000) pressure = "low"
@@ -186,7 +186,7 @@ export class WeatherTypeService {
   }
 
   private getWeatherTypeDirect(
-    weather: WeatherInfo,
+    weather: Weather,
     context: {
       timeOfDay: TimeOfDay
       season: Season
@@ -222,7 +222,7 @@ export class WeatherTypeService {
     return context.timeOfDay === "night" ? "partly-cloudy-night" : "partly-cloudy"
   }
 
-  private getFallbackWeatherType(weather: WeatherInfo): string {
+  private getFallbackWeatherType(weather: Weather): string {
     const context = this.getWeatherContext(weather)
 
     if (!context) return "cloudy"
@@ -281,7 +281,7 @@ export class WeatherTypeService {
     return null
   }
 
-  private getExtremeConditions(weather: WeatherInfo): string | null {
+  private getExtremeConditions(weather: Weather): string | null {
     if (weather.main.temp > 35) return "hot"
     if (weather.main.temp < -10) return "freezing"
     if (weather.wind.speed > 15) return "windy"
@@ -304,7 +304,7 @@ export class WeatherTypeService {
 
   private getCloudyType(
     context: { timeOfDay: TimeOfDay; season: Season },
-    weather: WeatherInfo
+    weather: Weather
   ): string {
     if (context.timeOfDay === "night") return "cloudy-night"
 

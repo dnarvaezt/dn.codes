@@ -1,10 +1,10 @@
-import type { WeatherInfo } from "@/application/domain/weather"
+import type { Weather } from "@/application/domain/weather"
 
 export interface WeatherVisibilityStrategy {
-  shouldShowRain(weather: WeatherInfo): boolean
-  shouldShowSnow(weather: WeatherInfo): boolean
-  shouldShowClouds(weather: WeatherInfo): boolean
-  shouldShowThunder(weather: WeatherInfo): boolean
+  shouldShowRain(weather: Weather): boolean
+  shouldShowSnow(weather: Weather): boolean
+  shouldShowClouds(weather: Weather): boolean
+  shouldShowThunder(weather: Weather): boolean
 }
 
 export class WeatherVisibilityService {
@@ -18,7 +18,7 @@ export class WeatherVisibilityService {
     this.strategy = strategy
   }
 
-  getVisibilityFlags(weather: WeatherInfo | null) {
+  getVisibilityFlags(weather: Weather | null) {
     if (!weather) {
       return {
         shouldShowRain: false,
@@ -38,17 +38,17 @@ export class WeatherVisibilityService {
 }
 
 export class DefaultWeatherVisibilityStrategy implements WeatherVisibilityStrategy {
-  shouldShowRain(weather: WeatherInfo): boolean {
+  shouldShowRain(weather: Weather): boolean {
     const mainWeather = weather.weather[0]?.main.toLowerCase()
     return mainWeather === "rain" || mainWeather === "drizzle" || mainWeather === "thunderstorm"
   }
 
-  shouldShowSnow(weather: WeatherInfo): boolean {
+  shouldShowSnow(weather: Weather): boolean {
     const mainWeather = weather.weather[0]?.main.toLowerCase()
     return mainWeather === "snow"
   }
 
-  shouldShowClouds(weather: WeatherInfo): boolean {
+  shouldShowClouds(weather: Weather): boolean {
     const mainWeather = weather.weather[0]?.main.toLowerCase()
     return (
       mainWeather === "clouds" ||
@@ -58,7 +58,7 @@ export class DefaultWeatherVisibilityStrategy implements WeatherVisibilityStrate
     )
   }
 
-  shouldShowThunder(weather: WeatherInfo): boolean {
+  shouldShowThunder(weather: Weather): boolean {
     const mainWeather = weather.weather[0]?.main.toLowerCase()
     return mainWeather === "thunderstorm"
   }

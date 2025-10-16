@@ -1,8 +1,15 @@
-import { TimezoneInfo } from "./timezone.model"
+import { axiosErrorHandler } from "@/application/utils"
+import axios from "axios"
 
-interface TimezoneRepository {
-  getTimezone(): TimezoneInfo
-  getTimezoneByCoordinates(latitude: number, longitude: number): Promise<TimezoneInfo>
+import type { TimezoneInfo } from "./timezone.model"
+export interface GetTimezoneByCoordinatesProps {
+  latitude: number
+  longitude: number
+}
+
+export abstract class TimezoneRepository<TModel = TimezoneInfo> {
+  abstract getTimezone(): TModel
+  abstract getByCoordinates(args: GetTimezoneByCoordinatesProps): Promise<TModel>
 }
 
 class TimezoneError extends Error {
@@ -22,7 +29,7 @@ const DEFAULT_TIMEZONE: TimezoneInfo = {
   isDST: false,
 }
 
-export class TimezoneRepositoryBrowser implements TimezoneRepository {
+export class TimezoneRepositoryBrowser implements TimezoneRepository<TimezoneInfo> {
   private isSupported(): boolean {
     return typeof Intl !== "undefined" && typeof Intl.DateTimeFormat === "function"
   }
@@ -42,15 +49,16 @@ export class TimezoneRepositoryBrowser implements TimezoneRepository {
   }
 
   private getTimezoneName(): string {
-    if (!this.isSupported()) {
-      throw new TimezoneError("Intl.DateTimeFormat no está soportado en este navegador")
+    const supported = this.isSupported()
+    if (supported) {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone
     }
-
-    return Intl.DateTimeFormat().resolvedOptions().timeZone
+    throw new TimezoneError("Intl.DateTimeFormat no está soportado en este navegador")
   }
 
   private getUserLocale(): string {
-    return typeof navigator !== "undefined" ? navigator.language || "en-US" : "en-US"
+    if (typeof navigator === "undefined") return "en-US"
+    return navigator.language || "en-US"
   }
 
   public getTimezone(): TimezoneInfo {
@@ -122,27 +130,21 @@ export class TimezoneRepositoryBrowser implements TimezoneRepository {
 
   private async fetchTimezoneFromAPI(latitude: number, longitude: number): Promise<string | null> {
     const apiKey = process.env.NEXT_PUBLIC_GEOAPIFY_API_KEY
-
-    if (!apiKey) {
-      return null
-    }
+    if (!apiKey) return null
 
     try {
-      const url = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&apiKey=${apiKey}`
-      const response = await fetch(url)
-
-      if (!response.ok) {
-        return null
-      }
-
-      const data = await response.json()
+      const { data } = await axios.get("https://api.geoapify.com/v1/geocode/reverse", {
+        params: { lat: latitude, lon: longitude, apiKey },
+      })
 
       if (data?.features?.[0]?.properties?.timezone?.name) {
-        return data.features[0].properties.timezone.name
+        return data.features[0].properties.timezone.name as string
       }
 
       return null
-    } catch {
+    } catch (error) {
+      // Centralizamos el manejo de errores Axios sin lanzar; devolvemos null para fallback local
+      const _ignored = axiosErrorHandler(error)
       return null
     }
   }
@@ -152,47 +154,39 @@ export class TimezoneRepositoryBrowser implements TimezoneRepository {
     return offsetHours >= 0 ? `Etc/GMT-${offsetHours}` : `Etc/GMT+${Math.abs(offsetHours)}`
   }
 
-  public async getTimezoneByCoordinates(
-    latitude: number,
-    longitude: number
-  ): Promise<TimezoneInfo> {
+  private mapResponseToTimezoneInfo(
+    timezone: string,
+    coords?: { latitude: number; longitude: number }
+  ): TimezoneInfo {
+    return {
+      timezone,
+      offset: this.getOffsetForTimezone(timezone),
+      offsetString: this.getOffsetStringForTimezone(timezone),
+      locale: this.getUserLocale(),
+      isManual: false,
+      detectionMethod: coords ? "geolocation" : "browser",
+      isDST: this.isDaylightSavingTime(timezone),
+      coordinates: coords,
+    }
+  }
+
+  public async getByCoordinates({
+    latitude,
+    longitude,
+  }: GetTimezoneByCoordinatesProps): Promise<TimezoneInfo> {
     try {
       let timezone = await this.fetchTimezoneFromAPI(latitude, longitude)
+      if (!timezone) timezone = this.findClosestTimezone(latitude, longitude)
 
-      if (!timezone) {
-        timezone = this.findClosestTimezone(latitude, longitude)
-      }
-
-      const offset = this.getOffsetForTimezone(timezone)
-      const isDST = this.isDaylightSavingTime(timezone)
-
-      return {
-        timezone,
-        offset,
-        offsetString: this.getOffsetStringForTimezone(timezone),
-        locale: this.getUserLocale(),
-        isManual: false,
-        detectionMethod: "geolocation",
-        isDST,
-        coordinates: {
-          latitude,
-          longitude,
-        },
-      }
-    } catch {
+      return this.mapResponseToTimezoneInfo(timezone, { latitude, longitude })
+    } catch (error) {
+      const _ignored = axiosErrorHandler(error)
       return {
         ...DEFAULT_TIMEZONE,
         detectionMethod: "geolocation",
         isDST: false,
-        coordinates: {
-          latitude,
-          longitude,
-        },
+        coordinates: { latitude, longitude },
       }
     }
   }
-}
-
-export const createTimezoneRepository = (): TimezoneRepository => {
-  return new TimezoneRepositoryBrowser()
 }

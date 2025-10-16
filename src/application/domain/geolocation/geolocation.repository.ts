@@ -1,7 +1,11 @@
-import { GeolocationOptions, GeolocationPosition } from "./geolocation.model"
+import type { GeolocationOptions, GeolocationPosition } from "./geolocation.model"
 
-interface GeolocationRepository {
-  getPosition(options?: GeolocationOptions): Promise<GeolocationPosition>
+export interface GetPositionProps {
+  options?: GeolocationOptions
+}
+
+export abstract class GeolocationRepository<TModel = GeolocationPosition> {
+  abstract getPosition(args?: GetPositionProps): Promise<TModel>
 }
 
 enum GeolocationErrorCode {
@@ -27,8 +31,8 @@ const DEFAULT_GEOLOCATION_OPTIONS: Required<GeolocationOptions> = {
   maximumAge: 0,
 }
 
-export class GeolocationRepositoryBrowser implements GeolocationRepository {
-  public async getPosition(options?: GeolocationOptions): Promise<GeolocationPosition> {
+export class GeolocationRepositoryBrowser implements GeolocationRepository<GeolocationPosition> {
+  async getPosition(args?: GetPositionProps): Promise<GeolocationPosition> {
     if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
       throw new GeolocationError(
         GeolocationErrorCode.NOT_SUPPORTED,
@@ -36,10 +40,9 @@ export class GeolocationRepositoryBrowser implements GeolocationRepository {
       )
     }
 
-    const opts: Required<GeolocationOptions> = {
-      ...DEFAULT_GEOLOCATION_OPTIONS,
-      ...options,
-    }
+    const opts: Required<GeolocationOptions> = args?.options
+      ? { ...DEFAULT_GEOLOCATION_OPTIONS, ...args.options }
+      : DEFAULT_GEOLOCATION_OPTIONS
 
     return new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(
@@ -74,8 +77,4 @@ export class GeolocationRepositoryBrowser implements GeolocationRepository {
       )
     })
   }
-}
-
-export const createGeolocationRepository = (): GeolocationRepository => {
-  return new GeolocationRepositoryBrowser()
 }

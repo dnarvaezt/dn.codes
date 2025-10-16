@@ -1,12 +1,12 @@
-import type { WeatherInfo } from "@/application/domain/weather"
+import type { Weather } from "@/application/domain/weather"
 import { calculateVisibilityBasedIntensity } from "./data-validators"
 
 export interface IntensityCalculator {
-  calculate(weather: WeatherInfo | null, weatherType: string): number
+  calculate(weather: Weather | null, weatherType: string): number
 }
 
 export class CloudIntensityCalculator implements IntensityCalculator {
-  calculate(weather: WeatherInfo | null, weatherType: string): number {
+  calculate(weather: Weather | null, weatherType: string): number {
     if (!weather) return 3
 
     // Usar utilidad centralizada para cálculo base
@@ -43,7 +43,7 @@ export class CloudIntensityCalculator implements IntensityCalculator {
 }
 
 export class RainIntensityCalculator implements IntensityCalculator {
-  calculate(weather: WeatherInfo | null, weatherType: string): number {
+  calculate(weather: Weather | null, weatherType: string): number {
     if (!weather) return 20
 
     const rainVolume1h = weather.rain?.oneHour || 0
@@ -63,7 +63,7 @@ export class RainIntensityCalculator implements IntensityCalculator {
 }
 
 export class SnowIntensityCalculator implements IntensityCalculator {
-  calculate(weather: WeatherInfo | null, weatherType: string): number {
+  calculate(weather: Weather | null, weatherType: string): number {
     if (!weather) return 15
 
     const snowVolume1h = weather.snow?.oneHour || 0

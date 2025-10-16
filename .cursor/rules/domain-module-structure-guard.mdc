@@ -1,0 +1,107 @@
+Domain Module Structure Guard — Basado en weather/
+
+Objetivo
+- Establecer un estándar obligatorio para crear módulos de dominio siguiendo EXACTAMENTE la estructura y los patrones observados en `src/application/domain/weather/`.
+- A partir de ahora, todos los dominios deben replicar esta organización, nombres de archivos, contratos y estilo de implementación.
+
+Estructura mínima obligatoria del dominio
+- Ubicación: `src/application/domain/<entity>/`
+- Archivos requeridos (kebab-case, sin subcarpetas internas):
+  1) `<entity>.model.ts`
+  2) `<entity>.repository.ts`
+  3) `<entity>.provider.ts`
+  4) `index.ts` (barrel re-exports)
+
+Contenido y responsabilidades (clonado del patrón weather/)
+1) <entity>.model.ts
+   - Define el contrato de datos del dominio (interfaces y tipos) sin dependencias de infraestructura ni frameworks.
+   - Debe describir la estructura final consumible por Infrastructure/UI ya normalizada (p. ej., en weather/ se exponen campos a partir de OpenWeatherMap pero con nombres coherentes: `feelsLike`, `tempMin`, etc.).
+   - No incluye lógica ni efectos.
+
+2) <entity>.repository.ts
+   - Define un contrato abstracto con métodos explícitos para recuperar datos del dominio.
+     - Ejemplo basado en weather/:
+       - `export interface Get<Entity>ByCoordinatesProps { latitude: number; longitude: number }`
+       - `export abstract class <Entity>Repository<TModel = <Entity>> { abstract getByCoordinates(args: Get<Entity>ByCoordinatesProps): Promise<TModel> }`
+   - Incluye una implementación concreta “por defecto” dentro del MISMO archivo, siguiendo el patrón:
+     - `export class <Entity>Repository<Proveedor> implements <Entity>Repository<<Entity>> { ... }`
+     - Uso de `axios` permitido para HTTP.
+     - Lectura de variables de entorno con prefijo `NEXT_PUBLIC_...` (p. ej. `NEXT_PUBLIC_OPENWEATHERMAP_API_KEY`).
+     - Manejo de errores centrado en Axios:
+       - Detectar `axios.isAxiosError(error)` y propagar `new Error(message)` con `response?.data?.message || error.message || "Unknown Axios error"`.
+     - Mapeo explícito de la respuesta cruda hacia el modelo del dominio mediante un método privado dedicado:
+       - `private mapResponseTo<Entity>(response: any): <Entity>`
+       - Conservar nombres semánticos del dominio (ej.: `feelsLike`, `tempMin`, `tempMax`, `rain.oneHour`).
+   - No exportar tipos ni helpers ajenos al repositorio; mantener contrato + implementación en este archivo.
+
+3) <entity>.provider.ts
+   - Expone una instancia única del repositorio POR DEFECTO para el dominio (factory mínima), tipada al modelo del dominio.
+   - Patrón basado en weather/:
+     - `import { <Entity>Repository, <Entity>Repository<Proveedor> } from "./<entity>.repository"`
+     - `import type { <Entity> } from "./<entity>.model"`
+     - `export const <entity>Repository: <Entity>Repository<<Entity>> = new <Entity>Repository<Proveedor>()`
+   - Sin clases singleton ni React; TypeScript puro.
+
+4) index.ts (barrel)
+   - Solo reexporta con wildcard en líneas separadas.
+   - Basado en weather/:
+     - `export * from "./<entity>.model"`
+     - `export * from "./<entity>.provider"`
+   - Prohibido: default exports, lógica, imports intermedios o re-exports selectivos.
+
+Reglas de nomenclatura y estilo
+- Nombres de archivos y carpetas en kebab-case estricto.
+- Clases y tipos en PascalCase; variables/constantes en camelCase.
+- Sin `export default`; solo exportaciones nombradas.
+- Sin React ni UI en `application/`.
+- No importar desde `infrastructure/`.
+
+Contratos y firmas sugeridas (derivadas de weather/)
+- Si aplica georreferenciación:
+  - `export interface Get<Entity>ByCoordinatesProps { latitude: number; longitude: number }`
+  - Método en repositorio abstracto: `getByCoordinates(args: Get<Entity>ByCoordinatesProps): Promise<TModel>`
+- Si no aplica coordenadas, adaptar el nombre del contrato de entrada (ej.: `Get<Entity>ByIdProps`, `Search<Entity>Props`), manteniendo:
+  - Un `interface` para props de entrada.
+  - Un `abstract class` con métodos `async` que retornen el modelo del dominio.
+
+Manejo de datos externos (paridad con weather/)
+- La implementación concreta debe:
+  - Usar `axios.get/post/...` con `params`/`data` tipados cuando sea posible.
+  - Centralizar el mapeo desde la respuesta cruda hacia el modelo en una función privada dedicada.
+  - Mantener nombres semánticos en el modelo del dominio (no arrastrar nombres crudos inconsistentes de proveedores externos).
+  - Internacionalización/idioma, unidades o formatos se parametrizan vía `params` (ej.: `units: "metric"`, `lang: "es"`).
+
+Errores y excepciones
+- Capturar errores específicos de Axios con `axios.isAxiosError`.
+- Extraer mensaje informativo desde `response?.data?.message`.
+- Re-lanzar como `Error` con mensaje claro.
+- No envolver con try/catch si no es necesario; mantenerlo mínimo y centrado en IO.
+
+Dependencias permitidas
+- `axios` en repositorios concretos.
+- Tipos de TypeScript del propio dominio.
+- Variables de entorno `NEXT_PUBLIC_*` para configuración pública necesaria en cliente.
+
+Ejemplo de layout final (idéntico a weather/)
+```
+src/application/domain/<entity>/
+  ├─ <entity>.model.ts              # Contrato del dominio (interfaces)
+  ├─ <entity>.repository.ts         # Contrato abstracto + implementación concreta por defecto
+  ├─ <entity>.provider.ts           # Instancia del repositorio por defecto tipada al modelo
+  └─ index.ts                       # Barrel: export * de model y provider únicamente
+```
+
+Checklist de validación (debe ser TODO "sí")
+- ¿La carpeta del dominio está en `src/application/domain/<entity>/` y en kebab-case?
+- ¿Existen exactamente los cuatro archivos mínimos y en el nivel raíz (sin subcarpetas)?
+- ¿`<entity>.model.ts` solo define tipos/contratos (sin lógica)?
+- ¿`<entity>.repository.ts` contiene contrato abstracto y una implementación concreta por defecto?
+- ¿Se usa `axios` y un mapeo privado para normalizar datos al modelo del dominio?
+- ¿`<entity>.provider.ts` exporta una instancia por defecto del repositorio tipada al modelo?
+- ¿`index.ts` solo reexporta `./<entity>.model` y `./<entity>.provider` con `export *`?
+- ¿No hay `export default` en ningún archivo del dominio?
+- ¿No hay imports de React o de `infrastructure/` en el dominio?
+
+Notas de compatibilidad con dominios existentes
+- Si un dominio previo usa `service` separado, migrar gradualmente al patrón de weather/ centrado en `repository + provider`.
+- Mantener las firmas y nombres semánticos del dominio; el repositorio se encarga de adaptar proveedores externos al contrato interno.
