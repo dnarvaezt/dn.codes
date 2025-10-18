@@ -195,6 +195,47 @@ export const WeatherBackground = () => {
     // Usar colores nocturnos si es de noche
     const finalColors = isNightTime && nightColors[condition] ? nightColors[condition] : baseColors
 
+    // Posición y halo solar (aproximado por hora del día)
+    const getSunParams = () => {
+      if (isNightTime) return null
+      const sunXMap: Record<TimeOfDay, number> = {
+        [TimeOfDay.Dawn]: 15,
+        [TimeOfDay.Morning]: 25,
+        [TimeOfDay.Noon]: 50,
+        [TimeOfDay.Afternoon]: 75,
+        [TimeOfDay.Sunset]: 85,
+        [TimeOfDay.Dusk]: 80,
+        [TimeOfDay.Night]: 80,
+        [TimeOfDay.Midnight]: 80,
+      }
+      const sunYMap: Record<TimeOfDay, number> = {
+        [TimeOfDay.Dawn]: 86,
+        [TimeOfDay.Morning]: 65,
+        [TimeOfDay.Noon]: 18,
+        [TimeOfDay.Afternoon]: 32,
+        [TimeOfDay.Sunset]: 86,
+        [TimeOfDay.Dusk]: 90,
+        [TimeOfDay.Night]: 90,
+        [TimeOfDay.Midnight]: 92,
+      }
+      const haloAlphaMap: Record<TimeOfDay, number> = {
+        [TimeOfDay.Dawn]: 0.16,
+        [TimeOfDay.Morning]: 0.1,
+        [TimeOfDay.Noon]: 0.06,
+        [TimeOfDay.Afternoon]: 0.08,
+        [TimeOfDay.Sunset]: 0.18,
+        [TimeOfDay.Dusk]: 0.12,
+        [TimeOfDay.Night]: 0,
+        [TimeOfDay.Midnight]: 0,
+      }
+      return {
+        x: sunXMap[timeOfDay],
+        y: sunYMap[timeOfDay],
+        halo: haloAlphaMap[timeOfDay],
+        disc: Math.max(0, haloAlphaMap[timeOfDay] - 0.08),
+      }
+    }
+
     // Crear degradado natural del cielo con múltiples capas
     const createNaturalSkyGradient = (primary: string, secondary: string, accent: string) => {
       const isClearType =
@@ -212,9 +253,9 @@ export const WeatherBackground = () => {
           ? `radial-gradient(ellipse 160% 80% at 50% -10%, rgba(0,0,0,${vignetteStrength}) 0%, rgba(0,0,0,${(vignetteStrength * 0.55).toFixed(3)}) 40%, transparent 70%),`
           : ""
       if (isNightTime) {
-        // Degradado nocturno más natural
+        // Degradado nocturno más natural (transiciones más largas y difuminadas)
         return `
-          radial-gradient(ellipse at top, ${primary} 0%, ${secondary} 40%, ${accent} 100%),
+          radial-gradient(120% 90% at 50% -10%, ${primary} 0%, ${secondary} 55%, ${accent} 100%),
           linear-gradient(180deg, ${primary} 0%, ${accent} 100%)
         `
       }
@@ -293,9 +334,61 @@ export const WeatherBackground = () => {
     // Reducción sutil de brillo en horas diurnas
     const adjustedBrightness = isNightTime ? finalBrightness : finalBrightness * 0.98
 
+    // Calidez de horizonte en horas doradas
+    const horizonWarmthAlpha = (() => {
+      if (isNightTime) return 0
+      switch (timeOfDay) {
+        case TimeOfDay.Dawn:
+        case TimeOfDay.Sunset:
+          return 0.16
+        case TimeOfDay.Morning:
+        case TimeOfDay.Dusk:
+          return 0.08
+        default:
+          return 0.04
+      }
+    })()
+    const horizonWarmthLayer = horizonWarmthAlpha
+      ? `linear-gradient(180deg, rgba(255, 184, 120, 0) 55%, rgba(255, 184, 120, ${horizonWarmthAlpha}) 82%, rgba(255, 184, 120, 0.02) 100%)`
+      : ""
+
+    // Contaminación lumínica nocturna (glow cálido en horizonte y ciudad)
+    const lightPollutionLayers = isNightTime
+      ? [
+          `linear-gradient(180deg, transparent 65%, rgba(255, 200, 130, 0.08) 85%, rgba(255, 200, 130, 0.16) 95%, rgba(255, 200, 130, 0.18) 100%)`,
+          `radial-gradient(60% 22% at 50% 105%, rgba(255, 200, 140, 0.14) 0%, rgba(255, 200, 140, 0.03) 60%, transparent 100%)`,
+        ]
+      : []
+
+    // Halo solar (aureola + disco suave)
+    const sunParams = getSunParams()
+    const sunHaloLayer =
+      sunParams && sunParams.halo > 0
+        ? `radial-gradient(40% 35% at ${sunParams.x}% ${sunParams.y}%, rgba(255, 220, 160, ${sunParams.halo}) 0%, rgba(255, 220, 160, 0) 60%), radial-gradient(12% 12% at ${sunParams.x}% ${sunParams.y}%, rgba(255, 245, 215, ${sunParams.disc}) 0%, rgba(255, 245, 215, 0) 80%)`
+        : ""
+
+    // Dither anti-banding muy sutil (deshabilitado en noche para evitar líneas visibles)
+    const ditherLayer = isNightTime
+      ? ""
+      : `repeating-linear-gradient(45deg, rgba(0,0,0,0.004) 0px, rgba(0,0,0,0.004) 2px, rgba(255,255,255,0.004) 2px, rgba(255,255,255,0.004) 4px)`
+
+    // Construcción de capas finales (de arriba hacia abajo)
+    const backgroundLayers = [
+      ditherLayer,
+      sunHaloLayer,
+      horizonWarmthLayer,
+      ...lightPollutionLayers,
+      createNaturalSkyGradient(modifiedPrimary, modifiedSecondary, modifiedAccent),
+    ].filter(Boolean)
+
+    // Tone mapping simple con clamps y contraste leve
+    const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v))
+    const brightnessClamped = clamp(adjustedBrightness, 0.85, 1.15)
+    const saturationClamped = clamp(adjustedSaturation, 0.7, 1.15)
+
     return {
-      background: createNaturalSkyGradient(modifiedPrimary, modifiedSecondary, modifiedAccent),
-      filter: `brightness(${adjustedBrightness}) saturate(${adjustedSaturation}) hue-rotate(${finalHue}deg)`,
+      background: backgroundLayers.join(","),
+      filter: `brightness(${brightnessClamped}) saturate(${saturationClamped}) hue-rotate(${finalHue}deg) contrast(1.03)`,
     }
   }
 
