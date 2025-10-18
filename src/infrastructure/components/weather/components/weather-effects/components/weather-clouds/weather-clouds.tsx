@@ -1,4 +1,4 @@
-import { Condition, TimeOfDay } from "@/application/domain/weather/weather.enum"
+import { Condition, Season, TimeOfDay } from "@/application/domain/weather/weather.enum"
 import { useWeatherStore } from "@/infrastructure/components/weather/weather-store"
 import { WeatherCloud } from "./components"
 import "./weather-clouds.scss"
@@ -46,12 +46,21 @@ export const WeatherClouds = () => {
   }
   const conditionOpacity = conditionOpacityMap[scenario.condition] ?? 0.75
 
-  // wind influences speed: map 0..20+ m/s to 90..25 seconds
+  // Velocidad base por viento: 0..20+ m/s -> 120..25s
   const mapWindToDuration = (speed: number) => {
     if (speed <= 0.5) return 120
     if (speed >= 20) return 25
     return 120 - (speed / 20) * (120 - 25)
   }
+
+  // Ajuste por nubosidad: más nubes -> arrastre mayor (más lento) en capas traseras, leve en delanteras
+  const cloudinessDragFactor = (() => {
+    if (cloudiness < 20) return 1
+    if (cloudiness < 40) return 1.05
+    if (cloudiness < 60) return 1.12
+    if (cloudiness < 80) return 1.2
+    return 1.3
+  })()
 
   // Generate layers with parallax: back(1), mid(2), front(3)
   const layers: Array<{
@@ -75,13 +84,23 @@ export const WeatherClouds = () => {
         min + (((seed * 9301 + 49297) % 233280) / 233280) * (max - min)
 
       const topPercent = rnd(topRange[0], topRange[1])
-      const scale = rnd(scaleRange[0], scaleRange[1])
+      let scale = rnd(scaleRange[0], scaleRange[1])
+      // Ajuste por estación: invierno nubes más compactas, verano más difusas
+      if (scenario.season === Season.Winter) scale *= 0.95
+      if (scenario.season === Season.Summer) scale *= 1.05
       const jitter = rnd(0, 0.2)
-      const baseOpacity = Math.min(
+      let baseOpacity = Math.min(
         1,
         Math.max(0.4, opacity * conditionOpacity * nightOpacityFactor + jitter - 0.1)
       )
-      const durationSec = mapWindToDuration(windSpeed) * (1 + (3 - layer) * 0.2) // farther layers slower
+      if (scenario.season === Season.Winter) baseOpacity = Math.min(1, baseOpacity * 0.95)
+      if (scenario.season === Season.Summer) baseOpacity = Math.min(1, baseOpacity * 1.05)
+      const baseDuration = mapWindToDuration(windSpeed)
+      const parallaxFactor = 1 + (3 - layer) * 0.2 // farther layers slower
+      let layerDrag = cloudinessDragFactor
+      if (layer === 2) layerDrag = cloudinessDragFactor * 0.95
+      if (layer === 3) layerDrag = cloudinessDragFactor * 0.9
+      const durationSec = baseDuration * parallaxFactor * layerDrag
       const delaySec = -rnd(0, durationSec) // negative delay to start mid-path
 
       return (
