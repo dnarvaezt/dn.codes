@@ -1,2 +1,164 @@
 .weather-widget {
+  @apply mx-auto w-full max-w-sm;
+
+  &__container {
+    @apply overflow-hidden rounded-2xl border border-border bg-card shadow-lg;
+    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--card) / 0.95) 100%);
+  }
+
+  &__content {
+    @apply space-y-6 p-6;
+  }
+
+  &__header {
+    @apply flex items-center justify-between;
+  }
+
+  &__location {
+    @apply flex-1;
+  }
+
+  &__city {
+    @apply mb-1 text-xl font-bold text-foreground;
+  }
+
+  &__country {
+    @apply text-sm uppercase tracking-wide text-muted-foreground;
+  }
+
+  &__icon {
+    @apply ml-4 flex-shrink-0;
+  }
+
+  &__weather-icon {
+    @apply h-16 w-16 object-contain;
+  }
+
+  &__main {
+    @apply space-y-3 text-center;
+  }
+
+  &__temperature {
+    @apply flex items-center justify-center space-x-2;
+  }
+
+  &__temp-value {
+    @apply text-5xl font-light text-foreground;
+    font-family: "Inter", system-ui, sans-serif;
+  }
+
+  &__temp-unit {
+    @apply text-lg font-medium text-muted-foreground;
+  }
+
+  &__description {
+    @apply space-y-1;
+  }
+
+  &__condition {
+    @apply text-lg font-medium capitalize text-foreground;
+  }
+
+  &__feels-like {
+    @apply text-sm text-muted-foreground;
+  }
+
+  &__details {
+    @apply grid grid-cols-2 gap-4;
+  }
+
+  &__detail-item {
+    @apply flex flex-col items-center space-y-1 rounded-xl p-3;
+    background: hsl(var(--muted) / 0.3);
+    border: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  &__detail-label {
+    @apply text-xs font-medium uppercase tracking-wide text-muted-foreground;
+  }
+
+  &__detail-value {
+    @apply text-sm font-semibold text-foreground;
+  }
+
+  &__sun-info {
+    @apply flex items-center justify-between rounded-xl p-4;
+    background: hsl(var(--accent) / 0.1);
+    border: 1px solid hsl(var(--accent) / 0.2);
+  }
+
+  &__sun-item {
+    @apply flex flex-col items-center space-y-1;
+  }
+
+  &__sun-label {
+    @apply text-xs font-medium uppercase tracking-wide text-muted-foreground;
+  }
+
+  &__sun-time {
+    @apply text-sm font-semibold text-foreground;
+  }
+
+  &__loading {
+    @apply flex flex-col items-center justify-center space-y-4 p-8;
+  }
+
+  &__loading-spinner {
+    @apply h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent;
+  }
+
+  &__loading-text {
+    @apply text-sm text-muted-foreground;
+  }
+
+  &__empty {
+    @apply flex flex-col items-center justify-center space-y-4 p-8;
+  }
+
+  &__empty-icon {
+    @apply text-4xl;
+  }
+
+  &__empty-text {
+    @apply text-center text-sm text-muted-foreground;
+  }
+
+  // Estados hover para interactividad
+  &__detail-item:hover {
+    background: hsl(var(--muted) / 0.5);
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+  }
+
+  &__sun-info:hover {
+    background: hsl(var(--accent) / 0.15);
+    transition: all 0.2s ease;
+  }
+
+  // Responsive design
+  @media (max-width: 640px) {
+    &__container {
+      @apply mx-4;
+    }
+
+    &__content {
+      @apply space-y-4 p-4;
+    }
+
+    &__temp-value {
+      @apply text-4xl;
+    }
+
+    &__weather-icon {
+      @apply h-12 w-12;
+    }
+
+    &__details {
+      @apply grid-cols-1 gap-3;
+    }
+
+    &__detail-item {
+      @apply p-2;
+    }
+  }
 }
