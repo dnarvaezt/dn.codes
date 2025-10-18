@@ -1,4 +1,4 @@
-export * from "./city-search"
+export * from "./city"
 export * from "./geocoding"
 export * from "./geolocation"
 export * from "./language"

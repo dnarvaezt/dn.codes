@@ -1,6 +1,0 @@
-export * from "./components/weather-clouds"
-export * from "./components/weather-particles"
-export * from "./components/weather-rain"
-export * from "./components/weather-snow"
-export * from "./components/weather-thunder"
-export * from "./weather-background"

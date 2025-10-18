@@ -1,7 +1,8 @@
+import { axiosErrorHandler } from "@/application/utils"
 import axios from "axios"
+import { buildWeatherScenario } from "./weather.build-scenario"
 
-import type { Weather } from "./weather.model"
-
+import type { Weather, WeatherMetrics, WeatherScenario } from "./weather.model"
 export interface GetWeatherByCoordinatesProps {
   latitude: number
   longitude: number
@@ -32,17 +33,19 @@ export class WeatherRepositoryOpenWeatherMap implements WeatherRepository<Weathe
         },
       })
 
-      return this.mapResponseToWeather(data)
+      const metrics: WeatherMetrics = this.mapResponseToWeatherMetrics(data)
+      const scenario: WeatherScenario = buildWeatherScenario(metrics)
+
+      return {
+        scenario,
+        metrics,
+      } as Weather
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const message = error.response?.data?.message || error.message || "Unknown Axios error"
-        throw new Error(message)
-      }
-      throw error
+      throw axiosErrorHandler(error)
     }
   }
 
-  private mapResponseToWeather(response: any): Weather {
+  private mapResponseToWeatherMetrics(response: any): WeatherMetrics {
     return {
       coordinates: {
         latitude: response.coord.lat,

@@ -1,4 +1,12 @@
-export interface Weather {
+import { Condition, Season, TimeOfDay } from "./weather.enum"
+
+export interface WeatherScenario {
+  season: Season
+  timeOfDay: TimeOfDay
+  condition: Condition
+}
+
+export interface WeatherMetrics {
   coordinates: {
     latitude: number
     longitude: number
@@ -47,4 +55,8 @@ export interface Weather {
   timezone: number
   cityId: number
   cityName: string
+}
+export interface Weather {
+  scenario: WeatherScenario
+  metrics: WeatherMetrics
 }

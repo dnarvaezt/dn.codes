@@ -4,8 +4,8 @@ export interface GetPositionProps {
   options?: GeolocationOptions
 }
 
-export abstract class GeolocationRepository<TModel = GeolocationPosition> {
-  abstract getPosition(args?: GetPositionProps): Promise<TModel>
+export abstract class GeolocationRepository<GeolocationPosition> {
+  abstract getPosition(args?: GetPositionProps): Promise<GeolocationPosition>
 }
 
 enum GeolocationErrorCode {

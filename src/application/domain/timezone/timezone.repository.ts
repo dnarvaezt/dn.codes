@@ -143,9 +143,7 @@ export class TimezoneRepositoryBrowser implements TimezoneRepository<TimezoneInf
 
       return null
     } catch (error) {
-      // Centralizamos el manejo de errores Axios sin lanzar; devolvemos null para fallback local
-      const _ignored = axiosErrorHandler(error)
-      return null
+      throw axiosErrorHandler(error)
     }
   }
 
@@ -180,13 +178,7 @@ export class TimezoneRepositoryBrowser implements TimezoneRepository<TimezoneInf
 
       return this.mapResponseToTimezoneInfo(timezone, { latitude, longitude })
     } catch (error) {
-      const _ignored = axiosErrorHandler(error)
-      return {
-        ...DEFAULT_TIMEZONE,
-        detectionMethod: "geolocation",
-        isDST: false,
-        coordinates: { latitude, longitude },
-      }
+      throw axiosErrorHandler(error)
     }
   }
 }

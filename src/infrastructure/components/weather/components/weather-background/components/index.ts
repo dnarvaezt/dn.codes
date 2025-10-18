@@ -1,5 +1,0 @@
-export * from "./weather-clouds"
-export * from "./weather-particles"
-export * from "./weather-rain"
-export * from "./weather-snow"
-export * from "./weather-thunder"
