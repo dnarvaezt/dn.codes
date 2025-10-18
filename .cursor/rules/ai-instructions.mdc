@@ -13,8 +13,8 @@ alwaysApply: true
 - Complete each requested task 100% before starting any other task
 
 ## Improved Quality Control
-- Before modifying any file: list the files that will be modified and wait for confirmation
-- Before implementing: restate the functionality in your own words and wait for confirmation
+- Before modifying any file: if there is any ambiguity, list the files to be modified and wait for confirmation; if scope is clear and unambiguous, proceed without waiting for confirmation
+- Before implementing: if the functionality is ambiguous, restate it in your own words and wait for confirmation; if it is clear and unambiguous, proceed without waiting for confirmation
 - After each action: verify it matches the request exactly (no additions, no omissions)
 - Before responding: check if any unrequested content was added (comments, logs, examples, validations)
 - Match the requested output format precisely (code only, text only, JSON only, etc.)

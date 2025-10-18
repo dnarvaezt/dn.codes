@@ -38,6 +38,18 @@
     }
   }
 
+  // Intensidad escasa (muy nublado/lluvia/niebla)
+  &--sparse {
+    &::before {
+      opacity: 0.18;
+      filter: blur(0.2px);
+    }
+    &::after {
+      opacity: 0.08;
+      filter: blur(0.3px);
+    }
+  }
+
   // Estrellas principales (más brillantes)
   &::before {
     content: "";
@@ -84,6 +96,86 @@
       radial-gradient(0.3px 0.3px at 12% 95%, rgba(250, 250, 250, 0.3), transparent);
     background-repeat: no-repeat;
     animation: subtle-twinkle 12s ease-in-out infinite reverse;
+  }
+
+  // Modificadores por estación (duración/contraste)
+  &--winter {
+    &::before {
+      animation-duration: 7s; // twinkle más ágil (aire más limpio)
+    }
+    &::after {
+      animation-duration: 10s;
+    }
+  }
+
+  &--summer {
+    &::before {
+      animation-duration: 9s; // twinkle un poco más lento (velos atmosféricos)
+    }
+    &::after {
+      animation-duration: 14s;
+    }
+  }
+
+  // Modificadores por humedad y viento
+  &--humid {
+    &::before {
+      opacity: 0.85; // ligera reducción de contraste de estrellas principales
+      filter: blur(0.2px);
+    }
+    &::after {
+      opacity: 0.5;
+      filter: blur(0.3px);
+    }
+  }
+
+  &--windy {
+    &::before {
+      animation-duration: 7.5s; // twinkle algo más dinámico
+    }
+    &::after {
+      animation-duration: 11.5s;
+    }
+  }
+
+  // Modificadores por nubosidad (reduce visibilidad progresiva)
+  &--clouds-20 {
+    &::before {
+      opacity: 0.9;
+    }
+    &::after {
+      opacity: 0.6;
+    }
+  }
+  &--clouds-40 {
+    &::before {
+      opacity: 0.75;
+      filter: blur(0.15px);
+    }
+    &::after {
+      opacity: 0.45;
+      filter: blur(0.2px);
+    }
+  }
+  &--clouds-60 {
+    &::before {
+      opacity: 0.55;
+      filter: blur(0.25px);
+    }
+    &::after {
+      opacity: 0.3;
+      filter: blur(0.3px);
+    }
+  }
+  &--clouds-80 {
+    &::before {
+      opacity: 0.35;
+      filter: blur(0.35px);
+    }
+    &::after {
+      opacity: 0.18;
+      filter: blur(0.4px);
+    }
   }
 }
 

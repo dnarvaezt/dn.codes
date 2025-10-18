@@ -1,0 +1,68 @@
+// Cloud single entity. Uses CSS variables for scale, duration and delay
+.weather-cloud {
+  position: absolute;
+  left: -40vw; // start off-screen for both directions
+  width: 40vw;
+  height: 20vw;
+  pointer-events: none;
+  transform: translateX(0) scale(var(--cloud-scale, 1));
+  filter: drop-shadow(0 8px 16px hsl(var(--foreground) / 0.05));
+  animation-duration: var(--cloud-duration, 60s);
+  animation-delay: var(--cloud-delay, 0s);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+
+  // depth layering: farther layers are smaller and slower (handled by props) but also slightly lower opacity
+  &--layer-1 {
+    z-index: 1;
+  }
+  &--layer-2 {
+    z-index: 2;
+  }
+  &--layer-3 {
+    z-index: 3;
+  }
+
+  &__inner {
+    position: absolute;
+    inset: 0;
+    // soft cloud made of multiple radial gradients; adapts to theme via semantic colors
+    background:
+      radial-gradient(35% 45% at 20% 60%, hsl(var(--foreground) / 0.08) 0%, transparent 60%),
+      radial-gradient(45% 55% at 45% 40%, hsl(var(--foreground) / 0.1) 0%, transparent 65%),
+      radial-gradient(40% 50% at 65% 55%, hsl(var(--foreground) / 0.1) 0%, transparent 65%),
+      radial-gradient(35% 45% at 80% 50%, hsl(var(--foreground) / 0.08) 0%, transparent 60%);
+    border-radius: 9999px;
+  }
+
+  // left-to-right (wind blowing to the east)
+  &.weather-cloud--ltr {
+    animation-name: cloud-move-ltr;
+  }
+
+  // right-to-left (wind blowing to the west)
+  &.weather-cloud--rtl {
+    animation-name: cloud-move-rtl;
+    left: auto;
+    right: -40vw;
+  }
+}
+
+@keyframes cloud-move-ltr {
+  0% {
+    transform: translateX(0) scale(var(--cloud-scale, 1));
+  }
+  100% {
+    transform: translateX(160vw) scale(var(--cloud-scale, 1));
+  }
+}
+
+@keyframes cloud-move-rtl {
+  0% {
+    transform: translateX(0) scale(var(--cloud-scale, 1));
+  }
+  100% {
+    transform: translateX(-160vw) scale(var(--cloud-scale, 1));
+  }
+}

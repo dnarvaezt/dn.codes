@@ -23,10 +23,10 @@ alwaysApply: true
 - Never suggest refactoring unless the user specifically asks "how can I improve this?"
 
 ## Understanding Validation
-- Before executing, restate: "I will: 1) modify [file], 2) implement [functionality], 3) following [pattern]. Correct?"
-- List exact files that will be created/modified/deleted
-- Describe expected behavior after changes
-- Wait for explicit "yes", "correct", or "proceed" before executing
+- When scope and target files are explicit and unambiguous, proceed without restating or waiting for approval.
+- If there is any ambiguity, restate: "I will: 1) modify [file], 2) implement [functionality], 3) following [pattern]. Correct?" and wait for approval.
+- List exact files that will be created/modified/deleted only when there is ambiguity or risk of misinterpretation.
+- Describe expected behavior after changes when the outcome could be interpreted in multiple ways.
 
 ## Dependency Management
 - If task requires changes in multiple files, list them: "This requires modifying: [file1], [file2]. Should I proceed?"

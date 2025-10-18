@@ -7,8 +7,7 @@ alwaysApply: true
 ## Pre-Validation (Before Writing Any Code)
 - Extract from request: target files (list each), functionality (describe in 1 sentence), acceptance criteria (what defines success)
 - If any extraction is unclear, ask: "I need to know: [missing info]"
-- Confirm understanding: "I will modify [files] to implement [functionality]. Correct?"
-- Wait for explicit approval ("yes", "correct", "proceed") before writing code
+- If scope and files are unambiguous, proceed without restating or waiting for approval. If there is any ambiguity, confirm understanding: "I will modify [files] to implement [functionality]. Correct?" and wait for approval before writing code.
 
 ## Creation Control (During Implementation)
 - Create ONLY files with explicit names mentioned in request (e.g., user explicitly said "create auth.js")
