@@ -9,82 +9,82 @@ export const WeatherBackground = () => {
   const getBackgroundStyle = (scenario: WeatherScenario) => {
     const { season, timeOfDay, condition } = scenario
 
-    // Colores base por condición climática (Colores realistas del cielo)
+    // Colores base por condición climática (día: paleta más suave y realista)
     const conditionColors = {
       [Condition.Sunny]: {
-        primary: "#87CEEB", // Azul cielo claro real
-        secondary: "#B0E0E6", // Azul cielo medio real
-        accent: "#F0F8FF", // Blanco azulado real
+        primary: "#6EA2D1", // cielo suave natural
+        secondary: "#A9C9E2", // azul claro realista
+        accent: "#EAF2FA", // brillo tenue
       },
       [Condition.PartlyCloudy]: {
-        primary: "#87CEEB", // Azul cielo real
-        secondary: "#E6F3FF", // Blanco azulado suave real
-        accent: "#F8F9FA", // Blanco nube real
+        primary: "#7DA1BC", // azul grisáceo natural
+        secondary: "#D0DAE4", // nubes suaves
+        accent: "#EEF2F6", // luz difusa
       },
       [Condition.Cloudy]: {
-        primary: "#B0C4DE", // Gris azulado real
-        secondary: "#D3D3D3", // Gris claro real
-        accent: "#F5F5F5", // Blanco grisáceo real
+        primary: "#95A3B0", // gris azulado moderado natural
+        secondary: "#C5CDD5", // gris claro natural
+        accent: "#E3E7EC", // tono alto suave
       },
       [Condition.Rainy]: {
-        primary: "#708090", // Gris azulado oscuro real
-        secondary: "#A9A9A9", // Gris medio real
-        accent: "#D3D3D3", // Gris claro real
+        primary: "#5E7282", // azul pizarra más natural
+        secondary: "#8899A6", // gris azulado medio
+        accent: "#C8D0D6", // luz de lluvia
       },
       [Condition.Stormy]: {
-        primary: "#2F4F4F", // Gris oscuro tormenta real
-        secondary: "#696969", // Gris medio real
-        accent: "#A9A9A9", // Gris claro real
+        primary: "#4A5863", // azul grisáceo tormenta natural
+        secondary: "#7A8791", // gris medio desaturado
+        accent: "#B6BDC4", // luz difusa
       },
       [Condition.Snowy]: {
-        primary: "#E6F3FF", // Blanco azulado real
-        secondary: "#F0F8FF", // Blanco nieve real
-        accent: "#FFFFFF", // Blanco puro real
+        primary: "#DFE8F2", // azul muy pálido
+        secondary: "#F2F6FA", // casi blanco frío
+        accent: "#F9FBFD", // blanco suave
       },
       [Condition.Windy]: {
-        primary: "#87CEEB", // Azul cielo real
-        secondary: "#B0E0E6", // Azul cielo claro real
-        accent: "#E6F3FF", // Blanco azulado real
+        primary: "#78AFCF", // cielo claro desaturado
+        secondary: "#B6D1E3", // tono medio natural
+        accent: "#E7EFF6", // luz alta sutil
       },
       [Condition.Foggy]: {
-        primary: "#D3D3D3", // Gris niebla real
-        secondary: "#E6E6E6", // Gris claro real
-        accent: "#F5F5F5", // Blanco grisáceo real
+        primary: "#C9CED2", // Gris niebla natural
+        secondary: "#DEE2E6", // Gris claro natural
+        accent: "#F1F3F5", // Blanco grisáceo tenue
       },
       [Condition.Clear]: {
-        primary: "#87CEEB", // Azul cielo claro real
-        secondary: "#B0E0E6", // Azul cielo medio real
-        accent: "#F0F8FF", // Blanco azulado real
+        primary: "#6CA5D6", // cielo despejado realista
+        secondary: "#B4D0EA", // azul claro
+        accent: "#EAF2FA", // brillo suave
       },
       [Condition.Humid]: {
-        primary: "#98FB98", // Verde pálido real
-        secondary: "#B0E0E6", // Azul cielo real
-        accent: "#F0F8FF", // Blanco azulado real
+        primary: "#97BCD3", // azul húmedo tenue natural
+        secondary: "#C4D6E3", // azul pálido
+        accent: "#ECF2F6", // luz difusa
       },
       [Condition.Dry]: {
-        primary: "#F4A460", // Marrón arena real
-        secondary: "#DEB887", // Marrón trigo real
-        accent: "#F5DEB3", // Marrón claro real
+        primary: "#AFC8DA", // cielo pálido y seco
+        secondary: "#D7E3ED", // azul muy claro
+        accent: "#F3F6F9", // luz alta tenue
       },
       [Condition.Hot]: {
-        primary: "#FF6347", // Rojo tomate real
-        secondary: "#FFD700", // Amarillo dorado real
-        accent: "#FFA500", // Naranja real
+        primary: "#8FB5D7", // cielo pálido y caluroso
+        secondary: "#CFE0EE", // azul muy claro lavado por calor
+        accent: "#F4EAD0", // bruma cálida en el horizonte
       },
       [Condition.Cold]: {
-        primary: "#B0C4DE", // Azul acero claro real
-        secondary: "#E6E6FA", // Lavanda real
-        accent: "#F0F8FF", // Blanco azulado real
+        primary: "#6F9CCF", // azul frío natural
+        secondary: "#BFD5EB", // azul claro frío
+        accent: "#E9F2FA", // brillo frío tenue
       },
       [Condition.Hailing]: {
-        primary: "#708090", // Gris pizarra real
-        secondary: "#A9A9A9", // Gris medio real
-        accent: "#D3D3D3", // Gris claro real
+        primary: "#667684", // gris azulado granizo natural
+        secondary: "#8F9BA5", // gris medio
+        accent: "#CCD3D8", // luz difusa
       },
       [Condition.Rainbow]: {
-        primary: "#FF6B6B", // Rojo coral real
-        secondary: "#4ECDC4", // Turquesa real
-        accent: "#45B7D1", // Azul cielo real
+        primary: "#7BAED9", // cielo limpio tras lluvia
+        secondary: "#C7D9EC", // azul claro con nubes
+        accent: "#EFF4FA", // luz alta
       },
     }
 
@@ -100,12 +100,12 @@ export const WeatherBackground = () => {
       [TimeOfDay.Midnight]: { brightness: 0.08, saturation: 0.3, hue: 270 }, // Medianoche púrpura profundo real
     }
 
-    // Modificadores por estación (colores realistas del cielo)
+    // Modificadores por estación (variaciones sutiles y naturales)
     const seasonModifiers = {
-      [Season.Spring]: { saturation: 1.1, hue: 5, brightness: 1 }, // Primavera fresca
-      [Season.Summer]: { saturation: 1, hue: 0, brightness: 1.1 }, // Verano brillante
-      [Season.Autumn]: { saturation: 1.1, hue: 15, brightness: 0.9 }, // Otoño cálido
-      [Season.Winter]: { saturation: 0.9, hue: 0, brightness: 0.8 }, // Invierno frío
+      [Season.Spring]: { saturation: 1.03, hue: 4, brightness: 1.02 },
+      [Season.Summer]: { saturation: 0.98, hue: 0, brightness: 1.05 },
+      [Season.Autumn]: { saturation: 0.95, hue: 8, brightness: 0.92 },
+      [Season.Winter]: { saturation: 0.88, hue: 0, brightness: 0.85 },
     }
 
     const baseColors = conditionColors[condition]
@@ -197,6 +197,20 @@ export const WeatherBackground = () => {
 
     // Crear degradado natural del cielo con múltiples capas
     const createNaturalSkyGradient = (primary: string, secondary: string, accent: string) => {
+      const isClearType =
+        condition === Condition.Clear ||
+        condition === Condition.Sunny ||
+        condition === Condition.PartlyCloudy
+      const isAfternoonClear = !isNightTime && timeOfDay === TimeOfDay.Afternoon && isClearType
+      const isNoonClear = !isNightTime && timeOfDay === TimeOfDay.Noon && isClearType
+      let vignetteStrength = 0
+      if (isAfternoonClear) vignetteStrength = 0.045
+      else if (isNoonClear) vignetteStrength = 0.03
+
+      const vignetteTop =
+        vignetteStrength > 0
+          ? `radial-gradient(ellipse 160% 80% at 50% -10%, rgba(0,0,0,${vignetteStrength}) 0%, rgba(0,0,0,${(vignetteStrength * 0.55).toFixed(3)}) 40%, transparent 70%),`
+          : ""
       if (isNightTime) {
         // Degradado nocturno más natural
         return `
@@ -210,6 +224,7 @@ export const WeatherBackground = () => {
         case Condition.Sunny:
         case Condition.Clear:
           return `
+            ${vignetteTop}
             radial-gradient(ellipse 150% 120% at 50% 0%, ${accent} 0%, transparent 60%),
             radial-gradient(ellipse 100% 80% at 30% 15%, ${secondary} 0%, transparent 50%),
             radial-gradient(ellipse 120% 100% at 70% 25%, ${primary} 0%, transparent 70%),
@@ -218,6 +233,7 @@ export const WeatherBackground = () => {
 
         case Condition.PartlyCloudy:
           return `
+            ${vignetteTop}
             radial-gradient(ellipse 200% 150% at 50% 0%, ${accent} 0%, transparent 40%),
             radial-gradient(ellipse 80% 60% at 20% 30%, ${secondary} 0%, transparent 60%),
             radial-gradient(ellipse 90% 70% at 80% 20%, ${primary} 0%, transparent 50%),
@@ -253,6 +269,7 @@ export const WeatherBackground = () => {
         default:
           // Degradado diurno natural con múltiples capas
           return `
+            ${vignetteTop}
             radial-gradient(ellipse 120% 100% at 50% 0%, ${accent} 0%, transparent 50%),
             radial-gradient(ellipse 80% 60% at 30% 20%, ${secondary} 0%, transparent 40%),
             radial-gradient(ellipse 100% 80% at 70% 30%, ${primary} 0%, transparent 60%),
@@ -271,9 +288,14 @@ export const WeatherBackground = () => {
     const finalSaturation = timeMod.saturation * seasonMod.saturation
     const finalHue = timeMod.hue + seasonMod.hue
 
+    // Reducción global sutil de saturación en horas diurnas para mayor realismo
+    const adjustedSaturation = isNightTime ? finalSaturation : finalSaturation * 0.93
+    // Reducción sutil de brillo en horas diurnas
+    const adjustedBrightness = isNightTime ? finalBrightness : finalBrightness * 0.98
+
     return {
       background: createNaturalSkyGradient(modifiedPrimary, modifiedSecondary, modifiedAccent),
-      filter: `brightness(${finalBrightness}) saturate(${finalSaturation}) hue-rotate(${finalHue}deg)`,
+      filter: `brightness(${adjustedBrightness}) saturate(${adjustedSaturation}) hue-rotate(${finalHue}deg)`,
     }
   }
 
