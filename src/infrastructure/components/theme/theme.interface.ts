@@ -1,4 +1,4 @@
-import { ThemeMode } from "./theme.type"
+import { ThemeMode, ThemeSkin } from "./theme.type"
 
 export interface ThemeColors {
   background: string
@@ -24,11 +24,13 @@ export interface ThemeColors {
 
 export interface ThemeInstance {
   name: ThemeMode
+  skin: ThemeSkin
   activate: () => Promise<void>
   deactivate: () => Promise<void>
 }
 
 export interface Theme {
   name: ThemeMode
+  skin: ThemeSkin
   createInstance: () => ThemeInstance
 }

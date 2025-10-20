@@ -8,85 +8,10 @@ export const WeatherBackground = () => {
 
   const getBackgroundStyle = (scenario: WeatherScenario) => {
     const { season, timeOfDay, condition } = scenario
-
-    // Colores base por condición climática (día: paleta más suave y realista)
-    const conditionColors = {
-      [Condition.Sunny]: {
-        primary: "#6EA2D1", // cielo suave natural
-        secondary: "#A9C9E2", // azul claro realista
-        accent: "#EAF2FA", // brillo tenue
-      },
-      [Condition.PartlyCloudy]: {
-        primary: "#7DA1BC", // azul grisáceo natural
-        secondary: "#D0DAE4", // nubes suaves
-        accent: "#EEF2F6", // luz difusa
-      },
-      [Condition.Cloudy]: {
-        primary: "#95A3B0", // gris azulado moderado natural
-        secondary: "#C5CDD5", // gris claro natural
-        accent: "#E3E7EC", // tono alto suave
-      },
-      [Condition.Rainy]: {
-        primary: "#5E7282", // azul pizarra más natural
-        secondary: "#8899A6", // gris azulado medio
-        accent: "#C8D0D6", // luz de lluvia
-      },
-      [Condition.Stormy]: {
-        primary: "#4A5863", // azul grisáceo tormenta natural
-        secondary: "#7A8791", // gris medio desaturado
-        accent: "#B6BDC4", // luz difusa
-      },
-      [Condition.Snowy]: {
-        primary: "#DFE8F2", // azul muy pálido
-        secondary: "#F2F6FA", // casi blanco frío
-        accent: "#F9FBFD", // blanco suave
-      },
-      [Condition.Windy]: {
-        primary: "#78AFCF", // cielo claro desaturado
-        secondary: "#B6D1E3", // tono medio natural
-        accent: "#E7EFF6", // luz alta sutil
-      },
-      [Condition.Foggy]: {
-        primary: "#C9CED2", // Gris niebla natural
-        secondary: "#DEE2E6", // Gris claro natural
-        accent: "#F1F3F5", // Blanco grisáceo tenue
-      },
-      [Condition.Clear]: {
-        primary: "#6CA5D6", // cielo despejado realista
-        secondary: "#B4D0EA", // azul claro
-        accent: "#EAF2FA", // brillo suave
-      },
-      [Condition.Humid]: {
-        primary: "#97BCD3", // azul húmedo tenue natural
-        secondary: "#C4D6E3", // azul pálido
-        accent: "#ECF2F6", // luz difusa
-      },
-      [Condition.Dry]: {
-        primary: "#AFC8DA", // cielo pálido y seco
-        secondary: "#D7E3ED", // azul muy claro
-        accent: "#F3F6F9", // luz alta tenue
-      },
-      [Condition.Hot]: {
-        primary: "#8FB5D7", // cielo pálido y caluroso
-        secondary: "#CFE0EE", // azul muy claro lavado por calor
-        accent: "#F4EAD0", // bruma cálida en el horizonte
-      },
-      [Condition.Cold]: {
-        primary: "#6F9CCF", // azul frío natural
-        secondary: "#BFD5EB", // azul claro frío
-        accent: "#E9F2FA", // brillo frío tenue
-      },
-      [Condition.Hailing]: {
-        primary: "#667684", // gris azulado granizo natural
-        secondary: "#8F9BA5", // gris medio
-        accent: "#CCD3D8", // luz difusa
-      },
-      [Condition.Rainbow]: {
-        primary: "#7BAED9", // cielo limpio tras lluvia
-        secondary: "#C7D9EC", // azul claro con nubes
-        accent: "#EFF4FA", // luz alta
-      },
-    }
+    // Colores semánticos centralizados (tokens HSL)
+    const cPrimary = "hsl(var(--primary))"
+    const cSecondary = "hsl(var(--secondary))"
+    const cAccent = "hsl(var(--accent))"
 
     // Modificadores por hora del día (colores realistas del cielo)
     const timeModifiers = {
@@ -108,92 +33,9 @@ export const WeatherBackground = () => {
       [Season.Winter]: { saturation: 0.88, hue: 0, brightness: 0.85 },
     }
 
-    const baseColors = conditionColors[condition]
     const timeMod = timeModifiers[timeOfDay]
     const seasonMod = seasonModifiers[season]
-
-    // Colores especiales para condiciones nocturnas
     const isNightTime = timeOfDay === TimeOfDay.Night || timeOfDay === TimeOfDay.Midnight
-    const nightColors: Record<Condition, { primary: string; secondary: string; accent: string }> = {
-      [Condition.Sunny]: {
-        primary: "#191970", // Azul medianoche profundo
-        secondary: "#000080", // Azul marino oscuro
-        accent: "#000033", // Azul muy oscuro
-      },
-      [Condition.PartlyCloudy]: {
-        primary: "#2F2F2F", // Gris muy oscuro
-        secondary: "#1C1C1C", // Gris casi negro
-        accent: "#0F0F0F", // Casi negro
-      },
-      [Condition.Cloudy]: {
-        primary: "#2F2F2F", // Gris muy oscuro
-        secondary: "#1C1C1C", // Gris casi negro
-        accent: "#0F0F0F", // Casi negro
-      },
-      [Condition.Rainy]: {
-        primary: "#1A1A2E", // Azul muy oscuro lluvioso
-        secondary: "#16213E", // Azul marino oscuro
-        accent: "#0F0F23", // Azul casi negro
-      },
-      [Condition.Stormy]: {
-        primary: "#0F0F0F", // Negro tormenta
-        secondary: "#1A1A1A", // Gris muy oscuro
-        accent: "#000000", // Negro puro
-      },
-      [Condition.Snowy]: {
-        primary: "#1A1A2E", // Azul muy oscuro nevado
-        secondary: "#16213E", // Azul marino oscuro
-        accent: "#0F0F23", // Azul casi negro
-      },
-      [Condition.Windy]: {
-        primary: "#191970", // Azul medianoche profundo
-        secondary: "#000080", // Azul marino oscuro
-        accent: "#000033", // Azul muy oscuro
-      },
-      [Condition.Foggy]: {
-        primary: "#2F2F2F", // Gris muy oscuro
-        secondary: "#1C1C1C", // Gris casi negro
-        accent: "#0F0F0F", // Casi negro
-      },
-      [Condition.Clear]: {
-        primary: "#191970", // Azul medianoche profundo
-        secondary: "#000080", // Azul marino oscuro
-        accent: "#000033", // Azul muy oscuro
-      },
-      [Condition.Humid]: {
-        primary: "#191970", // Azul medianoche profundo
-        secondary: "#000080", // Azul marino oscuro
-        accent: "#000033", // Azul muy oscuro
-      },
-      [Condition.Dry]: {
-        primary: "#2F2F2F", // Gris muy oscuro
-        secondary: "#1C1C1C", // Gris casi negro
-        accent: "#0F0F0F", // Casi negro
-      },
-      [Condition.Hot]: {
-        primary: "#2F2F2F", // Gris muy oscuro
-        secondary: "#1C1C1C", // Gris casi negro
-        accent: "#0F0F0F", // Casi negro
-      },
-      [Condition.Cold]: {
-        primary: "#191970", // Azul medianoche profundo
-        secondary: "#000080", // Azul marino oscuro
-        accent: "#000033", // Azul muy oscuro
-      },
-      [Condition.Hailing]: {
-        primary: "#2F2F2F", // Gris muy oscuro
-        secondary: "#1C1C1C", // Gris casi negro
-        accent: "#0F0F0F", // Casi negro
-      },
-      [Condition.Rainbow]: {
-        primary: "#191970", // Azul medianoche profundo
-        secondary: "#000080", // Azul marino oscuro
-        accent: "#000033", // Azul muy oscuro
-      },
-    }
-
-    // Usar colores nocturnos si es de noche
-    const finalColors = isNightTime && nightColors[condition] ? nightColors[condition] : baseColors
 
     // Posición y halo solar (aproximado por hora del día)
     const getSunParams = () => {
@@ -255,8 +97,8 @@ export const WeatherBackground = () => {
       if (isNightTime) {
         // Degradado nocturno más natural (transiciones más largas y difuminadas)
         return `
-          radial-gradient(120% 90% at 50% -10%, ${primary} 0%, ${secondary} 55%, ${accent} 100%),
-          linear-gradient(180deg, ${primary} 0%, ${accent} 100%)
+          radial-gradient(120% 90% at 50% -10%, hsl(var(--background)) 0%, hsl(var(--card)) 55%, hsl(var(--popover)) 100%),
+          linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--card)) 100%)
         `
       }
 
@@ -319,19 +161,11 @@ export const WeatherBackground = () => {
       }
     }
 
-    // Aplicar modificadores a los colores (combinando tiempo, estación y condición)
-    const modifiedPrimary = applyColorModifiers(finalColors.primary, timeMod, seasonMod)
-    const modifiedSecondary = applyColorModifiers(finalColors.secondary, timeMod, seasonMod)
-    const modifiedAccent = applyColorModifiers(finalColors.accent, timeMod, seasonMod)
-
-    // Calcular filtros finales combinando todos los modificadores
+    // Calcular filtros finales (tonemapping leve)
     const finalBrightness = timeMod.brightness * seasonMod.brightness
     const finalSaturation = timeMod.saturation * seasonMod.saturation
     const finalHue = timeMod.hue + seasonMod.hue
-
-    // Reducción global sutil de saturación en horas diurnas para mayor realismo
     const adjustedSaturation = isNightTime ? finalSaturation : finalSaturation * 0.93
-    // Reducción sutil de brillo en horas diurnas
     const adjustedBrightness = isNightTime ? finalBrightness : finalBrightness * 0.98
 
     // Calidez de horizonte en horas doradas
@@ -349,14 +183,14 @@ export const WeatherBackground = () => {
       }
     })()
     const horizonWarmthLayer = horizonWarmthAlpha
-      ? `linear-gradient(180deg, rgba(255, 184, 120, 0) 55%, rgba(255, 184, 120, ${horizonWarmthAlpha}) 82%, rgba(255, 184, 120, 0.02) 100%)`
+      ? `linear-gradient(180deg, hsl(var(--accent) / 0) 55%, hsl(var(--accent) / ${horizonWarmthAlpha}) 82%, hsl(var(--accent) / 0.02) 100%)`
       : ""
 
     // Contaminación lumínica nocturna (glow cálido en horizonte y ciudad)
     const lightPollutionLayers = isNightTime
       ? [
-          `linear-gradient(180deg, transparent 65%, rgba(255, 200, 130, 0.08) 85%, rgba(255, 200, 130, 0.16) 95%, rgba(255, 200, 130, 0.18) 100%)`,
-          `radial-gradient(60% 22% at 50% 105%, rgba(255, 200, 140, 0.14) 0%, rgba(255, 200, 140, 0.03) 60%, transparent 100%)`,
+          `linear-gradient(180deg, transparent 65%, hsl(var(--accent) / 0.08) 85%, hsl(var(--accent) / 0.16) 95%, hsl(var(--accent) / 0.18) 100%)`,
+          `radial-gradient(60% 22% at 50% 105%, hsl(var(--accent) / 0.14) 0%, hsl(var(--accent) / 0.03) 60%, transparent 100%)`,
         ]
       : []
 
@@ -364,13 +198,13 @@ export const WeatherBackground = () => {
     const sunParams = getSunParams()
     const sunHaloLayer =
       sunParams && sunParams.halo > 0
-        ? `radial-gradient(40% 35% at ${sunParams.x}% ${sunParams.y}%, rgba(255, 220, 160, ${sunParams.halo}) 0%, rgba(255, 220, 160, 0) 60%), radial-gradient(12% 12% at ${sunParams.x}% ${sunParams.y}%, rgba(255, 245, 215, ${sunParams.disc}) 0%, rgba(255, 245, 215, 0) 80%)`
+        ? `radial-gradient(40% 35% at ${sunParams.x}% ${sunParams.y}%, hsl(var(--accent) / ${sunParams.halo}) 0%, hsl(var(--accent) / 0) 60%), radial-gradient(12% 12% at ${sunParams.x}% ${sunParams.y}%, hsl(var(--accent) / ${sunParams.disc}) 0%, hsl(var(--accent) / 0) 80%)`
         : ""
 
     // Dither anti-banding muy sutil (deshabilitado en noche para evitar líneas visibles)
     const ditherLayer = isNightTime
       ? ""
-      : `repeating-linear-gradient(45deg, rgba(0,0,0,0.004) 0px, rgba(0,0,0,0.004) 2px, rgba(255,255,255,0.004) 2px, rgba(255,255,255,0.004) 4px)`
+      : `repeating-linear-gradient(45deg, hsl(var(--foreground) / 0.004) 0px, hsl(var(--foreground) / 0.004) 2px, hsl(var(--background) / 0.004) 2px, hsl(var(--background) / 0.004) 4px)`
 
     // Construcción de capas finales (de arriba hacia abajo)
     const backgroundLayers = [
@@ -378,7 +212,7 @@ export const WeatherBackground = () => {
       sunHaloLayer,
       horizonWarmthLayer,
       ...lightPollutionLayers,
-      createNaturalSkyGradient(modifiedPrimary, modifiedSecondary, modifiedAccent),
+      createNaturalSkyGradient(cPrimary, cSecondary, cAccent),
     ].filter(Boolean)
 
     // Tone mapping simple con clamps y contraste leve
@@ -390,85 +224,6 @@ export const WeatherBackground = () => {
       background: backgroundLayers.join(","),
       filter: `brightness(${brightnessClamped}) saturate(${saturationClamped}) hue-rotate(${finalHue}deg) contrast(1.03)`,
     }
-  }
-
-  const applyColorModifiers = (
-    color: string,
-    timeMod: { brightness: number; saturation: number; hue: number },
-    seasonMod: { saturation: number; hue: number; brightness: number }
-  ) => {
-    // Convertir hex a HSL para aplicar modificadores
-    const hexToHsl = (hex: string) => {
-      const r = Number.parseInt(hex.slice(1, 3), 16) / 255
-      const g = Number.parseInt(hex.slice(3, 5), 16) / 255
-      const b = Number.parseInt(hex.slice(5, 7), 16) / 255
-
-      const max = Math.max(r, g, b)
-      const min = Math.min(r, g, b)
-      let h = 0
-      let s = 0
-      const l = (max + min) / 2
-
-      if (max !== min) {
-        const d = max - min
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
-        switch (max) {
-          case r:
-            h = (g - b) / d + (g < b ? 6 : 0)
-            break
-          case g:
-            h = (b - r) / d + 2
-            break
-          case b:
-            h = (r - g) / d + 4
-            break
-        }
-        h /= 6
-      }
-      return [h * 360, s * 100, l * 100]
-    }
-
-    const hslToHex = (h: number, s: number, l: number) => {
-      h = h / 360
-      s = s / 100
-      l = l / 100
-
-      const hue2rgb = (p: number, q: number, t: number) => {
-        if (t < 0) t += 1
-        if (t > 1) t -= 1
-        if (t < 1 / 6) return p + (q - p) * 6 * t
-        if (t < 1 / 2) return q
-        if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6
-        return p
-      }
-
-      let r, g, b
-      if (s === 0) {
-        r = g = b = l
-      } else {
-        const q = l < 0.5 ? l * (1 + s) : l + s - l * s
-        const p = 2 * l - q
-        r = hue2rgb(p, q, h + 1 / 3)
-        g = hue2rgb(p, q, h)
-        b = hue2rgb(p, q, h - 1 / 3)
-      }
-
-      const toHex = (c: number) => {
-        const hex = Math.round(c * 255).toString(16)
-        return hex.length === 1 ? "0" + hex : hex
-      }
-
-      return `#${toHex(r)}${toHex(g)}${toHex(b)}`
-    }
-
-    const [h, s, l] = hexToHsl(color)
-
-    // Combinar modificadores de tiempo y estación
-    const combinedHue = (h + timeMod.hue + seasonMod.hue) % 360
-    const combinedSaturation = Math.min(100, s * timeMod.saturation * seasonMod.saturation)
-    const combinedLightness = Math.min(100, l * timeMod.brightness * seasonMod.brightness)
-
-    return hslToHex(combinedHue, combinedSaturation, combinedLightness)
   }
 
   if (isLoading || !weather) {

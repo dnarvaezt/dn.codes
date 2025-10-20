@@ -4,18 +4,22 @@ import { Button } from "@/infrastructure/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/infrastructure/components/ui/dropdown-menu"
 import { Moon, Sun } from "lucide-react"
 import { useThemeControllerStore } from "../theme-controller"
-import { ThemeMode } from "../theme.type"
+import { ThemeMode, ThemeSkin } from "../theme.type"
 import "./theme-toggle.scss"
 
 export const ThemeToggle = () => {
   const mode = useThemeControllerStore((state) => state.mode)
   const setTheme = useThemeControllerStore((state) => state.setTheme)
+  const skin = useThemeControllerStore((state) => state.skin)
+  const setSkin = useThemeControllerStore((state) => state.setSkin)
 
   return (
     <DropdownMenu>
@@ -27,6 +31,7 @@ export const ThemeToggle = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="theme-toggle__content">
+        <DropdownMenuLabel>Modo</DropdownMenuLabel>
         <DropdownMenuRadioGroup
           value={mode}
           onValueChange={(value) => setTheme(value as ThemeMode)}
@@ -42,6 +47,11 @@ export const ThemeToggle = () => {
           <DropdownMenuRadioItem value={ThemeMode.SYSTEM}>
             <span className="theme-toggle__menu-icon">💻</span>Sistema
           </DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel>Apariencia</DropdownMenuLabel>
+        <DropdownMenuRadioGroup value={skin} onValueChange={(value) => setSkin(value as ThemeSkin)}>
+          <DropdownMenuRadioItem value={ThemeSkin.FLAT}>Flat UI</DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>

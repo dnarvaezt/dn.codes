@@ -1,6 +1,5 @@
 .weather-widget {
   @apply mx-auto w-full max-w-sm;
-  // display: none;
 
   &__container {
     @apply overflow-hidden rounded-2xl border border-border bg-card shadow-lg;
@@ -21,11 +20,15 @@
   }
 
   &__search-results {
-    @apply mt-2 max-h-60 overflow-auto rounded-xl border border-border bg-card shadow-lg;
+    @apply mt-2 max-h-60 overflow-y-auto overflow-x-hidden rounded-xl border border-border bg-card shadow-lg;
   }
 
   &__search-item {
-    @apply w-full px-4 py-2 text-left text-sm text-foreground transition-colors hover:bg-accent hover:text-accent-foreground;
+    @apply flex h-12 w-full cursor-pointer items-center truncate whitespace-nowrap px-4 text-left text-sm leading-normal text-foreground transition-colors hover:bg-accent hover:text-accent-foreground;
+  }
+
+  &__search-item--active {
+    @apply bg-accent text-accent-foreground;
   }
 
   &__search-loading,

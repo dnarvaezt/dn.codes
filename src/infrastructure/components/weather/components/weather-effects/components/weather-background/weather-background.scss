@@ -17,8 +17,8 @@
     width: 100%;
     height: 100%;
     background:
-      radial-gradient(circle at 30% 20%, rgba(255, 215, 0, 0.1) 0%, transparent 70%),
-      radial-gradient(circle at 70% 80%, rgba(135, 206, 235, 0.08) 0%, transparent 70%);
+      radial-gradient(circle at 30% 20%, hsl(var(--accent) / 0.1) 0%, transparent 70%),
+      radial-gradient(circle at 70% 80%, hsl(var(--primary) / 0.08) 0%, transparent 70%);
     animation: marioShimmer 20s ease-in-out infinite;
   }
 
@@ -32,7 +32,7 @@
     background: linear-gradient(
       45deg,
       transparent 0%,
-      rgba(255, 215, 0, 0.008) 50%,
+      hsl(var(--accent) / 0.008) 50%,
       transparent 100%
     );
     background-size: 400% 400%;
@@ -43,7 +43,12 @@
   }
 
   &--loading {
-    background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 50%, #d0d0d0 100%);
+    background: linear-gradient(
+      135deg,
+      hsl(var(--muted) / 0.6) 0%,
+      hsl(var(--muted) / 0.5) 50%,
+      hsl(var(--muted) / 0.4) 100%
+    );
     animation: pulse 2s ease-in-out infinite;
 
     &::before,

@@ -6,7 +6,11 @@
   height: 100%;
   pointer-events: none;
   overflow: hidden;
-  background: radial-gradient(ellipse at center, rgba(0, 0, 20, 0.1) 0%, rgba(0, 0, 0, 0.3) 100%);
+  background: radial-gradient(
+    ellipse at center,
+    hsl(var(--foreground) / 0.1) 0%,
+    hsl(var(--foreground) / 0.3) 100%
+  );
 
   // Intensidad brillante (cielo despejado)
   &--bright {
@@ -59,16 +63,16 @@
     width: 100%;
     height: 100%;
     background-image:
-      radial-gradient(1px 1px at 15% 25%, #ffffff, transparent),
-      radial-gradient(1px 1px at 35% 15%, #f0f0f0, transparent),
-      radial-gradient(0.5px 0.5px at 55% 35%, #ffffff, transparent),
-      radial-gradient(1px 1px at 75% 20%, #e8e8e8, transparent),
-      radial-gradient(0.5px 0.5px at 85% 45%, #ffffff, transparent),
-      radial-gradient(1px 1px at 25% 65%, #f5f5f5, transparent),
-      radial-gradient(0.5px 0.5px at 45% 75%, #ffffff, transparent),
-      radial-gradient(1px 1px at 65% 85%, #e0e0e0, transparent),
-      radial-gradient(0.5px 0.5px at 85% 75%, #ffffff, transparent),
-      radial-gradient(1px 1px at 15% 85%, #f8f8f8, transparent);
+      radial-gradient(1px 1px at 15% 25%, hsl(var(--foreground)), transparent),
+      radial-gradient(1px 1px at 35% 15%, hsl(var(--foreground) / 0.9), transparent),
+      radial-gradient(0.5px 0.5px at 55% 35%, hsl(var(--foreground)), transparent),
+      radial-gradient(1px 1px at 75% 20%, hsl(var(--foreground) / 0.85), transparent),
+      radial-gradient(0.5px 0.5px at 85% 45%, hsl(var(--foreground)), transparent),
+      radial-gradient(1px 1px at 25% 65%, hsl(var(--foreground) / 0.95), transparent),
+      radial-gradient(0.5px 0.5px at 45% 75%, hsl(var(--foreground)), transparent),
+      radial-gradient(1px 1px at 65% 85%, hsl(var(--foreground) / 0.85), transparent),
+      radial-gradient(0.5px 0.5px at 85% 75%, hsl(var(--foreground)), transparent),
+      radial-gradient(1px 1px at 15% 85%, hsl(var(--foreground) / 0.95), transparent);
     background-repeat: no-repeat;
     animation: gentle-twinkle 8s ease-in-out infinite;
   }
@@ -82,18 +86,18 @@
     width: 100%;
     height: 100%;
     background-image:
-      radial-gradient(0.3px 0.3px at 5% 10%, rgba(255, 255, 255, 0.6), transparent),
-      radial-gradient(0.3px 0.3px at 25% 5%, rgba(240, 240, 240, 0.5), transparent),
-      radial-gradient(0.2px 0.2px at 45% 15%, rgba(255, 255, 255, 0.4), transparent),
-      radial-gradient(0.3px 0.3px at 65% 8%, rgba(230, 230, 230, 0.5), transparent),
-      radial-gradient(0.2px 0.2px at 85% 18%, rgba(255, 255, 255, 0.3), transparent),
-      radial-gradient(0.3px 0.3px at 95% 35%, rgba(245, 245, 245, 0.4), transparent),
-      radial-gradient(0.2px 0.2px at 8% 45%, rgba(255, 255, 255, 0.3), transparent),
-      radial-gradient(0.3px 0.3px at 28% 55%, rgba(235, 235, 235, 0.4), transparent),
-      radial-gradient(0.2px 0.2px at 48% 65%, rgba(255, 255, 255, 0.2), transparent),
-      radial-gradient(0.3px 0.3px at 68% 75%, rgba(225, 225, 225, 0.3), transparent),
-      radial-gradient(0.2px 0.2px at 88% 85%, rgba(255, 255, 255, 0.2), transparent),
-      radial-gradient(0.3px 0.3px at 12% 95%, rgba(250, 250, 250, 0.3), transparent);
+      radial-gradient(0.3px 0.3px at 5% 10%, hsl(var(--foreground) / 0.6), transparent),
+      radial-gradient(0.3px 0.3px at 25% 5%, hsl(var(--foreground) / 0.5), transparent),
+      radial-gradient(0.2px 0.2px at 45% 15%, hsl(var(--foreground) / 0.4), transparent),
+      radial-gradient(0.3px 0.3px at 65% 8%, hsl(var(--foreground) / 0.5), transparent),
+      radial-gradient(0.2px 0.2px at 85% 18%, hsl(var(--foreground) / 0.3), transparent),
+      radial-gradient(0.3px 0.3px at 95% 35%, hsl(var(--foreground) / 0.4), transparent),
+      radial-gradient(0.2px 0.2px at 8% 45%, hsl(var(--foreground) / 0.3), transparent),
+      radial-gradient(0.3px 0.3px at 28% 55%, hsl(var(--foreground) / 0.4), transparent),
+      radial-gradient(0.2px 0.2px at 48% 65%, hsl(var(--foreground) / 0.2), transparent),
+      radial-gradient(0.3px 0.3px at 68% 75%, hsl(var(--foreground) / 0.3), transparent),
+      radial-gradient(0.2px 0.2px at 88% 85%, hsl(var(--foreground) / 0.2), transparent),
+      radial-gradient(0.3px 0.3px at 12% 95%, hsl(var(--foreground) / 0.3), transparent);
     background-repeat: no-repeat;
     animation: subtle-twinkle 12s ease-in-out infinite reverse;
   }

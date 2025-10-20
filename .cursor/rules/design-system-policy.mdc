@@ -1,0 +1,93 @@
+---
+alwaysApply: true
+---
+
+# Política de Sistema de Diseño: Flat UI + Temas (Skins)
+
+## Objetivo
+- Establecer un sistema de diseño centralizado, armónico y coherente, basado en Flat UI por defecto, con soporte de modos (light/dark) y "skins" intercambiables (p. ej., material) sin modificar componentes.
+- Mantener componentes/páginas autónomos, independientes y genéricos, todos consumiendo el mismo set de tokens.
+- Permitir cambiar el tema (modo y/o skin) de forma simple y unificada.
+
+## Alcance y alineación
+- Complementa (no reemplaza) `shadcn-first-policy.mdc` y `hsl-variables-system.mdc`.
+- Se integra con `src/infrastructure/assets/globals.scss` y `src/infrastructure/assets/themes.scss` como fuente de verdad de tokens.
+- Usa Tailwind + variables HSL (shadcn) como sistema central; prohibidos valores hardcodeados fuera del sistema.
+
+## Ejes del sistema de diseño
+1) Modo de color (obligatorio):
+   - `light` y `dark` deben existir siempre.
+2) Skin/Estilo visual (extensible):
+   - `flat` es el skin base por defecto (mínimo relieve, sombras sutiles, superficies limpias).
+   - Otros skins (p. ej., `material`) deben agregarse como temas adicionales sin cambiar componentes.
+
+## Tokens centralizados (única fuente de verdad)
+- Colores: variables HSL semánticas predefinidas (ver hsl-variables-system).
+- Espaciado: escala de Tailwind (`0`…`20`) aplicada vía `@apply` en SCSS.
+- Bordes: `border`, `border-*`, color `border-border`.
+- Radius: clases Tailwind basadas en `--radius` (rounded, rounded-lg, etc.).
+- Tipografía: clases Tailwind (`text-*`, `font-*`, `leading-*`).
+- Sombras: clases `shadow-*`; en `flat` usar sombras sutiles o ninguna.
+- Transiciones: `transition-*` con duraciones estándar (`duration-200/300`).
+
+### Reglas estrictas
+- No usar HEX/RGB directos; usar `hsl(var(--...))` o clases Tailwind que ya resuelven tokens.
+- No usar `px/rem/em` hardcodeados para spacing; usar escala Tailwind con `@apply`.
+- No crear nuevas variables si existen equivalentes semánticas; excepciones deben seguir el proceso del documento HSL y vivir en `themes.scss`.
+
+## Implementación en el proyecto
+- Definición de tokens y temas:
+  - Variables y mapas de tema en `src/infrastructure/assets/globals.scss` y `themes.scss`.
+  - Modos `light`/`dark` se resuelven por `data-theme` o configuración centralizada.
+- Orquestación de tema (runtime):
+  - Usar exclusivamente el stack de `src/infrastructure/components/theme/` (controller/provider/store) para leer/cambiar modo/skin.
+  - Prohibido cambiar temas directamente desde componentes; todo cambio va por el controlador de tema.
+- Nuevos skins (p. ej., `material`):
+  - Agregar bajo `src/infrastructure/components/theme/themes/<skin>/` replicando el patrón de `light/` y `dark/` existentes.
+  - Mapear variables semánticas sin romper contratos: los componentes no cambian.
+
+## Componentes y páginas (autonomía y genericidad)
+- Los componentes deben:
+  - Ser presentacionales; sin lógica de negocio (seguir Clean Architecture).
+  - Consumir tokens vía clases Tailwind o `@apply` en sus SCSS locales.
+  - No usar estilos inline ni valores mágicos.
+  - No depender de un skin específico; su apariencia cambia al cambiar el tema/skin global.
+
+## Lineamientos para Flat UI (skin base)
+- Superficies planas: `bg-card`, `bg-background` con bordes sutiles (`border-border`).
+- Sombras mínimas o nulas: preferir `shadow-sm` o `shadow-none`.
+- Tipografía clara con contrastes correctos (usar `text-foreground`, `text-muted-foreground`).
+- Interacciones con `ring` y transiciones estándar (`transition-colors duration-200`).
+
+## Cambio de temas (modo y skin)
+- Interfaz de cambio única (store/controller de tema):
+  - Cambiar `mode` (light/dark) y `skin` (flat, material, …) sin tocar componentes.
+  - Persistencia/lectura de preferencia se realiza en el módulo de tema (no en UI ni dominio).
+
+## Checklist de cumplimiento
+- ¿El componente usa solo tokens (Tailwind/HSL) sin valores hardcodeados?
+- ¿La apariencia cambia correctamente entre `light` y `dark` sin tocar el componente?
+- ¿El componente no asume un skin específico (flat/material)?
+- ¿No se creó una variable nueva existiendo una semántica equivalente?
+- ¿No hay estilos inline, HEX/RGB, ni `px/rem` sin `@apply`?
+- ¿El cambio de tema se hace a través del controlador de tema?
+
+## Anti-patrones prohibidos
+- Estilos inline, colores HEX/RGB, espaciados en `px` fuera de `@apply`.
+- Media queries personalizadas no alineadas a breakpoints Tailwind.
+- Componentes que modifiquen directamente `document`/`classList` para temas.
+- Lógica de tema duplicada en features o componentes.
+- Dependencias de `application/` hacia `infrastructure/` para tema o estilos.
+
+## Proceso para añadir un nuevo skin (resumen)
+1) Crear `src/infrastructure/components/theme/themes/<skin>/` replicando la estructura de `light/`/`dark/`.
+2) Mapear todas las variables semánticas existentes a la estética del nuevo skin.
+3) Registrar el skin en el controlador de tema y exponerlo en el selector de temas.
+4) Verificar que todos los componentes cambian de estilo sin modificaciones en su código.
+
+## Validación final
+- Sistema coherente y armónico bajo Flat UI por defecto.
+- Modos `light/dark` funcionando.
+- Skins intercambiables sin tocar componentes.
+- Tokens centralizados y únicos.
+- Cumplimiento con `shadcn-first-policy` y `hsl-variables-system`.

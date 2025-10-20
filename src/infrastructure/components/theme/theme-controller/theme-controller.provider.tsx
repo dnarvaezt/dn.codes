@@ -8,15 +8,23 @@ import { useThemeControllerStore } from "./theme-controller.store"
 export const ThemeControllerProvider = ({ children }: { children: ReactNode }) => {
   const registerTheme = useThemeControllerStore((state) => state.registerTheme)
   const setTheme = useThemeControllerStore((state) => state.setTheme)
+  const setSkin = useThemeControllerStore((state) => state.setSkin)
   const mode = useThemeControllerStore((state) => state.mode)
+  const skin = useThemeControllerStore((state) => state.skin)
 
   useEffect(() => {
-    ;[darkTheme, lightTheme].forEach((theme) => registerTheme(theme.createInstance()))
+    for (const theme of [darkTheme, lightTheme]) {
+      registerTheme(theme.createInstance())
+    }
   }, [registerTheme])
 
   useEffect(() => {
     setTheme(mode)
   }, [setTheme, mode])
+
+  useEffect(() => {
+    setSkin(skin)
+  }, [setSkin, skin])
 
   useEffect(() => {
     const handleSystemThemeChange = () => {
@@ -25,7 +33,7 @@ export const ThemeControllerProvider = ({ children }: { children: ReactNode }) =
       }
     }
 
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
+    const mediaQuery = globalThis.matchMedia("(prefers-color-scheme: dark)")
     mediaQuery.addEventListener("change", handleSystemThemeChange)
 
     return () => mediaQuery.removeEventListener("change", handleSystemThemeChange)
@@ -47,8 +55,8 @@ export const ThemeControllerProvider = ({ children }: { children: ReactNode }) =
       }
     }
 
-    window.addEventListener("storage", handleStorageChange)
-    return () => window.removeEventListener("storage", handleStorageChange)
+    globalThis.addEventListener("storage", handleStorageChange)
+    return () => globalThis.removeEventListener("storage", handleStorageChange)
   }, [setTheme])
 
   return <>{children}</>
