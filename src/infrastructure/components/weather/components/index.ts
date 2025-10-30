@@ -1,2 +1,1 @@
-export * from "./weather-effects"
 export * from "./weather-widget"

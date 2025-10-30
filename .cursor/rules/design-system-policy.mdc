@@ -1,93 +1,113 @@
----
-alwaysApply: true
----
+## 12) Estética visual obligatoria: minimalista, moderna, elegante y sutil
 
-# Política de Sistema de Diseño: Flat UI + Temas (Skins)
+- Minimalismo total: priorizar espacio en blanco, jerarquía tipográfica y composición limpia; eliminar elementos decorativos no esenciales.
+- Atractivo y moderno: microinteracciones sutiles (transition 150–300ms, ease-*), superficies planas, acentos controlados con `--primary`.
+- Elegancia sutil: sombras suaves (`shadow-sm`/`shadow-md`), bordes y radios consistentes (alineados a `--radius`), opacidades moderadas.
+- Sobriedad cromática: paletas neutras basadas en tokens HSL; evitar gradientes, saturaciones altas y contrastes estridentes.
+- Claridad visual: evitar sobrecarga de información; densidad y espaciado según escala Tailwind; foco en legibilidad y orden.
 
-## Objetivo
-- Establecer un sistema de diseño centralizado, armónico y coherente, basado en Flat UI por defecto, con soporte de modos (light/dark) y "skins" intercambiables (p. ej., material) sin modificar componentes.
-- Mantener componentes/páginas autónomos, independientes y genéricos, todos consumiendo el mismo set de tokens.
-- Permitir cambiar el tema (modo y/o skin) de forma simple y unificada.
+# Política estricta del Sistema de Diseño (Flat UI · shadcn · Tailwind)
 
-## Alcance y alineación
-- Complementa (no reemplaza) `shadcn-first-policy.mdc` y `hsl-variables-system.mdc`.
-- Se integra con `src/infrastructure/assets/globals.scss` y `src/infrastructure/assets/themes.scss` como fuente de verdad de tokens.
-- Usa Tailwind + variables HSL (shadcn) como sistema central; prohibidos valores hardcodeados fuera del sistema.
+## 1) Regla Suprema: REUTILIZAR SIEMPRE ANTES DE CREAR
+- Debes verificar si el componente ya existe antes de crear uno nuevo.
+- Crear un nuevo componente es el ÚLTIMO recurso. La prioridad es:
+  1. Reusar componente existente (shadcn/ui o internos del proyecto).
+  2. Componer/parametrizar uno existente para cubrir la necesidad.
+  3. Extender de forma mínima sin romper contratos existentes.
+  4. Crear componente nuevo solo si 1-3 no son viables y con justificación clara.
+- Queda prohibido duplicar componentes, estilos o lógica visual.
 
-## Ejes del sistema de diseño
-1) Modo de color (obligatorio):
-   - `light` y `dark` deben existir siempre.
-2) Skin/Estilo visual (extensible):
-   - `flat` es el skin base por defecto (mínimo relieve, sombras sutiles, superficies limpias).
-   - Otros skins (p. ej., `material`) deben agregarse como temas adicionales sin cambiar componentes.
+## 2) Librerías y tecnologías OBLIGATORIAS
+- UI base: shadcn/ui (con Radix) instalada en el proyecto.
+- Estilos: Tailwind CSS exclusivamente.
+- Tokens/variables: usar variables HSL de shadcn y utilidades de Tailwind; no usar colores/valores hardcodeados.
 
-## Tokens centralizados (única fuente de verdad)
-- Colores: variables HSL semánticas predefinidas (ver hsl-variables-system).
-- Espaciado: escala de Tailwind (`0`…`20`) aplicada vía `@apply` en SCSS.
-- Bordes: `border`, `border-*`, color `border-border`.
-- Radius: clases Tailwind basadas en `--radius` (rounded, rounded-lg, etc.).
-- Tipografía: clases Tailwind (`text-*`, `font-*`, `leading-*`).
-- Sombras: clases `shadow-*`; en `flat` usar sombras sutiles o ninguna.
-- Transiciones: `transition-*` con duraciones estándar (`duration-200/300`).
+## 3) Tokens y theming (NUNCA hardcodear)
+- Colores: usar variables HSL semánticas (p. ej. `bg-background`, `text-foreground`, `border-border`, `bg-primary`, `text-muted-foreground`).
+- Tipografía: usar escalas de Tailwind (`text-sm`, `text-base`, `text-lg`, etc.) y `font-*`.
+- Espaciado: usar la escala Tailwind (`p-*`, `m-*`, `gap-*`, `space-*`).
+- Bordes y radios: `border`, `border-*`, `rounded-*` (alineados a `--radius`).
+- Sombras: `shadow-*` de Tailwind; evitar sombras pesadas por Flat UI.
+- Transiciones/animaciones: utilidades Tailwind (`transition-*`, `duration-*`, `ease-*`, `animate-*`).
 
-### Reglas estrictas
-- No usar HEX/RGB directos; usar `hsl(var(--...))` o clases Tailwind que ya resuelven tokens.
-- No usar `px/rem/em` hardcodeados para spacing; usar escala Tailwind con `@apply`.
-- No crear nuevas variables si existen equivalentes semánticas; excepciones deben seguir el proceso del documento HSL y vivir en `themes.scss`.
+## 4) Flat UI como línea visual
+- Sin gradientes, sin efectos skeuomórficos, sin glas effects por defecto.
+- Uso mínimo y sutil de sombras (`shadow-sm` a `shadow-md`), foco en superficies planas.
+- Jerarquía por color semántico, tipografía y espaciado; no por decoraciones.
 
-## Implementación en el proyecto
-- Definición de tokens y temas:
-  - Variables y mapas de tema en `src/infrastructure/assets/globals.scss` y `themes.scss`.
-  - Modos `light`/`dark` se resuelven por `data-theme` o configuración centralizada.
-- Orquestación de tema (runtime):
-  - Usar exclusivamente el stack de `src/infrastructure/components/theme/` (controller/provider/store) para leer/cambiar modo/skin.
-  - Prohibido cambiar temas directamente desde componentes; todo cambio va por el controlador de tema.
-- Nuevos skins (p. ej., `material`):
-  - Agregar bajo `src/infrastructure/components/theme/themes/<skin>/` replicando el patrón de `light/` y `dark/` existentes.
-  - Mapear variables semánticas sin romper contratos: los componentes no cambian.
+## 5) Consistencia y coherencia obligatoria
+- El mismo patrón de estilos y composición debe repetirse en toda la app.
+- No mezclar estilos inline ni clases ad hoc fuera de Tailwind.
+- Prohibido usar colores hex/rgb directos o medidas arbitrarias (px/rem) fuera de la escala.
 
-## Componentes y páginas (autonomía y genericidad)
-- Los componentes deben:
-  - Ser presentacionales; sin lógica de negocio (seguir Clean Architecture).
-  - Consumir tokens vía clases Tailwind o `@apply` en sus SCSS locales.
-  - No usar estilos inline ni valores mágicos.
-  - No depender de un skin específico; su apariencia cambia al cambiar el tema/skin global.
+## 6) Mobile-first y soporte de temas (dark/light)
+- Diseño mobile-first obligatorio; resolver primero en pantallas pequeñas.
+- Soporte obligatorio para modo claro y oscuro usando las variables HSL.
+- Respetar estados de foco/accesibilidad: `focus-visible`, `ring` usando `--ring`.
 
-## Lineamientos para Flat UI (skin base)
-- Superficies planas: `bg-card`, `bg-background` con bordes sutiles (`border-border`).
-- Sombras mínimas o nulas: preferir `shadow-sm` o `shadow-none`.
-- Tipografía clara con contrastes correctos (usar `text-foreground`, `text-muted-foreground`).
-- Interacciones con `ring` y transiciones estándar (`transition-colors duration-200`).
+## 7) Proceso estricto antes de crear un componente
+Debes cumplir, en orden, antes de crear:
+1. ¿Existe en shadcn/ui o ya en `src/infrastructure/components`? → REUTILIZAR.
+2. ¿Se puede cubrir con composición/slots/props de un componente existente? → REUTILIZAR/COMPONER.
+3. ¿Se puede extender sin romper API ni duplicar lógica? → EXTENDER MÍNIMO.
+4. Solo si nada anterior aplica: CREAR. Requisitos al crear:
+   - Nombre y carpeta en kebab-case.
+   - Sin `export default`; solo exportaciones nombradas.
+   - `index.ts` solo con `export *` (barrel), sin lógica.
+   - Estilos exclusivamente con Tailwind (opcionalmente `@apply` en .scss del componente si ya existe patrón del proyecto) y usando tokens HSL.
+   - API mínima, clara y documentada internamente (sin comentarios extensos), pensada para reuso.
 
-## Cambio de temas (modo y skin)
-- Interfaz de cambio única (store/controller de tema):
-  - Cambiar `mode` (light/dark) y `skin` (flat, material, …) sin tocar componentes.
-  - Persistencia/lectura de preferencia se realiza en el módulo de tema (no en UI ni dominio).
+## 8) Accesibilidad mínima obligatoria
+- Navegación por teclado y estados de foco visibles.
+- Roles/aria-labels adecuados cuando aplique.
+- Contraste suficiente garantizado por los tokens semánticos.
 
-## Checklist de cumplimiento
-- ¿El componente usa solo tokens (Tailwind/HSL) sin valores hardcodeados?
-- ¿La apariencia cambia correctamente entre `light` y `dark` sin tocar el componente?
-- ¿El componente no asume un skin específico (flat/material)?
-- ¿No se creó una variable nueva existiendo una semántica equivalente?
-- ¿No hay estilos inline, HEX/RGB, ni `px/rem` sin `@apply`?
-- ¿El cambio de tema se hace a través del controlador de tema?
+## 9) Reglas de prohibición
+- Prohibido crear componentes si existe uno equivalente en shadcn/ui o en el repositorio.
+- Prohibido copiar/pegar componentes con cambios menores; parametrizar en su lugar.
+- Prohibido usar estilos inline, colores hex/rgb, valores fuera de la escala Tailwind.
+- Prohibido romper consistencia de dark/light o de mobile-first.
 
-## Anti-patrones prohibidos
-- Estilos inline, colores HEX/RGB, espaciados en `px` fuera de `@apply`.
-- Media queries personalizadas no alineadas a breakpoints Tailwind.
-- Componentes que modifiquen directamente `document`/`classList` para temas.
-- Lógica de tema duplicada en features o componentes.
-- Dependencias de `application/` hacia `infrastructure/` para tema o estilos.
+## 10) Criterios de aceptación de UI
+- Reutiliza o compón componentes existentes.
+- Usa exclusivamente Tailwind y tokens HSL semánticos.
+- Cumple Flat UI: superficies planas, mínima sombra, sin gradientes.
+- Funciona y se ve correctamente en mobile, dark y light.
+- Mantiene coherencia con el resto del sistema (nombres, estructura, exportaciones, estilos).
 
-## Proceso para añadir un nuevo skin (resumen)
-1) Crear `src/infrastructure/components/theme/themes/<skin>/` replicando la estructura de `light/`/`dark/`.
-2) Mapear todas las variables semánticas existentes a la estética del nuevo skin.
-3) Registrar el skin en el controlador de tema y exponerlo en el selector de temas.
-4) Verificar que todos los componentes cambian de estilo sin modificaciones en su código.
+El incumplimiento de cualquier punto invalida la propuesta de UI y debe corregirse antes de integrar cambios.
 
-## Validación final
-- Sistema coherente y armónico bajo Flat UI por defecto.
-- Modos `light/dark` funcionando.
-- Skins intercambiables sin tocar componentes.
-- Tokens centralizados y únicos.
-- Cumplimiento con `shadcn-first-policy` y `hsl-variables-system`.
+## 11) MCP de shadcn/ui: lineamientos y configuración oficial del proyecto
+
+Debes seguir la documentación oficial de shadcn/ui y usar SIEMPRE su CLI conforme al `components.json` del repositorio.
+
+Configuración vigente (no modificar sin aprobación explícita):
+- `$schema`: `https://ui.shadcn.com/schema.json`
+- `style`: `default`
+- `rsc`: `false` (los componentes generados son Client Components; si necesitas server boundaries, compón sin alterar el origen)
+- `tsx`: `true`
+- `tailwind.config`: `tailwind.config.ts`
+- `tailwind.css`: `src/infrastructure/assets/globals.scss` (entrada única con `@tailwind base; components; utilities;` y variables HSL)
+- `tailwind.baseColor`: `neutral`
+- `tailwind.cssVariables`: `true` (usar variables HSL semánticas)
+- `aliases`:
+  - `components`: `@/infrastructure/components`
+  - `utils`: `@/infrastructure/utils`
+  - `ui`: `@/infrastructure/components/ui` (ruta OBLIGATORIA para importar UI generada)
+
+Reglas de uso del MCP:
+- Alta de componentes: usar la CLI de shadcn/ui para agregar/actualizar componentes. Prohibido copiar manualmente desde la web.
+- Ubicación: todos los componentes generados viven en `src/infrastructure/components/ui` respetando las rutas/aliases configurados.
+- Importación: importar SIEMPRE desde `@/infrastructure/components/ui` y utilidades desde `@/infrastructure/utils`.
+- Utilidad de clases: usar `cn` de `@/infrastructure/utils/class-names` para combinar clases Tailwind.
+- Tailwind y plugins: `tailwindcss-animate` está activo; usar sus utilidades cuando aplique. No agregar CSS inline ni valores fuera de la escala.
+- Theming: `darkMode` opera con `[data-theme='dark']` (ver `tailwind.config.ts`); los componentes deben respetar tokens `--*` y funcionar en light/dark sin overrides locales.
+- No editar núcleo innecesariamente: evita modificar los componentes base generados. Si una variación es necesaria, compón por encima; si la edición es imprescindible, documenta el cambio y mantenlo mínimo para facilitar upgrades.
+- Upgrades: cuando actualices un componente mediante la CLI, resuelve conflictos manteniendo tokens, aliases y consistencia de imports. No rompas la API existente sin justificación.
+- Accesibilidad Radix: conserva props, roles y comportamiento accesible que proveen los primitives.
+
+Criterio de validación MCP:
+- El componente fue agregado/actualizado con la CLI (trazable contra `components.json`).
+- Vive bajo `src/infrastructure/components/ui` y se importa por alias `@/infrastructure/components/ui`.
+- Usa `cn`, Tailwind, tokens HSL y respeta dark/light.
+- No hay duplicación ni forks innecesarios; se compone antes de editar.

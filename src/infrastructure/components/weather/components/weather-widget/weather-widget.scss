@@ -2,12 +2,31 @@
   @apply mx-auto w-full max-w-sm;
 
   &__container {
-    @apply overflow-hidden rounded-2xl border border-border bg-card shadow-lg;
-    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--card) / 0.95) 100%);
+    @apply overflow-hidden rounded-lg border border-border/50 shadow-none;
+    background: hsl(var(--card));
+    position: relative;
   }
 
-  &__search {
-    @apply border-b border-border bg-background/40 p-4;
+  &__top {
+    @apply flex items-center justify-between gap-2 p-2;
+    position: relative;
+    z-index: 10;
+  }
+
+  &__top-location {
+    @apply inline-flex items-center gap-1 text-sm text-muted-foreground;
+  }
+
+  &__top-city {
+    @apply text-foreground;
+  }
+
+  &__top-country {
+    @apply text-muted-foreground;
+  }
+
+  &__top-search {
+    @apply flex-1;
   }
 
   &__search-input-wrapper {
@@ -15,20 +34,32 @@
   }
 
   &__search-input {
-    @apply w-full rounded-xl border border-border bg-background px-4 py-2 text-sm text-foreground outline-none transition-all duration-200;
-    @apply focus:border-input focus:ring-2 focus:ring-ring;
+    @apply w-full rounded-lg border border-border/50 bg-background/80 px-3 py-2 text-sm text-foreground outline-none transition-all duration-200;
+    @apply placeholder:text-muted-foreground focus:border-input focus:ring-2 focus:ring-ring/60;
   }
 
   &__search-results {
-    @apply mt-2 max-h-60 overflow-y-auto overflow-x-hidden rounded-xl border border-border bg-card shadow-lg;
+    @apply mt-2 max-h-60 overflow-y-auto overflow-x-hidden rounded-lg border border-border/50 bg-card/95 shadow-md;
+    position: relative;
+    z-index: 50;
   }
 
   &__search-item {
-    @apply flex h-12 w-full cursor-pointer items-center truncate whitespace-nowrap px-4 text-left text-sm leading-normal text-foreground transition-colors hover:bg-accent hover:text-accent-foreground;
+    @apply flex h-9 w-full cursor-pointer items-center truncate whitespace-nowrap px-2 text-left text-sm leading-normal text-foreground transition-colors duration-200;
+    @apply hover:bg-transparent hover:text-foreground;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
   }
 
   &__search-item--active {
-    @apply bg-accent text-accent-foreground;
+    @apply bg-transparent text-foreground underline;
+  }
+
+  &__search-item-icon {
+    @apply mr-2 inline-flex h-4 w-4 items-center justify-center text-muted-foreground;
+  }
+
+  &__search-item-label {
+    @apply truncate;
   }
 
   &__search-loading,
@@ -37,11 +68,11 @@
   }
 
   &__content {
-    @apply space-y-6 p-6;
+    @apply space-y-6 p-5;
   }
 
   &__header {
-    @apply flex items-center justify-between;
+    @apply flex items-center justify-end pb-1;
   }
 
   &__location {
@@ -49,15 +80,19 @@
   }
 
   &__city {
-    @apply mb-1 text-xl font-bold text-foreground;
+    @apply mb-0.5 text-xl font-semibold text-foreground;
   }
 
   &__country {
-    @apply text-sm uppercase tracking-wide text-muted-foreground;
+    @apply text-xs uppercase tracking-wide text-muted-foreground;
   }
 
   &__icon {
-    @apply ml-4 flex-shrink-0;
+    @apply flex-shrink-0;
+  }
+
+  &__icon-wrap {
+    @apply mx-auto inline-flex h-16 w-16 items-center justify-center rounded-lg border border-border/60 bg-background/50 shadow-sm;
   }
 
   &__weather-icon {
@@ -65,20 +100,23 @@
   }
 
   &__main {
-    @apply space-y-3 text-center;
+    @apply space-y-2 text-center;
+  }
+
+  &__hero {
+    @apply space-y-4 text-center;
   }
 
   &__temperature {
-    @apply flex items-center justify-center space-x-2;
+    @apply flex items-center justify-center gap-2;
   }
 
   &__temp-value {
-    @apply text-5xl font-light text-foreground;
-    font-family: "Inter", system-ui, sans-serif;
+    @apply text-7xl font-light tracking-tight text-foreground;
   }
 
   &__temp-unit {
-    @apply text-lg font-medium text-muted-foreground;
+    @apply rounded-full border border-border/60 px-2 py-0.5 text-xs font-medium text-muted-foreground;
   }
 
   &__description {
@@ -94,13 +132,12 @@
   }
 
   &__details {
-    @apply grid grid-cols-2 gap-4;
+    @apply grid grid-cols-2 gap-1;
   }
 
   &__detail-item {
-    @apply flex flex-col items-center space-y-1 rounded-xl p-3;
-    background: hsl(var(--muted) / 0.3);
-    border: 1px solid hsl(var(--border) / 0.5);
+    @apply flex flex-col items-center space-y-0.5 p-1;
+    background: transparent;
   }
 
   &__detail-label {
@@ -112,9 +149,37 @@
   }
 
   &__sun-info {
-    @apply flex items-center justify-between rounded-xl p-4;
-    background: hsl(var(--accent) / 0.1);
-    border: 1px solid hsl(var(--accent) / 0.2);
+    @apply flex items-center justify-between p-2;
+    background: transparent;
+    border: 0;
+  }
+
+  &__chips {
+    @apply mt-3 grid grid-cols-2 gap-3;
+  }
+
+  &__chips--secondary {
+    @apply mt-3 grid-cols-2;
+  }
+
+  &__chip {
+    @apply inline-flex items-center gap-2 rounded-lg border border-border/50 bg-background/40 px-4 py-2 text-sm shadow-sm transition-colors duration-200;
+  }
+
+  &__chip:hover {
+    @apply bg-background/60;
+  }
+
+  &__separator {
+    @apply mx-auto h-px w-11/12 bg-border/60;
+  }
+
+  &__chip-label {
+    @apply text-xs uppercase tracking-wide text-muted-foreground;
+  }
+
+  &__chip-value {
+    @apply text-sm font-medium text-foreground;
   }
 
   &__sun-item {
@@ -134,7 +199,7 @@
   }
 
   &__loading-spinner {
-    @apply h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent;
+    @apply h-8 w-8 animate-spin rounded-full border-2 border-primary/80 border-t-transparent;
   }
 
   &__loading-text {
@@ -155,14 +220,11 @@
 
   // Estados hover para interactividad
   &__detail-item:hover {
-    background: hsl(var(--muted) / 0.5);
-    transform: translateY(-1px);
-    transition: all 0.2s ease;
+    background: transparent;
   }
 
   &__sun-info:hover {
-    background: hsl(var(--accent) / 0.15);
-    transition: all 0.2s ease;
+    background: transparent;
   }
 
   // Responsive design

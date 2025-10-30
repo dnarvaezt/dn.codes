@@ -1,0 +1,210 @@
+---
+alwaysApply: true
+description: "Regla avanzada y robusta para generar mensajes de commit convencionales en español, centrados en valor al usuario. Muestra solo el mensaje final en un bloque de texto copiable."
+triggers: ["commit", "git", "message", "✨", "@conventional-commits.mdc"]
+priority: 1
+autoActivate: true
+context: ["source-control", "commit"]
+cursorBehavior: "intervene-immediately"
+---
+
+# ⚡️ Regla Avanzada de Commits - Solo Mensaje Copiable
+
+## 🧠 Propósito
+
+Esta regla genera **únicamente el mensaje de commit final**, listo para copiar y pegar.
+No muestra explicaciones, pasos, ni sugerencias adicionales.
+El resultado **se presenta dentro de un bloque de texto plano copiable** para uso inmediato.
+
+---
+
+## 🚀 Proceso de Análisis Automático
+
+### 1. Detección del Tipo de Commit
+
+Analiza los archivos modificados y aplica estas reglas en orden de prioridad:
+
+| Tipo | Detectar cuando... | Valor para el usuario |
+|------|-------------------|----------------------|
+| `feat` | Se agregan nuevos componentes, páginas, módulos, funcionalidades, endpoints o capacidades | Permite hacer algo nuevo que antes no era posible |
+| `fix` | Se corrigen errores, bugs, validaciones fallidas, renders incorrectos, lógica rota | Corrige un problema que impedía usar correctamente una funcionalidad |
+| `refactor` | Se reestructura código sin cambiar comportamiento (extracción, renombrado, reorganización) | Mejora la mantenibilidad sin afectar la experiencia del usuario |
+| `perf` | Se optimiza rendimiento, carga, memoria, tiempos de respuesta | Acelera o reduce consumo de recursos en una funcionalidad existente |
+| `test` | Se agregan o modifican archivos de prueba (.test., .spec., coverage) | Aumenta la confiabilidad y estabilidad del sistema |
+| `docs` | Se modifican archivos README, .md, comentarios JSDoc, documentación técnica | Facilita el entendimiento y uso del código |
+| `style` | Se ajustan estilos visuales (.scss, .css), temas, colores, espaciados | Mejora la apariencia o consistencia visual |
+| `chore` | Se actualizan dependencias, configuraciones, scripts de build, herramientas | Mantiene el proyecto actualizado sin afectar funcionalidad |
+| `build` | Se modifica webpack, babel, tsconfig, package.json, configuración de build | Optimiza el proceso de construcción del proyecto |
+| `ci` | Se cambian pipelines, GitHub Actions, bitbucket-pipelines, amplify.yml | Mejora el proceso de integración y despliegue continuo |
+| `revert` | Se revierten commits previos | Deshace cambios que causaron problemas |
+
+**Criterio de decisión**: Si un cambio involucra múltiples tipos, elige el que tenga **mayor impacto en el usuario final**.
+
+---
+
+### 2. Identificación del Scope (Área)
+
+Mapea automáticamente el scope según las rutas modificadas:
+
+| Ruta modificada | Scope sugerido |
+|----------------|---------------|
+| `src/modules/academy/` | `academy` |
+| `src/modules/content/` | `content` |
+| `src/modules/category/` | `category` |
+| `src/modules/competence/` | `competence` |
+| `src/modules/learning-path/` | `learning-path` |
+| `src/modules/customization/` | `customization` |
+| `src/modules/expert/` | `expert` |
+| `src/modules/skill/` | `skill` |
+| `src/modules/catalog/` | `catalog` |
+| `src/modules/provider/` | `provider` |
+| `src/modules/bulk-certificate-downloader/` | `certificates` |
+| `src/components/` (componentes globales) | `components` |
+| `src/utils/` | `utils` |
+| `src/core/` | `core` |
+| `src/domain/` | `domain` |
+| Configuración (webpack, babel, tsconfig) | `config` |
+| package.json, dependencies | `deps` |
+| Pipelines, CI/CD | `ci` |
+| Tests | `tests` |
+| Documentación | `docs` |
+
+**Reglas adicionales**:
+- Si se modifican múltiples módulos relacionados, usa el scope del módulo principal
+- Si son componentes transversales, usa `components`
+- Si afecta múltiples áreas sin relación, omite el scope: `feat: permite...`
+
+---
+
+### 3. Construcción del Mensaje (Subject)
+
+#### Estructura obligatoria:
+```
+<verbo> + <beneficio/capacidad> + <contexto específico>
+```
+
+#### Verbos según tipo de commit:
+
+| Tipo | Verbos recomendados |
+|------|-------------------|
+| `feat` | permite, habilita, agrega, incorpora, introduce |
+| `fix` | corrige, soluciona, repara, resuelve |
+| `refactor` | mejora, simplifica, reorganiza, centraliza |
+| `perf` | optimiza, acelera, reduce |
+| `style` | ajusta, actualiza, estandariza (estilos visuales) |
+| `docs` | documenta, actualiza, aclara |
+| `test` | valida, asegura, cubre |
+| `chore` | actualiza, mantiene, configura |
+
+#### Criterios de calidad:
+
+✅ **Debe contener**:
+- Verbo en presente (3ª persona)
+- Beneficio concreto para el usuario/desarrollador
+- Contexto específico (qué funcionalidad, dónde, para qué)
+
+❌ **Debe evitar**:
+- Verbos técnicos sin contexto: "añade", "cambia", "modifica"
+- Detalles de implementación: "usa useState", "implementa useEffect"
+- Términos vagos: "mejora el código", "actualiza componente"
+
+#### Ejemplos de transformación:
+
+| ❌ Mensaje técnico | ✅ Mensaje con valor |
+|-------------------|---------------------|
+| "añade componente ReportRequest" | "permite solicitar reportes de estadísticas desde panel de contenido" |
+| "modifica función de fecha" | "corrige formato de fecha en selector de rango para reportes" |
+| "refactoriza hook" | "simplifica lógica de carga de datos mejorando mantenibilidad" |
+| "actualiza estilos del modal" | "mejora legibilidad del modal de confirmación en dispositivos móviles" |
+
+---
+
+### 4. Determinación del Cuerpo (Body)
+
+Incluye cuerpo del commit cuando se cumplan **al menos 2** de estos criterios:
+
+- ✅ Se modifican **más de 3 archivos** en diferentes áreas
+- ✅ El cambio afecta **múltiples capas** (presentación + lógica + dominio)
+- ✅ Se introducen **breaking changes** o cambios de comportamiento
+- ✅ Se requiere explicar **por qué** se hizo el cambio (contexto de negocio)
+- ✅ Hay **detalles técnicos importantes** que el reviewer debe conocer
+- ✅ El cambio está relacionado con un **ticket/issue** específico
+
+#### Estructura del cuerpo:
+
+```
+<tipo>(<scope>): <mensaje principal>
+
+<línea en blanco>
+
+* <Detalle técnico 1>
+* <Detalle técnico 2>
+* <Detalle técnico 3>
+
+<línea en blanco (opcional)>
+
+Relacionado: PL-XXXX
+```
+
+**Contenido del cuerpo** (elige lo relevante):
+- Qué cambió a nivel técnico (sin ser obvio)
+- Por qué se tomó esa decisión
+- Qué se consideró como alternativa y por qué se descartó
+- Impacto esperado o métricas mejoradas
+- Advertencias para el reviewer o equipo
+- Referencias a tickets/issues
+
+---
+
+## 🔍 Validación Técnica Automática
+
+Antes de generar el mensaje, verifica contra `commitlint.config.js`:
+
+- ✅ `type` está en la lista permitida
+- ✅ `type` en lower-case
+- ✅ `scope` en lower-case, camelCase o kebab-case (si existe)
+- ✅ `subject` no empieza con mayúscula (salvo nombres propios)
+- ✅ `subject` sin punto final
+- ✅ `subject` mínimo 10 caracteres, máximo 300
+- ✅ `header` completo máximo 300 caracteres
+- ✅ `body` con línea en blanco previa (si existe)
+- ✅ Cada línea del body máximo 300 caracteres
+
+---
+
+## 🎯 Resultado Final
+
+**Formato de salida**:
+
+```
+<tipo>(<scope>): <mensaje enfocado en valor>
+
+* <Detalle técnico relevante>
+* <Detalle técnico relevante>
+* <Detalle técnico relevante>
+```
+
+**Reglas de presentación**:
+- Solo mostrar el mensaje final en bloque de texto copiable
+- Sin explicaciones adicionales antes o después
+- Sin emojis en el mensaje (permitidos solo en el cuerpo si aportan claridad)
+- Mensaje completo listo para `git commit -m "..."`
+
+---
+
+## 📋 Checklist de Revisión Interna (No mostrar al usuario)
+
+Antes de entregar el mensaje, verifica mentalmente:
+
+- [ ] ¿El tipo refleja el impacto principal del cambio?
+- [ ] ¿El scope es correcto según las rutas modificadas?
+- [ ] ¿El mensaje explica qué mejora o permite, no solo qué se hizo?
+- [ ] ¿El verbo es apropiado y está en presente?
+- [ ] ¿Se incluyó contexto suficiente para entender el valor?
+- [ ] ¿El mensaje cumple las reglas de commitlint?
+- [ ] ¿El cuerpo aporta información técnica útil sin ser redundante?
+- [ ] ¿El mensaje es comprensible para alguien que revise el historial en 6 meses?
+
+---
+
+**💡 No se muestran pasos intermedios, solo el mensaje final copiable.**
