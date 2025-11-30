@@ -35,6 +35,91 @@
 - Uso mínimo y sutil de sombras (`shadow-sm` a `shadow-md`), foco en superficies planas.
 - Jerarquía por color semántico, tipografía y espaciado; no por decoraciones.
 
+## 4.1) Reglas Fundamentales del Diseño Flat UI
+
+### 1. Todo es simple y bidimensional
+- Los elementos no deben simular profundidad. **Prohibidas sombras, brillos, relieves, biseles o degradados decorativos**.
+- Todo se basa en formas sólidas, contornos mínimos y colores planos.
+- Las sombras solo se permiten en casos excepcionales y deben ser mínimas (`shadow-sm` máximo).
+
+### 2. Color como herramienta, no como carnaval
+- La paleta debe ser reducida, coherente y con contrastes bien pensados.
+- Los colores funcionan como señales: un color para acciones principales, uno para estados, uno para alertas.
+- **Nada de texturas, patrones o efectos superpuestos**.
+- Usar exclusivamente los tokens HSL semánticos del sistema (`--primary`, `--secondary`, `--muted`, `--destructive`, etc.).
+
+### 3. Jerarquía basada en tipografía y espaciado
+- La tipografía es sans-serif, limpia y legible (usar `font-sans` de Tailwind).
+- La diferencia entre niveles (títulos, subtítulos, cuerpo) se logra con tamaño, peso y espaciado, **nunca con decoraciones**.
+- El aire (espacio en blanco) es parte del sistema: cada elemento respira usando la escala de espaciado de Tailwind (`p-*`, `m-*`, `gap-*`, `space-*`).
+
+### 4. Iconos minimalistas y geométricos
+- Sin detalles minúsculos. Sin sombras. Sin ilustraciones complejas.
+- Los íconos son simples, lineales o de relleno sólido, y todos del mismo estilo visual.
+- El objetivo es claridad, no arte abstracto.
+- Usar `lucide-react` como fuente principal de iconos (ya incluida en el proyecto).
+
+### 5. Grillas estrictas
+- Todo se alinea a un sistema de columnas y márgenes.
+- Nada flota libre.
+- Un agente de IA debe respetar una grilla modular para mantener orden visual y ritmo vertical consistente.
+- Usar `grid` y `flex` de Tailwind con la escala de espaciado estándar.
+
+### 6. Áreas clicables claras y honestas
+- Un botón debe parecer un botón aun sin efectos 3D.
+- Se logra con: forma definida, color distintivo, tamaño suficiente, texto claro.
+- **Nunca se disfraza un elemento interactivo de adorno**.
+- Usar tokens semánticos (`bg-primary`, `bg-secondary`) para diferenciar acciones.
+
+### 7. Micro-interacciones sutiles y planas
+- Si se usan animaciones, deben ser limpias, suaves y funcionales.
+- Transiciones simples: opacidad, desplazamiento, escalado leve.
+- **Nada de rebotes, luces o elasticidades dramáticas**.
+- Usar `transition-*`, `duration-*` (150-300ms máximo), `ease-*` de Tailwind.
+
+### 8. Eliminación total de lo innecesario
+- Si un elemento no comunica algo o no mejora la usabilidad, se elimina.
+- Flat UI vive del mínimo útil, no del mínimo estético.
+- Cada elemento debe tener un propósito funcional claro.
+
+### 9. Consistencia obsesiva
+La IA debe mantener:
+- La misma familia tipográfica en todo el sistema (`font-sans`).
+- El mismo estilo de iconografía (`lucide-react`).
+- La misma paleta con tonalidades fijas (tokens HSL semánticos).
+- La misma estructura de márgenes y paddings (escala Tailwind).
+- Los mismos tamaños para botones y tarjetas según patrones ya definidos.
+
+### 10. Legibilidad por encima del minimalismo
+- El estilo es plano, no críptico.
+- Todo debe ser claro al primer vistazo: colores con contraste suficiente, botones distinguibles, texto que se lee sin esfuerzo.
+- Usar tokens de contraste adecuados (`text-foreground`, `text-muted-foreground`).
+
+### 11. Componentes con patrones rígidos
+- Un botón siempre sigue la misma receta.
+- Una tarjeta siempre usa la misma proporción de bordes, tipografía y espaciado.
+- Un formulario no cambia su estructura entre pantallas.
+- La IA debe reproducir estos patrones como si fueran leyes de la física del sistema.
+
+### 12. Adaptación responsiva lógica
+- Al escalar entre pantallas, los elementos no cambian de estilo, solo reorganizan su posición y espaciado dentro de la misma grilla.
+- La tipografía se adapta, pero mantiene proporciones.
+- Usar breakpoints estándar de Tailwind (`sm:`, `md:`, `lg:`, `xl:`, `2xl:`).
+
+### Cómo debe interpretar esto un agente de IA
+
+Un agente debería leer estas reglas como un set rígido de invariantes visuales:
+
+- **Lo plano es obligatorio**
+- **La simplicidad es sagrada**
+- **La paleta es un contrato**
+- **La tipografía gobierna**
+- **La grilla es el esqueleto**
+- **La consistencia vale más que la creatividad**
+- **La función vale más que el adorno**
+
+En otras palabras: el diseño final debe sentirse como una interfaz que fue destilada hasta su esencia matemática.
+
 ## 5) Consistencia y coherencia obligatoria
 - El mismo patrón de estilos y composición debe repetirse en toda la app.
 - No mezclar estilos inline ni clases ad hoc fuera de Tailwind.
