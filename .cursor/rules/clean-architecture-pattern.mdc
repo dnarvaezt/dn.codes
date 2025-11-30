@@ -846,7 +846,7 @@ export const useClientPage = () => {
 #### 6. Feature Completa = .tsx + .hook.ts + .scss + index.ts
 
 - **NO** omitir `.hook.ts` "porque es simple"
-- **NO** omitir `.scss` "porque uso Tailwind"
+- **NO** omitir `.scss` "porque es simple o innecesario"
 - **NO** omitir `index.ts` "porque solo hay un export"
 - La estructura es COMPLETA o no está completa
 

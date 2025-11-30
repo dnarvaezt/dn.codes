@@ -32,7 +32,7 @@ Analiza los archivos modificados y aplica estas reglas en orden de prioridad:
 | `perf` | Se optimiza rendimiento, carga, memoria, tiempos de respuesta | Acelera o reduce consumo de recursos en una funcionalidad existente |
 | `test` | Se agregan o modifican archivos de prueba (.test., .spec., coverage) | Aumenta la confiabilidad y estabilidad del sistema |
 | `docs` | Se modifican archivos README, .md, comentarios JSDoc, documentación técnica | Facilita el entendimiento y uso del código |
-| `style` | Se ajustan estilos visuales (.scss, .css), temas, colores, espaciados | Mejora la apariencia o consistencia visual |
+| `style` | Se ajustan estilos (.scss, .css) sin cambiar funcionalidad | Mejora la consistencia del código |
 | `chore` | Se actualizan dependencias, configuraciones, scripts de build, herramientas | Mantiene el proyecto actualizado sin afectar funcionalidad |
 | `build` | Se modifica webpack, babel, tsconfig, package.json, configuración de build | Optimiza el proceso de construcción del proyecto |
 | `ci` | Se cambian pipelines, GitHub Actions, bitbucket-pipelines, amplify.yml | Mejora el proceso de integración y despliegue continuo |
@@ -91,7 +91,7 @@ Mapea automáticamente el scope según las rutas modificadas:
 | `fix` | corrige, soluciona, repara, resuelve |
 | `refactor` | mejora, simplifica, reorganiza, centraliza |
 | `perf` | optimiza, acelera, reduce |
-| `style` | ajusta, actualiza, estandariza (estilos visuales) |
+| `style` | ajusta, actualiza, estandariza (estilos de código) |
 | `docs` | documenta, actualiza, aclara |
 | `test` | valida, asegura, cubre |
 | `chore` | actualiza, mantiene, configura |
@@ -115,7 +115,7 @@ Mapea automáticamente el scope según las rutas modificadas:
 | "añade componente ReportRequest" | "permite solicitar reportes de estadísticas desde panel de contenido" |
 | "modifica función de fecha" | "corrige formato de fecha en selector de rango para reportes" |
 | "refactoriza hook" | "simplifica lógica de carga de datos mejorando mantenibilidad" |
-| "actualiza estilos del modal" | "mejora legibilidad del modal de confirmación en dispositivos móviles" |
+| "actualiza estilos del modal" | "mejora estructura del modal de confirmación en dispositivos móviles" |
 
 ---
 

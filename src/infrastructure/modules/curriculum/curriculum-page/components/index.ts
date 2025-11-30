@@ -1,0 +1,7 @@
+export * from "./curriculum-about"
+export * from "./curriculum-education"
+export * from "./curriculum-experience"
+export * from "./curriculum-hero"
+export * from "./curriculum-languages"
+export * from "./curriculum-skills"
+export * from "./curriculum-skills-languages"

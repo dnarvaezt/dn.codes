@@ -1,0 +1,38 @@
+.curriculum-skills-languages {
+  position: relative;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-3xl) 0;
+  background: var(--flat-bg-primary);
+
+  &__container {
+    margin: 0 auto;
+    max-width: 72rem;
+    padding: 0 var(--spacing-base);
+  }
+
+  &__content {
+    opacity: 0;
+    transform: translateY(50px);
+    transition:
+      opacity 0.8s ease,
+      transform 0.8s ease;
+
+    &--visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-3xl);
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--spacing-2xl);
+    }
+  }
+}

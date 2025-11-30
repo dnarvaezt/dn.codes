@@ -1,36 +1,58 @@
-interface PersonalInfo {
-  name: string
-  title: string
-  email: string
-  phone: string
-  location: string
-  about: string
-}
-
-interface Experience {
-  position: string
-  company: string
-  period: string
-  description: string
-}
-
-interface Education {
-  degree: string
-  institution: string
-  period: string
-}
-
-interface Skill {
-  name: string
-  level: number
-}
-
-interface Language {
-  name: string
-  level: string
-}
+import { useParallax } from "@/infrastructure/hooks/use-parallax"
+import { useEffect, useRef, useState } from "react"
+import type {
+  Education,
+  Experience,
+  Language,
+  PersonalInfo,
+  Skill,
+} from "./curriculum-page.interface"
 
 export const useCurriculumPage = () => {
+  const [isVisible, setIsVisible] = useState<Record<string, boolean>>({})
+  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({})
+  const { setParallaxRef } = useParallax()
+
+  useEffect(() => {
+    // Intersection Observer para animaciones al entrar en viewport
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const key = entry.target.getAttribute("data-section-key")
+          if (key) {
+            setIsVisible((prev) => ({ ...prev, [key]: entry.isIntersecting }))
+          }
+        })
+      },
+      {
+        threshold: 0.1,
+        rootMargin: "0px 0px -100px 0px",
+      }
+    )
+
+    // Observar todos los elementos con refs
+    const observeSections = () => {
+      Object.keys(sectionRefs.current).forEach((key) => {
+        const element = sectionRefs.current[key]
+        if (element && !element.hasAttribute("data-section-key")) {
+          element.setAttribute("data-section-key", key)
+          observer.observe(element)
+        }
+      })
+    }
+
+    // Observar después de que los refs estén listos
+    const timeoutId = setTimeout(observeSections, 100)
+
+    return () => {
+      clearTimeout(timeoutId)
+      observer.disconnect()
+    }
+  }, [])
+
+  const setSectionRef = (key: string, element: HTMLDivElement | null) => {
+    sectionRefs.current[key] = element
+  }
   const personalInfo: PersonalInfo = {
     name: "Diego Narváez",
     title: "Desarrollador Full Stack",
@@ -91,5 +113,8 @@ export const useCurriculumPage = () => {
     education,
     skills,
     languages,
+    isVisible,
+    setSectionRef,
+    setParallaxRef,
   }
 }

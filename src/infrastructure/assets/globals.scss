@@ -23,7 +23,134 @@
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
     --ring: 0 0% 3.9%;
-    --radius: 0.5rem;
+    --radius: 0;
+
+    // Fondo base neumórfico (gris azulado suave)
+    --neu-bg-base: #e0e5ec;
+    --neu-bg-light: #f5f7fa;
+    --neu-bg-dark: #d1d9e6;
+
+    // Colores de elementos (variaciones del fondo)
+    --neu-element-light: #f0f3f6;
+    --neu-element-base: #e0e5ec;
+    --neu-element-dark: #d1d9e6;
+
+    // Sombras neumórficas (claras y oscuras)
+    --neu-shadow-light: rgba(255, 255, 255, 0.7);
+    --neu-shadow-dark: rgba(163, 177, 198, 0.6);
+    --neu-shadow-inset-light: rgba(255, 255, 255, 0.5);
+    --neu-shadow-inset-dark: rgba(163, 177, 198, 0.4);
+
+    // Sombras predefinidas para elevación
+    --neu-shadow-raised:
+      8px 8px 16px var(--neu-shadow-dark), -8px -8px 16px var(--neu-shadow-light);
+
+    --neu-shadow-pressed:
+      inset 4px 4px 8px var(--neu-shadow-dark), inset -4px -4px 8px var(--neu-shadow-light);
+
+    --neu-shadow-flat: 2px 2px 4px var(--neu-shadow-dark), -2px -2px 4px var(--neu-shadow-light);
+
+    // Colores semánticos suaves (neumórficos)
+    --neu-success: #a8d5ba;
+    --neu-error: #e8b4b8;
+    --neu-warning: #e8d5a3;
+    --neu-info: #a8c5e0;
+
+    // Texto (asegurar contraste)
+    --neu-text-primary: #2d3748;
+    --neu-text-secondary: #4a5568;
+    --neu-text-muted: #718096;
+
+    // Espaciado
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 0.75rem;
+    --spacing-base: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 3rem;
+    --spacing-3xl: 4rem;
+
+    // Fondos glassmórficos (transparencias balanceadas)
+    --glass-bg-base: rgba(255, 255, 255, 0.12);
+    --glass-bg-light: rgba(255, 255, 255, 0.06);
+    --glass-bg-strong: rgba(255, 255, 255, 0.25);
+    --glass-bg-subtle: rgba(255, 255, 255, 0.08);
+    --glass-bg-hover: rgba(255, 255, 255, 0.2);
+    --glass-bg-active: rgba(255, 255, 255, 0.28);
+
+    // Fondos glassmórficos oscuros (para temas dark)
+    --glass-bg-dark-base: rgba(0, 0, 0, 0.2);
+    --glass-bg-dark-light: rgba(0, 0, 0, 0.1);
+    --glass-bg-dark-strong: rgba(0, 0, 0, 0.3);
+
+    // Efectos de desenfoque (backdrop-filter)
+    --glass-blur-sm: blur(4px);
+    --glass-blur-md: blur(10px);
+    --glass-blur-lg: blur(16px);
+    --glass-blur-xl: blur(24px);
+
+    // Bordes glassmórficos (brillantes y sutiles)
+    --glass-border-light: 1px solid rgba(255, 255, 255, 0.18);
+    --glass-border-strong: 1px solid rgba(255, 255, 255, 0.3);
+    --glass-border-subtle: 1px solid rgba(255, 255, 255, 0.1);
+    --glass-border-dark: 1px solid rgba(255, 255, 255, 0.05);
+
+    // Sombras glassmórficas (suaves y sutiles)
+    --glass-shadow-base: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    --glass-shadow-hover: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
+    --glass-shadow-active: 0 4px 16px 0 rgba(31, 38, 135, 0.25);
+    --glass-shadow-subtle: 0 4px 16px 0 rgba(31, 38, 135, 0.2);
+
+    // Colores semánticos glassmórficos (desaturados y armoniosos)
+    --glass-success: rgba(139, 195, 74, 0.25);
+    --glass-error: rgba(239, 83, 80, 0.25);
+    --glass-warning: rgba(255, 193, 7, 0.25);
+    --glass-info: rgba(66, 165, 245, 0.25);
+
+    // Bordes semánticos glassmórficos (armoniosos)
+    --glass-border-success: 1px solid rgba(139, 195, 74, 0.35);
+    --glass-border-error: 1px solid rgba(239, 83, 80, 0.35);
+    --glass-border-warning: 1px solid rgba(255, 193, 7, 0.35);
+    --glass-border-info: 1px solid rgba(66, 165, 245, 0.35);
+
+    // Texto (asegurar contraste sobre glass)
+    --glass-text-primary: #1a1a1a;
+    --glass-text-secondary: #4a4a4a;
+    --glass-text-muted: #6b6b6b;
+    --glass-text-on-dark: #ffffff;
+    --glass-text-on-light: #1a1a1a;
+    --glass-text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+
+    // Flat UI Design - Colores base
+    --flat-bg-primary: #ffffff;
+    --flat-bg-secondary: #f8f9fa;
+    --flat-bg-tertiary: #e9ecef;
+    --flat-bg-accent: #3498db;
+
+    // Flat UI - Colores de texto
+    --flat-text-primary: #2c3e50;
+    --flat-text-secondary: #7f8c8d;
+    --flat-text-muted: #95a5a6;
+    --flat-text-inverse: #ffffff;
+
+    // Flat UI - Colores semánticos planos
+    --flat-success: #2ecc71;
+    --flat-error: #e74c3c;
+    --flat-warning: #f39c12;
+    --flat-info: #3498db;
+    --flat-primary: #3498db;
+
+    // Flat UI - Bordes
+    --flat-border: #dee2e6;
+    --flat-border-light: #e9ecef;
+    --flat-border-dark: #adb5bd;
+
+    // Flat UI - Sombras sutiles
+    --flat-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --flat-shadow-md: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --flat-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --flat-shadow-none: none;
   }
 
   [data-theme="dark"] {
@@ -46,6 +173,62 @@
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
     --ring: 0 0% 83.1%;
+
+    // Fondo base neumórfico oscuro
+    --neu-bg-base: #2d3748;
+    --neu-bg-light: #4a5568;
+    --neu-bg-dark: #1a202c;
+
+    // Colores de elementos oscuros
+    --neu-element-light: #4a5568;
+    --neu-element-base: #2d3748;
+    --neu-element-dark: #1a202c;
+
+    // Sombras neumórficas oscuras
+    --neu-shadow-light: rgba(255, 255, 255, 0.1);
+    --neu-shadow-dark: rgba(0, 0, 0, 0.5);
+    --neu-shadow-inset-light: rgba(255, 255, 255, 0.05);
+    --neu-shadow-inset-dark: rgba(0, 0, 0, 0.3);
+
+    // Texto oscuro (asegurar contraste)
+    --neu-text-primary: #f7fafc;
+    --neu-text-secondary: #e2e8f0;
+    --neu-text-muted: #cbd5e0;
+
+    // Fondos glassmórficos oscuros
+    --glass-bg-base: rgba(0, 0, 0, 0.2);
+    --glass-bg-light: rgba(0, 0, 0, 0.1);
+    --glass-bg-strong: rgba(0, 0, 0, 0.3);
+    --glass-bg-subtle: rgba(0, 0, 0, 0.08);
+    --glass-bg-hover: rgba(0, 0, 0, 0.25);
+    --glass-bg-active: rgba(0, 0, 0, 0.35);
+
+    // Bordes glassmórficos oscuros
+    --glass-border-light: 1px solid rgba(255, 255, 255, 0.1);
+    --glass-border-strong: 1px solid rgba(255, 255, 255, 0.2);
+    --glass-border-subtle: 1px solid rgba(255, 255, 255, 0.05);
+
+    // Texto glassmórfico oscuro
+    --glass-text-primary: #f7fafc;
+    --glass-text-secondary: #e2e8f0;
+    --glass-text-muted: #cbd5e0;
+    --glass-text-on-dark: #ffffff;
+    --glass-text-on-light: #1a1a1a;
+
+    // Flat UI Design - Dark theme
+    --flat-bg-primary: #1a1a1a;
+    --flat-bg-secondary: #2d2d2d;
+    --flat-bg-tertiary: #3a3a3a;
+    --flat-bg-accent: #3498db;
+
+    --flat-text-primary: #ffffff;
+    --flat-text-secondary: #b0b0b0;
+    --flat-text-muted: #808080;
+    --flat-text-inverse: #2c3e50;
+
+    --flat-border: #404040;
+    --flat-border-light: #3a3a3a;
+    --flat-border-dark: #505050;
   }
 }
 
@@ -55,5 +238,16 @@
   }
   body {
     @apply bg-background text-foreground;
+    background-color: var(--neu-bg-base);
+    color: var(--neu-text-primary);
+    font-family:
+      var(--font-noto-sans),
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      "Helvetica Neue",
+      Arial,
+      sans-serif;
   }
 }
